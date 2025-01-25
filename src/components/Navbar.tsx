@@ -3,12 +3,12 @@ import React from "react";
 
 function Navbar() {
   return (
-    <div className="py-5 gap-4 bg-primary  flex items-center  flex-row w-full">
+    <div className="py-5 gap-4 text-black bg-primary  flex items-center  flex-row w-full">
       {/* the search section  */}
       <div className="relative w-2/3">
         <input
           className="border shadow-lg px-5 h-10 rounded-full w-full"
-          placeholder="search..."
+          placeholder="search anything..."
         />
         <button>
           <Image

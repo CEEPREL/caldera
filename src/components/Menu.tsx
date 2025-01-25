@@ -11,8 +11,8 @@ const menuItems = [
 
 function Menu() {
   return (
-    <div className="p-2 flex flex-col gap-10">
-      <h1 className=" text-lg font-semibold">Admin</h1>
+    <div className="p-2 bg-white h-full flex flex-col gap-10">
+      <h1 className=" text-lg text-black font-semibold">Admin</h1>
       <div className="text-gray-500 flex flex-col gap-6">
         {menuItems.map((item) => (
           <div className=" flex flex-col gap-6" key={item.label}>
