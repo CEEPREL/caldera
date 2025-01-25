@@ -3,10 +3,10 @@ import Link from "next/link";
 import React from "react";
 
 const menuItems = [
-  { icon: "/icons/revenue.svg", label: "Revenue", href: "/revenue" },
-  { icon: "/icons/stores.svg", label: "Stores", href: "/stores" },
-  { icon: "/icons/team.svg", label: "Team", href: "/team" },
-  { icon: "/icons/settings.svg", label: "Settings", href: "/settings" },
+  { icon: "/icons/revenue.svg", label: "Revenue", href: "/admin/revenue" },
+  { icon: "/icons/stores.svg", label: "Stores", href: "/admin/stores" },
+  { icon: "/icons/team.svg", label: "Team", href: "/admin/team" },
+  { icon: "/icons/settings.svg", label: "Settings", href: "/admin/settings" },
 ];
 
 function Menu() {
