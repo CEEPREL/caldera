@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import logo from "../../../public/images/Frame.svg";
 import frame from "../../../public/images/Vector (4).svg";
+import { useRouter } from "next/navigation";
 
 function AdminLogin() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ function AdminLogin() {
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  const route = useRouter();
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -28,7 +30,7 @@ function AdminLogin() {
 
       if (response.ok) {
         alert("Login successful!");
-        // Redirect or handle successful login
+        route.push("/dashboard");
       } else {
         alert(data.message || "Login failed!");
       }
