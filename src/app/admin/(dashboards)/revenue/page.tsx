@@ -13,28 +13,385 @@ function Revenue() {
   ];
 
   const products = [
-    "Screen",
-    "Downboard",
-    "Battery",
-    "Back Glass",
-    "Touch Pad",
+    {
+      name: "Screen",
+      sales: {
+        year: [
+          {
+            name: "Page A",
+            uv: 4000,
+            pv: 2400,
+            amt: 2400,
+          },
+          {
+            name: "Page B",
+            uv: 3000,
+            pv: 1398,
+            amt: 2210,
+          },
+          {
+            name: "Page C",
+            uv: 2000,
+            pv: 9800,
+            amt: 2290,
+          },
+          {
+            name: "Page D",
+            uv: 2780,
+            pv: 3908,
+            amt: 2000,
+          },
+          {
+            name: "Page E",
+            uv: 1890,
+            pv: 4800,
+            amt: 2181,
+          },
+          {
+            name: "Page F",
+            uv: 2390,
+            pv: 3800,
+            amt: 2500,
+          },
+          {
+            name: "Page G",
+            uv: 3490,
+            pv: 4300,
+            amt: 2100,
+          },
+        ],
+        month: [
+          {
+            name: "Page A",
+            uv: 4000,
+            pv: 2400,
+            amt: 2400,
+          },
+          {
+            name: "Page B",
+            uv: 3000,
+            pv: 1398,
+            amt: 2210,
+          },
+          {
+            name: "Page C",
+            uv: 2000,
+            pv: 9800,
+            amt: 2290,
+          },
+          {
+            name: "Page D",
+            uv: 2780,
+            pv: 3908,
+            amt: 2000,
+          },
+          {
+            name: "Page E",
+            uv: 1890,
+            pv: 4800,
+            amt: 2181,
+          },
+          {
+            name: "Page F",
+            uv: 2390,
+            pv: 3800,
+            amt: 2500,
+          },
+          {
+            name: "Page G",
+            uv: 3490,
+            pv: 4300,
+            amt: 2100,
+          },
+        ],
+        week: [
+          {
+            name: "Page A",
+            uv: 4000,
+            pv: 2400,
+            amt: 2400,
+          },
+          {
+            name: "Page B",
+            uv: 3000,
+            pv: 1398,
+            amt: 2210,
+          },
+          {
+            name: "Page C",
+            uv: 2000,
+            pv: 9800,
+            amt: 2290,
+          },
+          {
+            name: "Page D",
+            uv: 2780,
+            pv: 3908,
+            amt: 2000,
+          },
+          {
+            name: "Page E",
+            uv: 1890,
+            pv: 4800,
+            amt: 2181,
+          },
+          {
+            name: "Page F",
+            uv: 2390,
+            pv: 3800,
+            amt: 2500,
+          },
+          {
+            name: "Page G",
+            uv: 3490,
+            pv: 4300,
+            amt: 2100,
+          },
+        ],
+        day: [
+          {
+            name: "Page A",
+            uv: 4000,
+            pv: 2400,
+            amt: 2400,
+          },
+          {
+            name: "Page B",
+            uv: 3000,
+            pv: 1398,
+            amt: 2210,
+          },
+          {
+            name: "Page C",
+            uv: 2000,
+            pv: 9800,
+            amt: 2290,
+          },
+          {
+            name: "Page D",
+            uv: 2780,
+            pv: 3908,
+            amt: 2000,
+          },
+          {
+            name: "Page E",
+            uv: 1890,
+            pv: 4800,
+            amt: 2181,
+          },
+          {
+            name: "Page F",
+            uv: 2390,
+            pv: 3800,
+            amt: 2500,
+          },
+          {
+            name: "Page G",
+            uv: 3490,
+            pv: 4300,
+            amt: 2100,
+          },
+        ],
+      },
+    },
+    {
+      name: "Battery",
+      sales: {
+        year: [
+          {
+            name: "Page A",
+            uv: 4000,
+            pv: 2400,
+            amt: 2400,
+          },
+          {
+            name: "Page B",
+            uv: 3000,
+            pv: 1398,
+            amt: 2210,
+          },
+          {
+            name: "Page C",
+            uv: 2000,
+            pv: 9800,
+            amt: 2290,
+          },
+          {
+            name: "Page D",
+            uv: 2780,
+            pv: 3908,
+            amt: 2000,
+          },
+          {
+            name: "Page E",
+            uv: 1890,
+            pv: 4800,
+            amt: 2181,
+          },
+          {
+            name: "Page F",
+            uv: 2390,
+            pv: 3800,
+            amt: 2500,
+          },
+          {
+            name: "Page G",
+            uv: 3490,
+            pv: 4300,
+            amt: 2100,
+          },
+        ],
+        month: [
+          {
+            name: "Page A",
+            uv: 4000,
+            pv: 2400,
+            amt: 2400,
+          },
+          {
+            name: "Page B",
+            uv: 3000,
+            pv: 1398,
+            amt: 2210,
+          },
+          {
+            name: "Page C",
+            uv: 2000,
+            pv: 9800,
+            amt: 2290,
+          },
+          {
+            name: "Page D",
+            uv: 2780,
+            pv: 3908,
+            amt: 2000,
+          },
+          {
+            name: "Page E",
+            uv: 1890,
+            pv: 4800,
+            amt: 2181,
+          },
+          {
+            name: "Page F",
+            uv: 2390,
+            pv: 3800,
+            amt: 2500,
+          },
+          {
+            name: "Page G",
+            uv: 3490,
+            pv: 4300,
+            amt: 2100,
+          },
+        ],
+        week: [
+          {
+            name: "Page A",
+            uv: 4000,
+            pv: 2400,
+            amt: 2400,
+          },
+          {
+            name: "Page B",
+            uv: 3000,
+            pv: 1398,
+            amt: 2210,
+          },
+          {
+            name: "Page C",
+            uv: 2000,
+            pv: 9800,
+            amt: 2290,
+          },
+          {
+            name: "Page D",
+            uv: 2780,
+            pv: 3908,
+            amt: 2000,
+          },
+          {
+            name: "Page E",
+            uv: 1890,
+            pv: 4800,
+            amt: 2181,
+          },
+          {
+            name: "Page F",
+            uv: 2390,
+            pv: 3800,
+            amt: 2500,
+          },
+          {
+            name: "Page G",
+            uv: 3490,
+            pv: 4300,
+            amt: 2100,
+          },
+        ],
+        day: [
+          {
+            name: "Page A",
+            uv: 4000,
+            pv: 2400,
+            amt: 2400,
+          },
+          {
+            name: "Page B",
+            uv: 3000,
+            pv: 1398,
+            amt: 2210,
+          },
+          {
+            name: "Page C",
+            uv: 2000,
+            pv: 9800,
+            amt: 2290,
+          },
+          {
+            name: "Page D",
+            uv: 2780,
+            pv: 3908,
+            amt: 2000,
+          },
+          {
+            name: "Page E",
+            uv: 1890,
+            pv: 4800,
+            amt: 2181,
+          },
+          {
+            name: "Page F",
+            uv: 2390,
+            pv: 3800,
+            amt: 2500,
+          },
+          {
+            name: "Page G",
+            uv: 3490,
+            pv: 4300,
+            amt: 2100,
+          },
+        ],
+      },
+    },
   ];
 
   const [selectedState, setSelectedState] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
-
+  const selectedProductData = products.find((p) => p.name === selectedProduct);
   const renderProductContent = () => {
     switch (selectedProduct) {
       case "Screen":
         return (
           <div className="w-full h-full">
-            <SalesGraph />
+            <SalesGraph data={selectedProductData?.sales.year || []} />
           </div>
         );
       case "Downboard":
         return <p className="text-gray-700">Downboard revenue details.</p>;
       case "Battery":
-        return <p className="text-gray-700">Battery performance insights.</p>;
+        return <SalesGraph data={selectedProductData?.sales.year || []} />;
       case "Back Glass":
         return <p className="text-gray-700">Back Glass sales tracking.</p>;
       case "Touch Pad":
@@ -60,7 +417,7 @@ function Revenue() {
               placeholder="Select a State"
               onSelect={setSelectedState}
               getLabel={(state) => state.name}
-              getSubLabel={(state) => state.code}
+              getSubLabel={(products) => products.code}
             />
             <Dropdown
               showSearch
@@ -69,7 +426,7 @@ function Revenue() {
               options={products}
               placeholder="Select a Product"
               onSelect={setSelectedProduct}
-              getLabel={(product) => product}
+              getLabel={(products) => products.name}
             />
           </div>
 
@@ -79,14 +436,14 @@ function Revenue() {
               {products.map((p, index) => (
                 <button
                   key={index}
-                  onClick={() => setSelectedProduct(p)}
+                  onClick={() => setSelectedProduct(p.name)}
                   className={`${
-                    selectedProduct === p
+                    selectedProduct === p.name
                       ? "border-b-4 border-blue-400 font-semibold"
                       : ""
                   } p-2`}
                 >
-                  {p}
+                  {p.name}
                 </button>
               ))}
             </div>
