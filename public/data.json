@@ -1,0 +1,22 @@
+{
+  "products": [
+    {
+      "name": "Screen",
+      "sales": {
+        "year": [{ "sales": 5023 }, { "sales": 7812 }, { "sales": 6598 }],
+        "month": [{ "sales": 412 }, { "sales": 789 }, { "sales": 523 }],
+        "week": [{ "sales": 78 }, { "sales": 92 }, { "sales": 105 }],
+        "day": [{ "sales": 15 }, { "sales": 27 }, { "sales": 32 }]
+      }
+    },
+    {
+      "name": "Battery",
+      "sales": {
+        "year": [{ "sales": 8921 }, { "sales": 6789 }, { "sales": 5432 }],
+        "month": [{ "sales": 654 }, { "sales": 876 }, { "sales": 734 }],
+        "week": [{ "sales": 89 }, { "sales": 112 }, { "sales": 130 }],
+        "day": [{ "sales": 20 }, { "sales": 35 }, { "sales": 40 }]
+      }
+    }
+  ]
+}

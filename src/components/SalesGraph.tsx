@@ -9,12 +9,15 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-
+type Sales = {
+  year: number;
+  month: number;
+  week: number;
+  day: number;
+};
 type Data = {
   name: string;
-  uv: number;
-  pv: number;
-  amt: number;
+  sales: Sales;
 };
 
 // const data = [
@@ -64,7 +67,7 @@ type Data = {
 
 function SalesGraph({ data }: { data: Data[] }) {
   return (
-    <div className="w-full h-64">
+    <div className="w-full h-44">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
