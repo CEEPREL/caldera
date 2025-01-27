@@ -1,5 +1,6 @@
 "use client";
 import Dropdown from "@/components/Dropdown";
+import SalesGraph from "@/components/SalesGraph";
 import Image from "next/image";
 import React, { useState } from "react";
 
@@ -26,7 +27,9 @@ function Revenue() {
     switch (selectedProduct) {
       case "Screen":
         return (
-          <p className="text-gray-700">Screen sales report and analytics.</p>
+          <div className="w-full h-full">
+            <SalesGraph />
+          </div>
         );
       case "Downboard":
         return <p className="text-gray-700">Downboard revenue details.</p>;
