@@ -3,6 +3,7 @@ import Dropdown from "@/components/Dropdown";
 import SalesGraph from "@/components/SalesGraph";
 import Image from "next/image";
 import React, { useState } from "react";
+import products from "@/data/data.json";
 
 function Revenue() {
   const states = [
@@ -12,380 +13,387 @@ function Revenue() {
     { code: "ABJ", name: "Abuja" },
   ];
 
-  const products = [
-    {
-      name: "Screen",
-      sales: {
-        year: [
-          {
-            name: "Page A",
-            uv: 4000,
-            pv: 2400,
-            amt: 2400,
-          },
-          {
-            name: "Page B",
-            uv: 3000,
-            pv: 1398,
-            amt: 2210,
-          },
-          {
-            name: "Page C",
-            uv: 2000,
-            pv: 9800,
-            amt: 2290,
-          },
-          {
-            name: "Page D",
-            uv: 2780,
-            pv: 3908,
-            amt: 2000,
-          },
-          {
-            name: "Page E",
-            uv: 1890,
-            pv: 4800,
-            amt: 2181,
-          },
-          {
-            name: "Page F",
-            uv: 2390,
-            pv: 3800,
-            amt: 2500,
-          },
-          {
-            name: "Page G",
-            uv: 3490,
-            pv: 4300,
-            amt: 2100,
-          },
-        ],
-        month: [
-          {
-            name: "Page A",
-            uv: 4000,
-            pv: 2400,
-            amt: 2400,
-          },
-          {
-            name: "Page B",
-            uv: 3000,
-            pv: 1398,
-            amt: 2210,
-          },
-          {
-            name: "Page C",
-            uv: 2000,
-            pv: 9800,
-            amt: 2290,
-          },
-          {
-            name: "Page D",
-            uv: 2780,
-            pv: 3908,
-            amt: 2000,
-          },
-          {
-            name: "Page E",
-            uv: 1890,
-            pv: 4800,
-            amt: 2181,
-          },
-          {
-            name: "Page F",
-            uv: 2390,
-            pv: 3800,
-            amt: 2500,
-          },
-          {
-            name: "Page G",
-            uv: 3490,
-            pv: 4300,
-            amt: 2100,
-          },
-        ],
-        week: [
-          {
-            name: "Page A",
-            uv: 4000,
-            pv: 2400,
-            amt: 2400,
-          },
-          {
-            name: "Page B",
-            uv: 3000,
-            pv: 1398,
-            amt: 2210,
-          },
-          {
-            name: "Page C",
-            uv: 2000,
-            pv: 9800,
-            amt: 2290,
-          },
-          {
-            name: "Page D",
-            uv: 2780,
-            pv: 3908,
-            amt: 2000,
-          },
-          {
-            name: "Page E",
-            uv: 1890,
-            pv: 4800,
-            amt: 2181,
-          },
-          {
-            name: "Page F",
-            uv: 2390,
-            pv: 3800,
-            amt: 2500,
-          },
-          {
-            name: "Page G",
-            uv: 3490,
-            pv: 4300,
-            amt: 2100,
-          },
-        ],
-        day: [
-          {
-            name: "Page A",
-            uv: 4000,
-            pv: 2400,
-            amt: 2400,
-          },
-          {
-            name: "Page B",
-            uv: 3000,
-            pv: 1398,
-            amt: 2210,
-          },
-          {
-            name: "Page C",
-            uv: 2000,
-            pv: 9800,
-            amt: 2290,
-          },
-          {
-            name: "Page D",
-            uv: 2780,
-            pv: 3908,
-            amt: 2000,
-          },
-          {
-            name: "Page E",
-            uv: 1890,
-            pv: 4800,
-            amt: 2181,
-          },
-          {
-            name: "Page F",
-            uv: 2390,
-            pv: 3800,
-            amt: 2500,
-          },
-          {
-            name: "Page G",
-            uv: 3490,
-            pv: 4300,
-            amt: 2100,
-          },
-        ],
-      },
-    },
-    {
-      name: "Battery",
-      sales: {
-        year: [
-          {
-            name: "Page A",
-            uv: 4000,
-            pv: 2400,
-            amt: 2400,
-          },
-          {
-            name: "Page B",
-            uv: 3000,
-            pv: 1398,
-            amt: 2210,
-          },
-          {
-            name: "Page C",
-            uv: 2000,
-            pv: 9800,
-            amt: 2290,
-          },
-          {
-            name: "Page D",
-            uv: 2780,
-            pv: 3908,
-            amt: 2000,
-          },
-          {
-            name: "Page E",
-            uv: 1890,
-            pv: 4800,
-            amt: 2181,
-          },
-          {
-            name: "Page F",
-            uv: 2390,
-            pv: 3800,
-            amt: 2500,
-          },
-          {
-            name: "Page G",
-            uv: 3490,
-            pv: 4300,
-            amt: 2100,
-          },
-        ],
-        month: [
-          {
-            name: "Page A",
-            uv: 4000,
-            pv: 2400,
-            amt: 2400,
-          },
-          {
-            name: "Page B",
-            uv: 3000,
-            pv: 1398,
-            amt: 2210,
-          },
-          {
-            name: "Page C",
-            uv: 2000,
-            pv: 9800,
-            amt: 2290,
-          },
-          {
-            name: "Page D",
-            uv: 2780,
-            pv: 3908,
-            amt: 2000,
-          },
-          {
-            name: "Page E",
-            uv: 1890,
-            pv: 4800,
-            amt: 2181,
-          },
-          {
-            name: "Page F",
-            uv: 2390,
-            pv: 3800,
-            amt: 2500,
-          },
-          {
-            name: "Page G",
-            uv: 3490,
-            pv: 4300,
-            amt: 2100,
-          },
-        ],
-        week: [
-          {
-            name: "Page A",
-            uv: 4000,
-            pv: 2400,
-            amt: 2400,
-          },
-          {
-            name: "Page B",
-            uv: 3000,
-            pv: 1398,
-            amt: 2210,
-          },
-          {
-            name: "Page C",
-            uv: 2000,
-            pv: 9800,
-            amt: 2290,
-          },
-          {
-            name: "Page D",
-            uv: 2780,
-            pv: 3908,
-            amt: 2000,
-          },
-          {
-            name: "Page E",
-            uv: 1890,
-            pv: 4800,
-            amt: 2181,
-          },
-          {
-            name: "Page F",
-            uv: 2390,
-            pv: 3800,
-            amt: 2500,
-          },
-          {
-            name: "Page G",
-            uv: 3490,
-            pv: 4300,
-            amt: 2100,
-          },
-        ],
-        day: [
-          {
-            name: "Page A",
-            uv: 4000,
-            pv: 2400,
-            amt: 2400,
-          },
-          {
-            name: "Page B",
-            uv: 3000,
-            pv: 1398,
-            amt: 2210,
-          },
-          {
-            name: "Page C",
-            uv: 2000,
-            pv: 9800,
-            amt: 2290,
-          },
-          {
-            name: "Page D",
-            uv: 2780,
-            pv: 3908,
-            amt: 2000,
-          },
-          {
-            name: "Page E",
-            uv: 1890,
-            pv: 4800,
-            amt: 2181,
-          },
-          {
-            name: "Page F",
-            uv: 2390,
-            pv: 3800,
-            amt: 2500,
-          },
-          {
-            name: "Page G",
-            uv: 3490,
-            pv: 4300,
-            amt: 2100,
-          },
-        ],
-      },
-    },
-  ];
+  const period = ["year", "month", "week", "day"];
+
+  // const products = [
+  //   {
+  //     name: "Screen",
+  //     sales: {
+  //       year: [
+  //         {
+  //           name: "Page A",
+  //           uv: 4000,
+  //           pv: 2400,
+  //           amt: 2400,
+  //         },
+  //         {
+  //           name: "Page B",
+  //           uv: 3000,
+  //           pv: 1398,
+  //           amt: 2210,
+  //         },
+  //         {
+  //           name: "Page C",
+  //           uv: 2000,
+  //           pv: 9800,
+  //           amt: 2290,
+  //         },
+  //         {
+  //           name: "Page D",
+  //           uv: 2780,
+  //           pv: 3908,
+  //           amt: 2000,
+  //         },
+  //         {
+  //           name: "Page E",
+  //           uv: 1890,
+  //           pv: 4800,
+  //           amt: 2181,
+  //         },
+  //         {
+  //           name: "Page F",
+  //           uv: 2390,
+  //           pv: 3800,
+  //           amt: 2500,
+  //         },
+  //         {
+  //           name: "Page G",
+  //           uv: 3490,
+  //           pv: 4300,
+  //           amt: 2100,
+  //         },
+  //       ],
+  //       month: [
+  //         {
+  //           name: "Page A",
+  //           uv: 4000,
+  //           pv: 2400,
+  //           amt: 2400,
+  //         },
+  //         {
+  //           name: "Page B",
+  //           uv: 3000,
+  //           pv: 1398,
+  //           amt: 2210,
+  //         },
+  //         {
+  //           name: "Page C",
+  //           uv: 2000,
+  //           pv: 9800,
+  //           amt: 2290,
+  //         },
+  //         {
+  //           name: "Page D",
+  //           uv: 2780,
+  //           pv: 3908,
+  //           amt: 2000,
+  //         },
+  //         {
+  //           name: "Page E",
+  //           uv: 1890,
+  //           pv: 4800,
+  //           amt: 2181,
+  //         },
+  //         {
+  //           name: "Page F",
+  //           uv: 2390,
+  //           pv: 3800,
+  //           amt: 2500,
+  //         },
+  //         {
+  //           name: "Page G",
+  //           uv: 3490,
+  //           pv: 4300,
+  //           amt: 2100,
+  //         },
+  //       ],
+  //       week: [
+  //         {
+  //           name: "Page A",
+  //           uv: 4000,
+  //           pv: 2400,
+  //           amt: 2400,
+  //         },
+  //         {
+  //           name: "Page B",
+  //           uv: 3000,
+  //           pv: 1398,
+  //           amt: 2210,
+  //         },
+  //         {
+  //           name: "Page C",
+  //           uv: 2000,
+  //           pv: 9800,
+  //           amt: 2290,
+  //         },
+  //         {
+  //           name: "Page D",
+  //           uv: 2780,
+  //           pv: 3908,
+  //           amt: 2000,
+  //         },
+  //         {
+  //           name: "Page E",
+  //           uv: 1890,
+  //           pv: 4800,
+  //           amt: 2181,
+  //         },
+  //         {
+  //           name: "Page F",
+  //           uv: 2390,
+  //           pv: 3800,
+  //           amt: 2500,
+  //         },
+  //         {
+  //           name: "Page G",
+  //           uv: 3490,
+  //           pv: 4300,
+  //           amt: 2100,
+  //         },
+  //       ],
+  //       day: [
+  //         {
+  //           name: "Page A",
+  //           uv: 4000,
+  //           pv: 2400,
+  //           amt: 2400,
+  //         },
+  //         {
+  //           name: "Page B",
+  //           uv: 3000,
+  //           pv: 1398,
+  //           amt: 2210,
+  //         },
+  //         {
+  //           name: "Page C",
+  //           uv: 2000,
+  //           pv: 9800,
+  //           amt: 2290,
+  //         },
+  //         {
+  //           name: "Page D",
+  //           uv: 2780,
+  //           pv: 3908,
+  //           amt: 2000,
+  //         },
+  //         {
+  //           name: "Page E",
+  //           uv: 1890,
+  //           pv: 4800,
+  //           amt: 2181,
+  //         },
+  //         {
+  //           name: "Page F",
+  //           uv: 2390,
+  //           pv: 3800,
+  //           amt: 2500,
+  //         },
+  //         {
+  //           name: "Page G",
+  //           uv: 3490,
+  //           pv: 4300,
+  //           amt: 2100,
+  //         },
+  //       ],
+  //     },
+  //   },
+  //   {
+  //     name: "Battery",
+  //     sales: {
+  //       year: [
+  //         {
+  //           name: "Page A",
+  //           uv: 4000,
+  //           pv: 2400,
+  //           amt: 2400,
+  //         },
+  //         {
+  //           name: "Page B",
+  //           uv: 3000,
+  //           pv: 1398,
+  //           amt: 2210,
+  //         },
+  //         {
+  //           name: "Page C",
+  //           uv: 2000,
+  //           pv: 9800,
+  //           amt: 2290,
+  //         },
+  //         {
+  //           name: "Page D",
+  //           uv: 2780,
+  //           pv: 3908,
+  //           amt: 2000,
+  //         },
+  //         {
+  //           name: "Page E",
+  //           uv: 1890,
+  //           pv: 4800,
+  //           amt: 2181,
+  //         },
+  //         {
+  //           name: "Page F",
+  //           uv: 2390,
+  //           pv: 3800,
+  //           amt: 2500,
+  //         },
+  //         {
+  //           name: "Page G",
+  //           uv: 3490,
+  //           pv: 4300,
+  //           amt: 2100,
+  //         },
+  //       ],
+  //       month: [
+  //         {
+  //           name: "Page A",
+  //           uv: 4000,
+  //           pv: 2400,
+  //           amt: 2400,
+  //         },
+  //         {
+  //           name: "Page B",
+  //           uv: 3000,
+  //           pv: 1398,
+  //           amt: 2210,
+  //         },
+  //         {
+  //           name: "Page C",
+  //           uv: 2000,
+  //           pv: 9800,
+  //           amt: 2290,
+  //         },
+  //         {
+  //           name: "Page D",
+  //           uv: 2780,
+  //           pv: 3908,
+  //           amt: 2000,
+  //         },
+  //         {
+  //           name: "Page E",
+  //           uv: 1890,
+  //           pv: 4800,
+  //           amt: 2181,
+  //         },
+  //         {
+  //           name: "Page F",
+  //           uv: 2390,
+  //           pv: 3800,
+  //           amt: 2500,
+  //         },
+  //         {
+  //           name: "Page G",
+  //           uv: 3490,
+  //           pv: 4300,
+  //           amt: 2100,
+  //         },
+  //       ],
+  //       week: [
+  //         {
+  //           name: "Page A",
+  //           uv: 4000,
+  //           pv: 2400,
+  //           amt: 2400,
+  //         },
+  //         {
+  //           name: "Page B",
+  //           uv: 3000,
+  //           pv: 1398,
+  //           amt: 2210,
+  //         },
+  //         {
+  //           name: "Page C",
+  //           uv: 2000,
+  //           pv: 9800,
+  //           amt: 2290,
+  //         },
+  //         {
+  //           name: "Page D",
+  //           uv: 2780,
+  //           pv: 3908,
+  //           amt: 2000,
+  //         },
+  //         {
+  //           name: "Page E",
+  //           uv: 1890,
+  //           pv: 4800,
+  //           amt: 2181,
+  //         },
+  //         {
+  //           name: "Page F",
+  //           uv: 2390,
+  //           pv: 3800,
+  //           amt: 2500,
+  //         },
+  //         {
+  //           name: "Page G",
+  //           uv: 3490,
+  //           pv: 4300,
+  //           amt: 2100,
+  //         },
+  //       ],
+  //       day: [
+  //         {
+  //           name: "Page A",
+  //           uv: 4000,
+  //           pv: 2400,
+  //           amt: 2400,
+  //         },
+  //         {
+  //           name: "Page B",
+  //           uv: 3000,
+  //           pv: 1398,
+  //           amt: 2210,
+  //         },
+  //         {
+  //           name: "Page C",
+  //           uv: 2000,
+  //           pv: 9800,
+  //           amt: 2290,
+  //         },
+  //         {
+  //           name: "Page D",
+  //           uv: 2780,
+  //           pv: 3908,
+  //           amt: 2000,
+  //         },
+  //         {
+  //           name: "Page E",
+  //           uv: 1890,
+  //           pv: 4800,
+  //           amt: 2181,
+  //         },
+  //         {
+  //           name: "Page F",
+  //           uv: 2390,
+  //           pv: 3800,
+  //           amt: 2500,
+  //         },
+  //         {
+  //           name: "Page G",
+  //           uv: 3490,
+  //           pv: 4300,
+  //           amt: 2100,
+  //         },
+  //       ],
+  //     },
+  //   },
+  // ];
 
   const [selectedState, setSelectedState] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
+  const [selectedPeriod, setselectedPeriod] = useState("");
   const selectedProductData = products.find((p) => p.name === selectedProduct);
+  const validPeriod = ["year", "month", "week", "day"].includes(selectedPeriod)
+    ? selectedPeriod
+    : "year";
+  const allProduct = products.map((p) => p.sales.year);
   const renderProductContent = () => {
     switch (selectedProduct) {
       case "Screen":
         return (
           <div className="w-full h-full">
-            <SalesGraph data={selectedProductData?.sales.year || []} />
+            <SalesGraph data={selectedProductData?.sales[validPeriod] || []} />;
           </div>
         );
       case "Downboard":
@@ -404,7 +412,7 @@ function Revenue() {
   };
 
   return (
-    <div className="w-full text-black rounded-3xl p-5 h-[88%] bg-white">
+    <div className="w-full text-black rounded-3xl p-5 h-[88%] overflow-y-scroll bg-white">
       {states.length > 0 ? (
         <div>
           <h1 className="text-black font-semibold">Revenue</h1>
@@ -417,16 +425,16 @@ function Revenue() {
               placeholder="Select a State"
               onSelect={setSelectedState}
               getLabel={(state) => state.name}
-              getSubLabel={(products) => products.code}
+              getSubLabel={(products) => ""}
             />
             <Dropdown
               showSearch
               className="bg-white rounded-full w-1/4"
               label="Select Product"
-              options={products}
+              options={allProduct}
               placeholder="Select a Product"
               onSelect={setSelectedProduct}
-              getLabel={(products) => products.name}
+              getLabel={(products) => ""}
             />
           </div>
 
@@ -449,7 +457,23 @@ function Revenue() {
             </div>
 
             {/* Product Content */}
-            <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+            <div className="mt-4 p-4 rounded-lg">
+              <div className="flex justify-between flex-row">
+                <div>
+                  <label className="text-gray-400">Total sales</label>
+                  <h1 className="text-2xl font-bold">₦97,209,080</h1>
+                </div>
+                <Dropdown
+                  showSearch
+                  className="bg-white rounded-full w-1/6"
+                  label="Select Product"
+                  options={period}
+                  placeholder="Select a Product"
+                  onSelect={setselectedPeriod}
+                  // getLabel={(period) => period}
+                />
+              </div>
+
               {renderProductContent()}
             </div>
           </div>
@@ -473,3 +497,11 @@ function Revenue() {
 }
 
 export default Revenue;
+
+// c
+
+// const [selectedState, setSelectedState] = useState("");
+// const [selectedProduct, setSelectedProduct] = useState("");
+// const highest = products.products.reduce((max, obj) =>
+//   max.sales.year > obj.sales.year ? max : obj
+// );

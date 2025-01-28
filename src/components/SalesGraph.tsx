@@ -9,15 +9,14 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-type Sales = {
-  year: number;
-  month: number;
-  week: number;
-  day: number;
-};
+
 type Data = {
-  name: string;
-  sales: Sales;
+  name?: string;
+  year?: number;
+  uv?: number;
+  sales?: number;
+  pv: number;
+  amt: number;
 };
 
 // const data = [
@@ -73,11 +72,11 @@ function SalesGraph({ data }: { data: Data[] }) {
           data={data}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="1 10" />
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
-          <Area type="linear" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+          <Area type="linear" dataKey="amt" stroke="#8884d8" fill="#8884d8" />
         </AreaChart>
       </ResponsiveContainer>
     </div>

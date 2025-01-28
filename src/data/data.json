@@ -1,22 +1,83 @@
-{
-  "products": [
-    {
-      "name": "Screen",
-      "sales": {
-        "year": [{ "sales": 5023 }, { "sales": 7812 }, { "sales": 6598 }],
-        "month": [{ "sales": 412 }, { "sales": 789 }, { "sales": 523 }],
-        "week": [{ "sales": 78 }, { "sales": 92 }, { "sales": 105 }],
-        "day": [{ "sales": 15 }, { "sales": 27 }, { "sales": 32 }]
-      }
-    },
-    {
-      "name": "Battery",
-      "sales": {
-        "year": [{ "sales": 8921 }, { "sales": 6789 }, { "sales": 5432 }],
-        "month": [{ "sales": 654 }, { "sales": 876 }, { "sales": 734 }],
-        "week": [{ "sales": 89 }, { "sales": 112 }, { "sales": 130 }],
-        "day": [{ "sales": 20 }, { "sales": 35 }, { "sales": 40 }]
-      }
+[
+  {
+    "name": "Screen",
+    "sales": {
+      "year": [
+        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 2400 },
+        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 2210 },
+        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2290 },
+        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 2000 },
+        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 2181 },
+        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 2500 },
+        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 2100 }
+      ],
+      "month": [
+        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 2780 },
+        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 2210 },
+        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2246 },
+        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 3800 },
+        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 2181 },
+        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 3490 },
+        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 2100 }
+      ],
+      "week": [
+        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 2400 },
+        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 9800 },
+        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2290 },
+        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 2000 },
+        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 2181 },
+        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 2500 },
+        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 4800 }
+      ],
+      "day": [
+        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 400 },
+        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 2210 },
+        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2290 },
+        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 2000 },
+        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 4800 },
+        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 2500 },
+        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 2100 }
+      ]
     }
-  ]
-}
+  },
+  {
+    "name": "Battery",
+    "sales": {
+      "year": [
+        { "name": "2018", "uv": 2802, "pv": 4222, "amt": 1746 },
+        { "name": "2019", "uv": 1653, "pv": 4057, "amt": 2246 },
+        { "name": "2020", "uv": 3182, "pv": 6771, "amt": 2091 },
+        { "name": "2021", "uv": 3166, "pv": 2891, "amt": 1556 },
+        { "name": "2022", "uv": 4671, "pv": 3677, "amt": 1975 },
+        { "name": "2023", "uv": 1975, "pv": 8361, "amt": 1611 }
+      ],
+      "month": [
+        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 2400 },
+        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 2210 },
+        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2290 },
+        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 2000 },
+        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 2181 },
+        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 2500 },
+        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 2100 }
+      ],
+      "week": [
+        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 2400 },
+        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 2210 },
+        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2290 },
+        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 2000 },
+        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 2181 },
+        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 2500 },
+        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 2100 }
+      ],
+      "day": [
+        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 2400 },
+        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 2210 },
+        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2290 },
+        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 2000 },
+        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 2181 },
+        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 2500 },
+        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 2100 }
+      ]
+    }
+  }
+]
