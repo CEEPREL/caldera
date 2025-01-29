@@ -19,6 +19,7 @@ function AdminLogin() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
+    route.push("admin/revenue");
     try {
       const response = await fetch("/api/login", {
         method: "POST",
@@ -30,7 +31,6 @@ function AdminLogin() {
 
       if (response.ok) {
         alert("Login successful!");
-        route.push("/dashboard");
       } else {
         alert(data.message || "Login failed!");
       }

@@ -1,5 +1,5 @@
 import Menu from "@/components/Menu";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/admin/Navbar";
 
 export default function DashboardLayout({
   children,
