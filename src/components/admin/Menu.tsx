@@ -1,6 +1,8 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 const menuItems = [
   { icon: "/icons/revenue.svg", label: "Revenue", href: "/admin/revenue" },
@@ -10,13 +12,26 @@ const menuItems = [
 ];
 
 function Menu() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [selectedItem, setSelectedItem] = useState(pathname);
+  const handleClick = (item: string, href: string) => {
+    setSelectedItem(item);
+    router.push(href);
+  };
   return (
     <div className="p-2 bg-white h-full flex flex-col gap-10">
       <h1 className=" text-lg text-black font-semibold">Admin</h1>
       <div className="text-gray-500 flex flex-col gap-6">
         {menuItems.map((item) => (
-          <div className=" flex flex-col gap-6" key={item.label}>
-            <Link className="flex gap-2" href={item.href}>
+          <div className="flex flex-col gap-6" key={item.label}>
+            <Link
+              className={`flex p-2 rounded-3xl gap-2 ${
+                selectedItem === item.href ? "bg-selected" : ""
+              }`}
+              href={item.href}
+              onClick={() => handleClick(item.href, item.href)}
+            >
               <Image
                 className=""
                 src={item.icon}

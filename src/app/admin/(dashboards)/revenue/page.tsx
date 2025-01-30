@@ -22,12 +22,12 @@ function Revenue() {
   >("year");
   const selectedProductData = products.find((p) => p.name === selectedProduct);
   const validPeriod = selectedPeriod || "year";
-  const allProduct = products.map((p) => p.sales.year);
+  const allProduct = products.map((p) => p.name);
   const renderProductContent = () => {
     switch (selectedProduct) {
       case "Screen":
         return (
-          <div className="w-full h-[200px]">
+          <div className="w-full  h-[200px]">
             <SalesGraph data={selectedProductData?.sales[validPeriod] || []} />
           </div>
         );
@@ -51,19 +51,36 @@ function Revenue() {
   };
 
   return (
-    <>
-      <div className="w-full p-5 relative text-black rounded-3x h-[88%] overflow-y-scroll bg-white">
-        {products.length > 0 ? (
+    <div className="w-full h-[88%] bg-white overflow-y-scroll rounded-3xl ">
+      <div className="w-full p-5 relative text-black  bg-white">
+        {products.length === 0 ? (
+          <div
+            className={`flex flex-col ${
+              products.length === 0 ? "min-h-[80vh]" : "min-h-0"
+            } justify-center items-center w-full`}
+          >
+            <div className="flex justify-center  items-center w-48 h-48 rounded-full bg-gradient-to-t from-white to-gray-100">
+              <Image
+                className="top-3 left-1"
+                width={100}
+                height={100}
+                alt="No Data"
+                src={"/icons/revenue.svg"}
+              />
+            </div>
+            <h2>No sales record yet</h2>
+          </div>
+        ) : (
           <div>
-            <h1 className="text-black font-semibold">Revenue</h1>
-            <div className="flex w-[70%] gap-4 flex-row">
+            <h1 className="text-black  font-semibold">Revenue</h1>
+            <div className="flex w-[100%] gap-4 flex-row">
               <Dropdown
                 showSearch
                 className="bg-white rounded-full w-1/4"
                 label={states[0].name}
                 options={states}
                 placeholder="Select a State"
-                onSelect={setSelectedState}
+                onSelect={(state) => setSelectedState(state)}
                 getLabel={(state) => state.name}
                 getSubLabel={(products) => ""}
               />
@@ -74,12 +91,12 @@ function Revenue() {
                 options={allProduct}
                 placeholder="Select a Product"
                 onSelect={setSelectedProduct}
-                getLabel={(products) => ""}
+                getLabel={(product) => product}
               />
             </div>
 
             {/* Product Selection */}
-            <div className="flex pt-10 flex-col gap-4">
+            <div className="flex pt-5 flex-col gap-4">
               <div className="flex gap-6">
                 {products.map((p, index) => (
                   <button
@@ -105,7 +122,7 @@ function Revenue() {
                   </div>
                   <Dropdown
                     showSearch
-                    className="bg-white rounded-full w-1/6"
+                    className="bg-white rounded-full h-10 w-1/6"
                     label="Select Product"
                     options={period}
                     placeholder={period[0]}
@@ -122,27 +139,18 @@ function Revenue() {
               </div>
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col justify-center items-center w-full h-full">
-            <div className="flex justify-center items-center w-48 h-48 rounded-full bg-gradient-to-t from-white to-gray-100">
-              <Image
-                className="top-3 left-1"
-                width={100}
-                height={100}
-                alt="No Data"
-                src={"/icons/revenue.svg"}
-              />
-            </div>
-            <h2>No sales record yet</h2>
-          </div>
         )}
       </div>
-      <div className="border-t-8 border-gray-100">
-        <div className="bg-white p-5">
-          <PurchasingReport />
+      {products.length === 0 ? (
+        <></>
+      ) : (
+        <div className="border-t-8 border-gray-100">
+          <div className="bg-white p-5">
+            <PurchasingReport />
+          </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 }
 
@@ -169,7 +177,7 @@ export function PurchasingReport() {
   >("year");
   const selectedProductData = products.find((p) => p.name === selectedProduct);
   const validPeriod = selectedPeriod || "year";
-  const allProduct = products.map((p) => p.sales.year);
+  const allProduct = products.map((p) => p.name);
   const renderProductContent = () => {
     switch (selectedProduct) {
       case "Screen":
@@ -344,7 +352,7 @@ export function PurchasingReport() {
   };
 
   return (
-    <div className="w-full text-black   h-[88%]  bg-white">
+    <div className="w-full text-black   h-[30%]  bg-white">
       {products.length > 0 ? (
         <div>
           <div className="flex flex-row items-center w-full justify-between">

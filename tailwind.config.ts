@@ -15,6 +15,8 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         primary: "#F5F2EA",
+        selected: "#D7DEF9",
+        button: "#7D95EE",
       },
     },
   },

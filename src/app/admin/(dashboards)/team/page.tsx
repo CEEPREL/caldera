@@ -1,7 +1,13 @@
 import React from "react";
 
 function Team() {
-  return <div className="w-[100%] rounded-3xl p-5 h-[95%] bg-white ">Team</div>;
+  return (
+    <div className="w-full h-[88%]  overflow-y-scroll rounded-3xl ">
+      <div className="w-full min-h-full p-5 relative text-black  bg-white">
+        Team
+      </div>
+    </div>
+  );
 }
 
 export default Team;

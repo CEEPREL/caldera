@@ -10,7 +10,9 @@ interface DropdownProps<T> {
   placeholder: string;
   onSelect: (value: string) => void;
   className?: string;
+  className2?: string;
   showSearch?: boolean;
+  id?: string;
   getLabel?: (option: T) => string;
   getSubLabel?: (option: T) => string;
 }
@@ -21,9 +23,11 @@ const Dropdown = <T,>({
   placeholder,
   onSelect,
   className,
+  className2,
   showSearch,
   getLabel = (option) => String(option),
   getSubLabel = (option) => String(option),
+  id,
 }: DropdownProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState("");
@@ -63,13 +67,13 @@ const Dropdown = <T,>({
   }, []);
 
   return (
-    <div
-      ref={dropdownRef}
-      className={clsx("relative opacity-100 mt-4", className)}
-    >
+    <div ref={dropdownRef} className={clsx("relative opacity-100 ", className)}>
       {/* <label className="block text-gray-700 font-medium">{label}</label> */}
       <div
-        className="border rounded-full flex justify-between  p-2 cursor-pointer"
+        className={clsx(
+          "border rounded-full w-auto inline-flex justify-between gap-2 px-2 p-1 cursor-pointer min-w-0",
+          className2
+        )}
         onClick={() => setIsOpen(!isOpen)}
       >
         {selected || placeholder}{" "}
@@ -81,7 +85,7 @@ const Dropdown = <T,>({
         />
       </div>
       {isOpen && (
-        <div className="absolute z-50 bg-white border rounded mt-1 w-full shadow">
+        <div className="absolute z-50 bg-white border border-gray-200 rounded mt-1 w-44 shadow">
           {/* {showSearch === true && (
             <input
               className="w-full rounded-full px-2 focus:bg-blue-50 focus:rounded-full"
@@ -100,7 +104,7 @@ const Dropdown = <T,>({
                   handleSelect(getLabel ? getLabel(option) : (option as string))
                 }
               >
-                <h1>
+                <h1 id={id}>
                   {getLabel ? getLabel(option) : (option as string)}{" "}
                   {getSubLabel && typeof option !== "string" && (
                     <span className="italic">{getSubLabel(option)}</span>
