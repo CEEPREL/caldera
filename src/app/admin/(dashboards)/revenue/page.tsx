@@ -73,7 +73,7 @@ function Revenue() {
         ) : (
           <div>
             <h1 className="text-black  font-semibold">Revenue</h1>
-            <div className="flex w-[100%] gap-4 flex-row">
+            <div className="flex pt-4 w-[100%] gap-4 flex-row">
               <Dropdown
                 showSearch
                 className="bg-white rounded-full w-1/6"
