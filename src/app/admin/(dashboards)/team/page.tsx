@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import products from "@/data/data.json";
 import Link from "next/link";
 import TeamTable from "@/components/admin/TeamTable";
+import SlideDrawer from "@/components/admin/AddTeamSlider";
 
 function Team() {
   const states = [
@@ -25,9 +26,16 @@ function Team() {
   const selectedProductData = products.find((p) => p.name === selectedProduct);
   const validPeriod = selectedPeriod || "year";
   const allProduct = products.map((p) => p.name);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
     <div className="w-full h-[88%] bg-white overflow-y-scroll rounded-3xl ">
+      <div className="absolute top-0 right-0">
+        <SlideDrawer
+          isOpen={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+        />
+      </div>
       <div className="w-full p-5 relative text-black  bg-white">
         {products.length === 0 ? (
           <div
@@ -47,15 +55,15 @@ function Team() {
             <h2>No team record yet</h2>
           </div>
         ) : (
-          <div>
+          <div className=" ">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-medium">Team</h1>
-              <Link
-                href="/admin/stores/new"
+              <button
+                onClick={() => setIsDrawerOpen(true)}
                 className="bg-button text-white p-2 px-4 rounded-full"
               >
                 Add New Team
-              </Link>
+              </button>
             </div>
             <div className="flex pt-4 w-[100%] gap-4 flex-row">
               <Dropdown
@@ -78,7 +86,7 @@ function Team() {
                 getLabel={(product) => product}
               />
             </div>
-            <div className="pt-4">
+            <div className=" pt-4">
               <TeamTable />
             </div>
           </div>

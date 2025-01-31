@@ -4,60 +4,40 @@ import { useState } from "react";
 interface Product {
   id: number;
   name: string;
-  purchased: string;
-  sellingPrice: string;
-  stock: number;
+  cadre: string;
+  registered: string;
+  phoneNo: string;
+  status: string;
+  url: string;
 }
 
 const products: Product[] = [
   {
     id: 1,
-    name: "X650 KC2 KC8 CC7(BB4 X653)",
-    purchased: "₦16,800",
-    sellingPrice: "₦18,000",
-    stock: 10,
+    name: "Adebowale Olaniyan",
+    cadre: "Lagos",
+    registered: "2024-01-01",
+    phoneNo: "08123456789",
+    status: "Active",
+    url: "/images/profile.png",
   },
   {
     id: 2,
-    name: "X650 KC2 KC8 CC7(BB4 X653)",
-    purchased: "₦16,800",
-    sellingPrice: "₦18,000",
-    stock: 0,
+    name: "Ellena James",
+    cadre: "Abuja",
+    registered: "2024-01-01",
+    phoneNo: "08123456789",
+    status: "Inactive",
+    url: "/images/profile.png",
   },
   {
     id: 3,
-    name: "BF7",
-    purchased: "₦16,800",
-    sellingPrice: "₦18,000",
-    stock: 10,
-  },
-  {
-    id: 4,
-    name: "J7 Prime Gold",
-    purchased: "₦16,800",
-    sellingPrice: "₦18,000",
-    stock: 1,
-  },
-  {
-    id: 5,
-    name: "iPhone 6s",
-    purchased: "₦16,800",
-    sellingPrice: "₦18,000",
-    stock: 10,
-  },
-  {
-    id: 6,
-    name: "S17",
-    purchased: "₦16,800",
-    sellingPrice: "₦18,000",
-    stock: 0,
-  },
-  {
-    id: 7,
-    name: "BE6",
-    purchased: "₦16,800",
-    sellingPrice: "₦18,000",
-    stock: 10,
+    name: "Ayodele Oluwaseyi",
+    cadre: "Ogun",
+    registered: "2024-01-01",
+    phoneNo: "08123456789",
+    status: "Active",
+    url: "/images/profile.png",
   },
 ];
 
@@ -75,23 +55,23 @@ export default function TeamTable() {
 
   return (
     <div className="">
-      <table className="w-full border-collapse border border-gray-300 shadow-md">
+      <table className="w-full border-collapse shadow-md">
         <thead className="bg-gray-100 text-left">
           <tr>
-            <th className="border p-2">#</th>
-            <th className="border p-2">Product</th>
-            <th className="border p-2">Purchased</th>
-            <th className="border p-2">Selling Price</th>
-            <th className="border p-2">Stock</th>
-            <th className="border p-2">Status</th>
-            <th className="border p-2">Value</th>
+            <th className=" p-2">#</th>
+            <th className=" p-2">Name</th>
+            <th className=" p-2">Cadre</th>
+            <th className=" p-2">Registered </th>
+            <th className=" p-2">Phone No.</th>
+            <th className=" p-2">Status</th>
+            <th className=" p-2"></th>
           </tr>
         </thead>
         <tbody>
           {data.map((product, index) =>
             product.name ? (
-              <tr key={product.id} className="border">
-                <td className=" text-gray-400 text-xs flex w-14 p-2">
+              <tr key={product.id} className=" border-b">
+                <td className="justify-start items-center h-12 text-gray-400 text-xs flex w-14 p-2">
                   <span className="text-black pr-1">
                     {" "}
                     <input className="" type="checkbox" />
@@ -99,29 +79,44 @@ export default function TeamTable() {
 
                   {index + 1}
                 </td>
-                <td className="border p-2">{product.name}</td>
-                <td className="border p-2">{product.purchased}</td>
-                <td className="border p-2">{product.sellingPrice}</td>
-                <td className="border p-2">{product.stock}</td>
-                <td className="border p-2">
+                <td className="p-2">
+                  <div className="flex items-center">
+                    <Image
+                      src={product.url}
+                      alt={product.name}
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                    />
+                    <span className="text-black ml-2">{product.name}</span>
+                  </div>
+                </td>
+                <td className=" p-2">
+                  <span className={`px-2 py-1 border bg-yellow-50 rounded-3xl`}>
+                    {product.cadre}
+                  </span>
+                </td>
+                <td className=" p-2">{product.registered}</td>
+                <td className=" p-2">{product.phoneNo}</td>
+                <td className=" p-2">
                   <span
-                    className={`px-2 py-1 rounded-lg ${
-                      product.stock > 5
-                        ? "bg-green-200 text-green-800"
-                        : product.stock > 0
-                        ? "bg-blue-200 text-blue-800"
+                    className={`px-2 py-1 border border-green-800 rounded-3xl ${
+                      product.status === "Active"
+                        ? "bg-green-50 text-green-800"
+                        : product.status === "Inactive"
+                        ? "bg-gray-200 text-gray-500"
                         : "bg-red-200 text-red-800"
                     }`}
                   >
-                    {product.stock > 5
-                      ? "In Stock"
-                      : product.stock > 0
-                      ? "Re-purchase"
-                      : "Out of Stock"}
+                    {product.status === "Active"
+                      ? "Active"
+                      : product.status === "Inactive"
+                      ? "Inactive"
+                      : "Pending"}
                   </span>
                 </td>
-                <td className="border p-2 text-indigo-600 cursor-pointer">
-                  Set
+                <td className=" p-2 text-indigo-600 cursor-pointer">
+                  <button className=" pr-1"> ...</button>
                 </td>
               </tr>
             ) : null
