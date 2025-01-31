@@ -76,7 +76,7 @@ function Revenue() {
             <div className="flex w-[100%] gap-4 flex-row">
               <Dropdown
                 showSearch
-                className="bg-white rounded-full w-1/4"
+                className="bg-white rounded-full w-1/6"
                 label={states[0].name}
                 options={states}
                 placeholder="Select a State"
@@ -86,7 +86,7 @@ function Revenue() {
               />
               <Dropdown
                 showSearch
-                className="bg-white rounded-full w-1/4"
+                className="bg-white rounded-full w-1/6"
                 label="Select Product"
                 options={allProduct}
                 placeholder="Select a Product"
@@ -122,7 +122,7 @@ function Revenue() {
                   </div>
                   <Dropdown
                     showSearch
-                    className="bg-white rounded-full h-10 w-1/6"
+                    className="bg-white rounded-full h-10 w-[100px]"
                     label="Select Product"
                     options={period}
                     placeholder={period[0]}
@@ -360,7 +360,7 @@ export function PurchasingReport() {
             <div className="flex justify-end w-[70%] gap-4 flex-row">
               <Dropdown
                 showSearch
-                className="bg-white rounded-full w-1/6"
+                className="bg-white rounded-full w-[100px]"
                 label="Select Product"
                 options={period}
                 placeholder={period[0]}

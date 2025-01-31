@@ -71,7 +71,7 @@ const Dropdown = <T,>({
       {/* <label className="block text-gray-700 font-medium">{label}</label> */}
       <div
         className={clsx(
-          "border rounded-full w-auto inline-flex justify-between gap-2 px-2 p-1 cursor-pointer min-w-0",
+          "border rounded-full w-full inline-flex justify-between gap-2 px-2 p-1 cursor-pointer min-w-0",
           className2
         )}
         onClick={() => setIsOpen(!isOpen)}
@@ -85,7 +85,7 @@ const Dropdown = <T,>({
         />
       </div>
       {isOpen && (
-        <div className="absolute z-50 bg-white border border-gray-200 rounded mt-1 w-44 shadow">
+        <div className="absolute z-50 bg-white border border-gray-200 rounded mt-1 w-full shadow">
           {/* {showSearch === true && (
             <input
               className="w-full rounded-full px-2 focus:bg-blue-50 focus:rounded-full"
@@ -99,7 +99,7 @@ const Dropdown = <T,>({
             {filteredOptions.map((option, index) => (
               <div
                 key={index}
-                className="p-2 bg-white hover:bg-gray-100 cursor-pointer"
+                className="p-2  w-full  hover:bg-gray-100 cursor-pointer"
                 onClick={() =>
                   handleSelect(getLabel ? getLabel(option) : (option as string))
                 }
