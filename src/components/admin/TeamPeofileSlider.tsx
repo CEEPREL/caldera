@@ -22,45 +22,45 @@ const states = [
 ];
 const cadres = ["Cadre 1", "Cadre 2"];
 
-function New() {
-  const router = useRouter();
+// function New() {
+//   const router = useRouter();
 
-  // State for form data
-  const [formData, setFormData] = useState({
-    state: "",
-    location: "",
-    manager: "",
-    phone: "",
-    cadre: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-  }); // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-  };
-  // Handle state selection from dropdown
-  const handleStateSelect = (state: { code: string; name: string }) => {
-    setFormData({ ...formData, state: state.name });
-  };
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form Data:", formData);
+//   // State for form data
+//   const [formData, setFormData] = useState({
+//     state: "",
+//     location: "",
+//     manager: "",
+//     phone: "",
+//     cadre: "",
+//     username: "",
+//     password: "",
+//     confirmPassword: "",
+//   }); // Handle input changes
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     setFormData({ ...formData, [e.target.id]: e.target.value });
+//   };
+//   // Handle state selection from dropdown
+//   const handleStateSelect = (state: { code: string; name: string }) => {
+//     setFormData({ ...formData, state: state.name });
+//   };
+//   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+//     e.preventDefault();
+//     console.log("Form Data:", formData);
 
-    setFormData({
-      state: "",
-      location: "",
-      manager: "",
-      phone: "",
-      cadre: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
-    });
+//     setFormData({
+//       state: "",
+//       location: "",
+//       manager: "",
+//       phone: "",
+//       cadre: "",
+//       username: "",
+//       password: "",
+//       confirmPassword: "",
+//     });
 
-    setTimeout(() => router.push("/admin/stores"), 500);
-  };
-}
+//     setTimeout(() => router.push("/admin/stores"), 500);
+//   };
+// }
 
 const ProfileSlider: React.FC<SlideDrawerProps> = ({
   isOpen,
@@ -139,122 +139,70 @@ const ProfileSlider: React.FC<SlideDrawerProps> = ({
       >
         {/* Drawer Content - Form */}
         <div className="mt-2 bg w-full">
-          <h2 className="text-lg font-bold mb-4">Edit Team Member</h2>
-          <form
-            className="flex w-full items-center justify-center flex-col gap-4"
-            onSubmit={handleSubmit}
-          >
+          <h2 className="text-lg font-bold mb-4">Profile</h2>
+          <div className="flex w-full items-center justify-center flex-col gap-4">
             {/* Location Section */}
-            <div className="flex flex-col bg-gray-100 p-5 w-full gap-4">
-              <h1 className="text-lg font-bold">Location</h1>
+            <div className="flex flex-row bg-gray-100 p-5 w-full gap-4">
+              <Image
+                src={`/images/profile.png`} //pass as a prop
+                alt="profile" //pass as a prop
+                width={100}
+                height={100}
+              />
               <div className="flex flex-col gap-1">
-                <label htmlFor="store-state">State</label>
-                <Dropdown
-                  showSearch
-                  className="gap-0"
-                  className2="bg-white border-none w-full h-9 flex justify-between items-center rounded-md"
-                  label={formData.state || "Select a State"}
-                  options={states}
-                  placeholder="Select a State"
-                  onSelect={(state) => state}
-                  getLabel={(state) => state.name}
-                  getSubLabel={() => ""}
-                  id="store-state"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label htmlFor="location">Enter Store Location</label>
-                <input
-                  className="h-8 p-1 rounded-md"
-                  type="text"
-                  id="location"
-                  value={formData.location}
-                  onChange={handleChange}
-                />
+                <h1 className="text-lg font-bold">Adebowale Olaniyan</h1>{" "}
+                {/* pass as a prop */}
+                <p className="text-sm text-gray-500">
+                  08067836473 {/* pass as a prop */}
+                </p>
+                <p className="text-lg bg-yellow-500 rounded-full px-2 py-1">
+                  Attendant
+                </p>
               </div>
             </div>
 
             {/* Store Manager Section */}
             <div className="flex flex-col bg-gray-100 p-5 w-full gap-4">
-              <h1 className="text-lg font-bold">Store Manager</h1>
-              <div className="flex flex-col gap-1">
-                <label htmlFor="manager">Full Name</label>
-                <input
-                  className="h-8 p-1 rounded-md"
-                  type="text"
-                  id="manager"
-                  value={formData.manager}
-                  onChange={handleChange}
-                />
+              <h1 className="text-lg font-bold">Activity Summary</h1>
+              {/* clsx classname style as prop, map through the array and pass as a prop */}
+              <div className="flex flex-row gap-3">
+                <p className="text-lg bg-gray-200 rounded-lg px-2 py-1 font-bold">
+                  This Week
+                </p>
+                <p className="text-lg bg-gray-200 rounded-lg px-2 py-1 font-bold">
+                  This Month
+                </p>
+                <p className="text-lg bg-gray-200 rounded-lg px-2 py-1 font-bold">
+                  6 Months
+                </p>
+                <p className="text-lg bg-gray-200 rounded-lg px-2 py-1 font-bold">
+                  This Year
+                </p>
+                <p className="text-lg bg-gray-200 rounded-lg px-2 py-1 font-bold">
+                  All Time
+                </p>
               </div>
-              <div className="flex flex-col gap-1">
-                <label htmlFor="phone">Phone Number</label>
-                <input
-                  className="h-8 p-1 rounded-md"
-                  type="text"
-                  id="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                />
+              {/* map through the array and pass as a prop */}
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-row justify-between gap-3">
+                  <p className="text-lg font-bold">Total sales pick</p>
+                  <p className="text-lg font-bold">10</p>
+                </div>
+                <div className="flex flex-row justify-between gap-1">
+                  <p className="text-lg font-bold">Active days</p>
+                  <p className="text-lg font-bold">3 days</p>
+                </div>
+                <div className="flex flex-row justify-between gap-1">
+                  <p className="text-lg font-bold">Offline days</p>
+                  <p className="text-lg font-bold">2 days</p>
+                </div>
               </div>
-              <div className="flex flex-col gap-1">
-                <label htmlFor="cadre">Cadre</label>
-                <Dropdown
-                  showSearch
-                  className="gap-0"
-                  className2="bg-green-100 border-none w-full h-9 flex justify-between items-center rounded-md"
-                  label={formData.state || "Select cadre"}
-                  options={cadres}
-                  placeholder="Select Cadre"
-                  onSelect={(selected) =>
-                    setFormData({ ...formData, state: selected })
-                  }
-                  className3="p-2 rounded-2xl bg-green-100"
-                  getLabel={(cadre) => cadre}
-                  getSubLabel={() => ""}
-                  id="store-state"
-                />
-              </div>
-            </div>
 
-            {/* Authentication Section */}
-            <div className="flex flex-col bg-gray-100 p-5 w-full gap-4">
-              <h1 className="text-lg font-bold">Authentication</h1>
-              <div className="flex flex-col gap-1">
-                <label htmlFor="username">User Name</label>
-                <input
-                  className="h-8 p-1 rounded-md"
-                  type="text"
-                  id="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label htmlFor="password">Password</label>
-                <input
-                  className="h-8 p-1 rounded-md"
-                  type="password"
-                  id="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <input
-                  className="h-8 p-1 rounded-md"
-                  type="password"
-                  id="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                />
-              </div>
               <button className="bg-button text-white p-2 rounded-full">
                 Add Member
               </button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </>
