@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Product {
   id: number;
@@ -10,7 +10,12 @@ interface Product {
   status: string;
   url: string;
 }
-
+const menuItems = [
+  { label: "User Activity", icon: "/icons/brief_case.svg" },
+  { label: "Edit Profile", icon: "/icons/user_icon.svg" },
+  { label: "Deactivate User", icon: "/icons/deactivate.svg" },
+  { label: "Remove User", icon: "/icons/delete.svg" },
+];
 const products: Product[] = [
   {
     id: 1,
@@ -44,10 +49,37 @@ const products: Product[] = [
 export default function TeamTable() {
   const [data, setData] = useState(products);
   const [extraRows, setExtraRows] = useState(0);
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleAddRow = () => {
     setExtraRows(extraRows + 1);
   };
+
+  const toggleDropdown = (rowId: number | null) => {
+    setOpenDropdownId((prev) => (prev === rowId ? null : rowId));
+  };
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setOpenDropdownId(null);
+    }
+  };
+  const handleWindowBlur = () => {
+    setOpenDropdownId(null);
+  };
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    window.addEventListener("blur", handleWindowBlur);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
+      window.removeEventListener("blur", handleWindowBlur);
+    };
+  }, []);
 
   const handleDeleteRow = (id: number) => {
     setData(data.filter((product) => product.id !== id));
@@ -115,8 +147,39 @@ export default function TeamTable() {
                       : "Pending"}
                   </span>
                 </td>
-                <td className=" p-2 text-indigo-600 cursor-pointer">
-                  <button className=" pr-1"> ...</button>
+                <td className=" p-2 relative text-indigo-600 cursor-pointer">
+                  <button
+                    className=" pr-1"
+                    onClick={() => toggleDropdown(product.id)}
+                  >
+                    •••
+                  </button>
+                  {openDropdownId === product.id && (
+                    <div
+                      className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-50"
+                      ref={dropdownRef}
+                    >
+                      <div className="flex flex-col gap-2 p-2">
+                        {menuItems.map((item, index) => (
+                          <div
+                            key={index}
+                            // onClick={() => handleMenuItemClick(item.label)}
+                            className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border hover:border-gray-500 transition cursor-pointer"
+                          >
+                            <Image
+                              src={item.icon}
+                              alt={item.label}
+                              width={14}
+                              height={14}
+                            />
+                            <h1 className="text-sm text-gray-700">
+                              {item.label}
+                            </h1>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </td>
               </tr>
             ) : null

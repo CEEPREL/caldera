@@ -15,11 +15,12 @@ interface SlideDrawerProps {
 }
 
 const states = [
-  { code: "OG", name: "Ogun State" },
-  { code: "KW", name: "Kwara State" },
-  { code: "LAG", name: "Lagos State" },
-  { code: "ABJ", name: "Abuja" },
+  { code: "OG", name: "Ogun State", cadre: "Cadre 1" },
+  { code: "KW", name: "Kwara State", cadre: "Cadre 2" },
+  { code: "LAG", name: "Lagos State", cadre: "Cadre 1" },
+  { code: "ABJ", name: "Abuja", cadre: "Cadre 2" },
 ];
+const cadres = ["Cadre 1", "Cadre 2"];
 
 function New() {
   const router = useRouter();
@@ -120,23 +121,22 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
         onClick={onClose} // Clicking overlay closes drawer
       />
 
-      {/* Drawer */}
+      <button
+        className={`absolute top-5 z-20 left-[-420px] text-black w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full shadow-lg hover:bg-gray-300 transition ${
+          isOpen ? "block" : "hidden"
+        }`}
+        onClick={onClose}
+      >
+        ✕
+      </button>
       <div
         className={clsx(
-          "fixed top-0  overflow-y-scroll  text-black  right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
-          isOpen ? "translate-y-0" : "-translate-y-full",
+          "fixed top-0 overflow-y-scroll  text-black  right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
+          isOpen ? "-translate-y-0" : "-translate-y-full",
           width,
           drawerStyle
         )}
       >
-        {/* Close Button */}
-        <button
-          className="absolute top-5  left-[-50px] text-black w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full shadow-lg hover:bg-gray-300 transition"
-          onClick={onClose}
-        >
-          ✕
-        </button>
-
         {/* Drawer Content - Form */}
         <div className="mt-2 bg w-full">
           <h2 className="text-lg font-bold mb-4">Edit Team Member</h2>
@@ -199,12 +199,20 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
               </div>
               <div className="flex flex-col gap-1">
                 <label htmlFor="cadre">Cadre</label>
-                <input
-                  className="h-8 p-1 rounded-md"
-                  type="text"
-                  id="cadre"
-                  value={formData.cadre}
-                  onChange={handleChange}
+                <Dropdown
+                  showSearch
+                  className="gap-0"
+                  className2="bg-green-100 border-none w-full h-9 flex justify-between items-center rounded-md"
+                  label={formData.state || "Select cadre"}
+                  options={cadres}
+                  placeholder="Select Cadre"
+                  onSelect={(selected) =>
+                    setFormData({ ...formData, state: selected })
+                  }
+                  className3="p-2 rounded-2xl bg-green-100"
+                  getLabel={(cadre) => cadre}
+                  getSubLabel={() => ""}
+                  id="store-state"
                 />
               </div>
             </div>
@@ -243,7 +251,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                 />
               </div>
               <button className="bg-button text-white p-2 rounded-full">
-                Create Store
+                Add Member
               </button>
             </div>
           </form>

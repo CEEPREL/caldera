@@ -11,6 +11,7 @@ interface DropdownProps<T> {
   onSelect: (value: string) => void;
   className?: string;
   className2?: string;
+  className3?: string;
   showSearch?: boolean;
   id?: string;
   getLabel?: (option: T) => string;
@@ -24,6 +25,7 @@ const Dropdown = <T,>({
   onSelect,
   className,
   className2,
+  className3,
   showSearch,
   getLabel = (option) => String(option),
   getSubLabel = (option) => String(option),
@@ -95,11 +97,14 @@ const Dropdown = <T,>({
               //   placeholder="Search Airport"
             />
           )} */}
-          <div className=" h-48 overflow-y-scroll">
+          <div className=" h-fit gap-2 flex flex-col overflow-y-scroll">
             {filteredOptions.map((option, index) => (
               <div
                 key={index}
-                className="p-2  w-full  hover:bg-gray-100 cursor-pointer"
+                className={clsx(
+                  `p-2  w-full  hover:bg-gray-100 cursor-pointer `,
+                  className3
+                )}
                 onClick={() =>
                   handleSelect(getLabel ? getLabel(option) : (option as string))
                 }
