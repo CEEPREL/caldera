@@ -58,11 +58,15 @@ export default function TeamTable() {
 
   const toggleDropdown = (rowId: number | null) => {
     setOpenDropdownId((prev) => (prev === rowId ? null : rowId));
+    setTimeout(() => {
+      setOpenDropdownId((prev) => (prev === rowId ? null : rowId));
+    }, 0);
   };
   const handleClickOutside = (event: MouseEvent) => {
     if (
       dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
+      !dropdownRef.current.contains(event.target as Node) &&
+      !(event.target as HTMLElement).closest(".dropdown-toggle")
     ) {
       setOpenDropdownId(null);
     }
@@ -75,7 +79,7 @@ export default function TeamTable() {
     document.addEventListener("click", handleClickOutside);
     window.addEventListener("blur", handleWindowBlur);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      // document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("click", handleClickOutside);
       window.removeEventListener("blur", handleWindowBlur);
     };
@@ -150,7 +154,9 @@ export default function TeamTable() {
                 <td className=" p-2 relative text-indigo-600 cursor-pointer">
                   <button
                     className=" pr-1"
-                    onClick={() => toggleDropdown(product.id)}
+                    onClick={(e) => {
+                      toggleDropdown(product.id);
+                    }}
                   >
                     •••
                   </button>
