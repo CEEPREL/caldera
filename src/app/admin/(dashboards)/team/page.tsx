@@ -1,10 +1,8 @@
 "use client";
 import Dropdown from "@/components/Dropdown";
-import SalesGraph from "@/components/visualizationToola/SalesGraph";
 import Image from "next/image";
 import React, { useState } from "react";
 import products from "@/data/data.json";
-import Link from "next/link";
 import TeamTable from "@/components/admin/TeamTable";
 import SlideDrawer from "@/components/admin/AddTeamSlider";
 

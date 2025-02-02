@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import TeamPeofileSlider from "./TeamPeofileSlider";
 
 interface Product {
   id: number;
@@ -51,9 +52,19 @@ export default function TeamTable() {
   const [extraRows, setExtraRows] = useState(0);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [menuItem, setMenuItem] = useState<string>("");
 
   const handleAddRow = () => {
     setExtraRows(extraRows + 1);
+  };
+  const handleMenuItemClick = (label: string) => {
+    if (label === "User Activity") {
+      setMenuItem("User Activity");
+    } else if (label === "Edit Profile") {
+      setMenuItem("Edit Profile");
+    } else if (label === "Deactivate User") {
+      setMenuItem("Deactivate User");
+    }
   };
 
   const toggleDropdown = (rowId: number | null) => {
@@ -126,6 +137,27 @@ export default function TeamTable() {
                     />
                     <span className="text-black ml-2">{product.name}</span>
                   </div>
+                  {menuItem === "User Activity" && (
+                    <div className="flex flex-col gap-2">
+                      <TeamPeofileSlider
+                        isOpen={true}
+                        onClose={() => {
+                          setMenuItem("");
+                        }}
+                        id={product.id}
+                        name={product.name}
+                        phone={product.phoneNo}
+                        role={product.cadre}
+                        imageUrl={product.url}
+                        salesPick={0}
+                        activeDays={0}
+                        offlineDays={0}
+                        width="w-1/4"
+                        overlayColor="bg-black bg-opacity-50"
+                        drawerStyle="bg-white"
+                      />
+                    </div>
+                  )}
                 </td>
                 <td className=" p-2">
                   <span className={`px-2 py-1 border bg-yellow-50 rounded-3xl`}>
@@ -169,7 +201,7 @@ export default function TeamTable() {
                         {menuItems.map((item, index) => (
                           <div
                             key={index}
-                            // onClick={() => handleMenuItemClick(item.label)}
+                            onClick={() => handleMenuItemClick(item.label)}
                             className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border hover:border-gray-500 transition cursor-pointer"
                           >
                             <Image

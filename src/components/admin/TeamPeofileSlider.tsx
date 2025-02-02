@@ -6,12 +6,20 @@ import clsx from "clsx";
 import Dropdown from "../Dropdown";
 import { useRouter } from "next/navigation";
 
-interface SlideDrawerProps {
+interface UserProfile {
+  id: number;
+  name: string;
+  phone: string;
+  role: string;
+  imageUrl: string;
+  salesPick: number;
+  activeDays: number;
+  offlineDays: number;
   isOpen: boolean;
   onClose: () => void;
-  width?: string; // Customizable width
-  overlayColor?: string; // Overlay background
-  drawerStyle?: string; // Additional drawer styles
+  width: string;
+  overlayColor: string;
+  drawerStyle: string;
 }
 
 const states = [
@@ -22,47 +30,7 @@ const states = [
 ];
 const cadres = ["Cadre 1", "Cadre 2"];
 
-// function New() {
-//   const router = useRouter();
-
-//   // State for form data
-//   const [formData, setFormData] = useState({
-//     state: "",
-//     location: "",
-//     manager: "",
-//     phone: "",
-//     cadre: "",
-//     username: "",
-//     password: "",
-//     confirmPassword: "",
-//   }); // Handle input changes
-//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setFormData({ ...formData, [e.target.id]: e.target.value });
-//   };
-//   // Handle state selection from dropdown
-//   const handleStateSelect = (state: { code: string; name: string }) => {
-//     setFormData({ ...formData, state: state.name });
-//   };
-//   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     console.log("Form Data:", formData);
-
-//     setFormData({
-//       state: "",
-//       location: "",
-//       manager: "",
-//       phone: "",
-//       cadre: "",
-//       username: "",
-//       password: "",
-//       confirmPassword: "",
-//     });
-
-//     setTimeout(() => router.push("/admin/stores"), 500);
-//   };
-// }
-
-const ProfileSlider: React.FC<SlideDrawerProps> = ({
+const ProfileSlider: React.FC<UserProfile> = ({
   isOpen,
   onClose,
   width = "w-1/4", // Default: 1/4 of the page
@@ -122,7 +90,7 @@ const ProfileSlider: React.FC<SlideDrawerProps> = ({
       />
 
       <button
-        className={`absolute top-5 z-20 left-[-420px] text-black w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full shadow-lg hover:bg-gray-300 transition ${
+        className={`absolute top-5 z-20 left-[-50px] text-black w-10 h-10 flex items-center justify-center bg-red-100 rounded-full shadow-lg hover:bg-gray-300 transition ${
           isOpen ? "block" : "hidden"
         }`}
         onClick={onClose}
@@ -131,7 +99,7 @@ const ProfileSlider: React.FC<SlideDrawerProps> = ({
       </button>
       <div
         className={clsx(
-          "fixed top-0 overflow-y-scroll  text-black  right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
+          "fixed top-0 overflow-y-scroll w-[40%] text-black  right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
           isOpen ? "-translate-y-0" : "-translate-y-full",
           width,
           drawerStyle
@@ -166,41 +134,34 @@ const ProfileSlider: React.FC<SlideDrawerProps> = ({
               <h1 className="text-lg font-bold">Activity Summary</h1>
               {/* clsx classname style as prop, map through the array and pass as a prop */}
               <div className="flex flex-row gap-3">
-                <p className="text-lg bg-gray-200 rounded-lg px-2 py-1 font-bold">
+                <p className="text-sm cursor-pointer bg-gray-200 rounded-lg px-2 py-1 ">
                   This Week
                 </p>
-                <p className="text-lg bg-gray-200 rounded-lg px-2 py-1 font-bold">
+                <p className="text-sm cursor-pointer bg-gray-200 rounded-lg px-2 py-1">
                   This Month
                 </p>
-                <p className="text-lg bg-gray-200 rounded-lg px-2 py-1 font-bold">
+                <p className="text-sm cursor-pointer bg-gray-200 rounded-lg px-2 py-1 ">
                   6 Months
                 </p>
-                <p className="text-lg bg-gray-200 rounded-lg px-2 py-1 font-bold">
-                  This Year
-                </p>
-                <p className="text-lg bg-gray-200 rounded-lg px-2 py-1 font-bold">
+                <p className="text-sm cursor-pointer bg-gray-200 rounded-lg px-2 py-1 ">
                   All Time
                 </p>
               </div>
               {/* map through the array and pass as a prop */}
-              <div className="flex flex-col gap-5">
+              <div className="flex text-gray-500 flex-col gap-5">
                 <div className="flex flex-row justify-between gap-3">
-                  <p className="text-lg font-bold">Total sales pick</p>
-                  <p className="text-lg font-bold">10</p>
+                  <p className="text-lg ">Total sales pick</p>
+                  <p className="text-lg">10</p>
                 </div>
                 <div className="flex flex-row justify-between gap-1">
-                  <p className="text-lg font-bold">Active days</p>
-                  <p className="text-lg font-bold">3 days</p>
+                  <p className="text-lg ">Active days</p>
+                  <p className="text-lg ">3 days</p>
                 </div>
                 <div className="flex flex-row justify-between gap-1">
-                  <p className="text-lg font-bold">Offline days</p>
-                  <p className="text-lg font-bold">2 days</p>
+                  <p className="text-lg ">Offline days</p>
+                  <p className="text-lg ">2 days</p>
                 </div>
               </div>
-
-              <button className="bg-button text-white p-2 rounded-full">
-                Add Member
-              </button>
             </div>
           </div>
         </div>
