@@ -1,7 +1,8 @@
 import React from "react";
+import { redirect } from "next/navigation";
 
 function Adminpage() {
-  return <div>Adminpage</div>;
+  return redirect("/admin/revenue");
 }
 
 export default Adminpage;

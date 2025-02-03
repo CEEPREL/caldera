@@ -1,12 +1,8 @@
 import React from "react";
-import AdminLogin from "./login/page";
+import { redirect } from "next/navigation";
 
 function page() {
-  return (
-    <>
-      <AdminLogin />
-    </>
-  );
+  return redirect("/login");
 }
 
 export default page;
