@@ -72,8 +72,6 @@ export default function TeamTable() {
     setExtraRows(extraRows + 1);
   };
   const handleMenuItemClick = (label: string, product: Product) => {
-    setMenuItem(menuItems.filter((item) => item.label === label));
-
     if (label === "User Activity") {
       setSelectedProfileId(product.id);
       setOpenProfile(true);
@@ -82,26 +80,20 @@ export default function TeamTable() {
       setSelectedProfileId(product.id);
       setOpenEdit(true);
       setOpenProfile(false);
-    } else if (label === "Deactivate User") {
+    } else if (label === "Deactivate User" || label === "Activate User") {
       setData((prevData) =>
         prevData.map((user) =>
           user.id === product.id
             ? {
                 ...user,
-                status: (user.status = "Deactivated"),
+                status:
+                  user.status === "Active"
+                    ? "Deactivated"
+                    : user.status === "Inactive"
+                    ? "Deactivated"
+                    : "Active",
               }
             : user
-        )
-      );
-      setMenuItem((prev) =>
-        prev.map((item) =>
-          item.label === "Deactivate User"
-            ? {
-                ...item,
-                label: (item.label = "Activate User"),
-                icon: (item.icon = "/icons/activate.svg"),
-              }
-            : { ...item, icon: item.icon }
         )
       );
       setOpenEdit(false);
@@ -165,7 +157,7 @@ export default function TeamTable() {
         <tbody>
           {data.map((product, index) =>
             product.name ? (
-              <tr key={product.id} className="relative border-b">
+              <tr key={product.id} className=" border-b">
                 <td className=" justify-start items-center h-12 text-gray-400 text-xs flex w-14 p-2">
                   <span className="text-black pr-1">
                     {" "}
@@ -218,7 +210,7 @@ export default function TeamTable() {
                     )}
                   {selectedProfileId === product.id &&
                     menuItem[1]?.label === "Edit Profile" && (
-                      <div className="flex justify-center items-center flex-col gap-2">
+                      <div className="">
                         <AddTeamSlider
                           isOpen={openEdit}
                           onClose={() => {
@@ -238,8 +230,8 @@ export default function TeamTable() {
                           password="password"
                           confirmPassword="password"
                           // width="w-1/4"
-                          overlayColor="bg-black bg-opacity-50"
-                          drawerStyle="bg-white"
+                          // overlayColor="bg-black bg-opacity-50"
+                          // drawerStyle="bg-white"
                         />
                       </div>
                     )}
@@ -286,25 +278,42 @@ export default function TeamTable() {
                       ref={dropdownRef}
                     >
                       <div className="flex flex-col gap-2 p-2">
-                        {menuItems.map((item, index) => (
-                          <div
-                            key={index}
-                            onClick={() =>
-                              handleMenuItemClick(item.label, product)
-                            }
-                            className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border hover:border-gray-500 transition cursor-pointer"
-                          >
-                            <Image
-                              src={item.icon}
-                              alt={item.label}
-                              width={14}
-                              height={14}
-                            />
-                            <h1 className="text-sm text-gray-700">
-                              {item.label}
-                            </h1>
-                          </div>
-                        ))}
+                        {menuItems.map((item, index) => {
+                          let isDeactivate = item.label === "Deactivate User";
+                          let isActive = product.status === "Activate User";
+                          let newLabel =
+                            product.status === "Active" && isDeactivate
+                              ? "Deactivate User"
+                              : product.status === "Inactive" && isDeactivate
+                              ? "Deactivate User"
+                              : item.label;
+                          let newIcon =
+                            product.status === "Active" && isDeactivate
+                              ? "/icons/deactivate.svg"
+                              : product.status === "Deactivated" && isDeactivate
+                              ? "/icons/activate.svg"
+                              : item.icon;
+
+                          return (
+                            <div
+                              key={index}
+                              onClick={() =>
+                                handleMenuItemClick(newLabel, product)
+                              }
+                              className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border hover:border-gray-500 transition cursor-pointer"
+                            >
+                              <Image
+                                src={newIcon}
+                                alt={newLabel}
+                                width={14}
+                                height={14}
+                              />
+                              <h1 className="text-sm text-gray-700">
+                                {newLabel}
+                              </h1>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}

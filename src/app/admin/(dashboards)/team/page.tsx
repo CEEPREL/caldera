@@ -30,6 +30,17 @@ function Team() {
     <div className="w-full h-[88%] bg-white overflow-y-scroll rounded-3xl ">
       <div className="absolute top-0 right-0">
         <SlideDrawer
+          name=""
+          phone=""
+          role=""
+          email=""
+          state=""
+          location=""
+          manager=""
+          cadre=""
+          username=""
+          password=""
+          confirmPassword=""
           isOpen={isDrawerOpen}
           onClose={() => setIsDrawerOpen(false)}
         />
