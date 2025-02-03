@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 function AdminLogin() {
   const [formData, setFormData] = useState({
-    username: "",
+    userName: "",
     password: "",
   });
 
@@ -19,18 +19,20 @@ function AdminLogin() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    route.push("admin/revenue");
     try {
-      const response = await fetch("/api/login", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      console.log(formData);
 
       const data = await response.json();
-
+      console.log(data);
       if (response.ok) {
-        alert("Login successful!");
+        const token = data.token;
+        localStorage.setItem("token", token);
+        route.push("admin/revenue");
       } else {
         alert(data.message || "Login failed!");
       }
@@ -42,10 +44,10 @@ function AdminLogin() {
 
   return (
     <div className="relative h-screen overflow-hidden bg-gradient-to-b from-[#7D95EE] to-[#F56476]">
-      <div className="flex justify-center">
+      <div className="flex w-full justify-center">
         <Image priority className="overflow-hidden" src={frame} alt="tag" />
 
-        <div className="absolute top-16 flex flex-col items-center w-1/4">
+        <div className="absolute top-16 flex flex-col items-center w-1/2 lg:w-1/4">
           <Image src={logo} alt="Logo" />
           <div className="w-full">
             <h1 className="rounded-t-2xl p-4 bg-[#F9F6F1] text-black font-bold text-3xl text-center">
@@ -59,8 +61,8 @@ function AdminLogin() {
                 <label>Username</label>
                 <input
                   type="text"
-                  name="username"
-                  value={formData.username}
+                  name="userName"
+                  value={formData.userName}
                   onChange={handleChange}
                   className="border h-8 w-full p-1 rounded-xl border-gray-400"
                   required
