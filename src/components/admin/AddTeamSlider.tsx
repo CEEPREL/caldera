@@ -104,14 +104,6 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
         onClick={onClose} // Clicking overlay closes drawer
       />
 
-      <button
-        className={`absolute top-1 z-20 right-[20px] bg-red-300 text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:bg-gray-300 transition ${
-          isOpen ? "block" : "hidden"
-        }`}
-        onClick={onClose}
-      >
-        ✕
-      </button>
       <div
         className={clsx(
           "fixed top-0 overflow-y-scroll w-[70%] lg:w-[35%] text-black  right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
@@ -120,6 +112,14 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
           drawerStyle
         )}
       >
+        <button
+          className={`top-1 z-20 right-[20px] bg-red-300 text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:bg-gray-300 transition ${
+            isOpen ? "block" : "hidden"
+          }`}
+          onClick={onClose}
+        >
+          ✕
+        </button>
         {/* Drawer Content - Form */}
         <div className="mt-2 bg w-full">
           <h2 className="text-lg font-bold mb-4">{tittle}</h2>

@@ -96,14 +96,6 @@ const ProfileSlider: React.FC<UserProfile> = ({
         onClick={onClose} // Clicking overlay closes drawer
       />
 
-      <button
-        className={`absolute top-5 z-20 left-[-50px] text-black w-10 h-10 flex items-center justify-center bg-red-100 rounded-full shadow-lg hover:bg-gray-300 transition ${
-          isOpen ? "block" : "hidden"
-        }`}
-        onClick={onClose}
-      >
-        ✕
-      </button>
       <div
         className={clsx(
           "fixed top-0 overflow-y-scroll w-[70%] lg:w-[35%] text-black  right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
@@ -114,6 +106,14 @@ const ProfileSlider: React.FC<UserProfile> = ({
       >
         {/* Drawer Content - Form */}
         <div className="mt-2 bg p-5 w-full">
+          <button
+            className={`top-5 z-20 left-[-50px] text-black w-10 h-10 flex items-center justify-center bg-red-300 rounded-full shadow-lg hover:bg-gray-300 transition ${
+              isOpen ? "block" : "hidden"
+            }`}
+            onClick={onClose}
+          >
+            ✕
+          </button>
           <h2 className="text-lg font-bold mb-4">Profile</h2>
           <div className="flex w-full items-center justify-center flex-col gap-4">
             {/* Location Section */}
