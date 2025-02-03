@@ -9,9 +9,22 @@ import { useRouter } from "next/navigation";
 interface SlideDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  width?: string; // Customizable width
-  overlayColor?: string; // Overlay background
-  drawerStyle?: string; // Additional drawer styles
+  width?: string;
+  tittle?: string;
+  overlayColor?: string;
+  drawerStyle?: string;
+  id?: number;
+  name: string;
+  phone: string;
+  role: string;
+  email: string;
+  state: string;
+  location: string;
+  manager: string;
+  cadre: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
 }
 
 const states = [
@@ -22,65 +35,36 @@ const states = [
 ];
 const cadres = ["Cadre 1", "Cadre 2"];
 
-function New() {
-  const router = useRouter();
-
-  // State for form data
-  const [formData, setFormData] = useState({
-    state: "",
-    location: "",
-    manager: "",
-    phone: "",
-    cadre: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-  }); // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-  };
-  // Handle state selection from dropdown
-  const handleStateSelect = (state: { code: string; name: string }) => {
-    setFormData({ ...formData, state: state.name });
-  };
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form Data:", formData);
-
-    setFormData({
-      state: "",
-      location: "",
-      manager: "",
-      phone: "",
-      cadre: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
-    });
-
-    setTimeout(() => router.push("/admin/stores"), 500);
-  };
-}
-
 const SlideDrawer: React.FC<SlideDrawerProps> = ({
   isOpen,
   onClose,
-  width = "w-1/4", // Default: 1/4 of the page
+  width = "w-1/4",
   overlayColor = "bg-black bg-opacity-50",
   drawerStyle = "bg-white p-5 rounded-r-2xl shadow-lg",
+  tittle = "Add Team Member",
+  name = "",
+  email = "",
+  state = "",
+  location = "",
+  manager = "",
+  phone = "",
+  cadre = "",
+  username = "",
+  password = "",
+  confirmPassword = "",
 }) => {
   // Form State
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    state: "",
-    location: "",
-    manager: "",
-    phone: "",
-    cadre: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
+    name: name,
+    email: email,
+    state: state,
+    location: location,
+    manager: manager,
+    phone: phone,
+    cadre: cadre,
+    username: username,
+    password: password,
+    confirmPassword: confirmPassword,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,15 +75,14 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
 
-    // Clear Form Fields
     setFormData({
       name: "",
       email: "",
-      state: "",
+      cadre: "",
       location: "",
       manager: "",
       phone: "",
-      cadre: "",
+      state: "",
       username: "",
       password: "",
       confirmPassword: "",
@@ -122,7 +105,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
       />
 
       <button
-        className={`absolute top-5 z-20 left-[-420px] text-black w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full shadow-lg hover:bg-gray-300 transition ${
+        className={`absolute top-1 z-20 right-[20px] bg-red-300 text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:bg-gray-300 transition ${
           isOpen ? "block" : "hidden"
         }`}
         onClick={onClose}
@@ -131,7 +114,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
       </button>
       <div
         className={clsx(
-          "fixed top-0 overflow-y-scroll  text-black  right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
+          "fixed top-0 overflow-y-scroll w-[70%] lg:w-[35%] text-black  right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
           isOpen ? "-translate-y-0" : "-translate-y-full",
           width,
           drawerStyle
@@ -139,7 +122,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
       >
         {/* Drawer Content - Form */}
         <div className="mt-2 bg w-full">
-          <h2 className="text-lg font-bold mb-4">Edit Team Member</h2>
+          <h2 className="text-lg font-bold mb-4">{tittle}</h2>
           <form
             className="flex w-full items-center justify-center flex-col gap-4"
             onSubmit={handleSubmit}
@@ -148,7 +131,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
             <div className="flex flex-col bg-gray-100 p-5 w-full gap-4">
               <h1 className="text-lg font-bold">Location</h1>
               <div className="flex flex-col gap-1">
-                <label htmlFor="store-state">State</label>
+                <label htmlFor="state">State</label>
                 <Dropdown
                   showSearch
                   className="gap-0"
@@ -156,7 +139,9 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   label={formData.state || "Select a State"}
                   options={states}
                   placeholder="Select a State"
-                  onSelect={(state) => state}
+                  onSelect={(state) =>
+                    setFormData((prev) => ({ ...prev, state: state }))
+                  }
                   getLabel={(state) => state.name}
                   getSubLabel={() => ""}
                   id="store-state"
@@ -168,6 +153,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   className="h-8 p-1 rounded-md"
                   type="text"
                   id="location"
+                  name="location"
                   value={formData.location}
                   onChange={handleChange}
                 />
@@ -178,12 +164,13 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
             <div className="flex flex-col bg-gray-100 p-5 w-full gap-4">
               <h1 className="text-lg font-bold">Store Manager</h1>
               <div className="flex flex-col gap-1">
-                <label htmlFor="manager">Full Name</label>
+                <label htmlFor="name">Full Name</label>
                 <input
                   className="h-8 p-1 rounded-md"
                   type="text"
-                  id="manager"
-                  value={formData.manager}
+                  id="name"
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                 />
               </div>
@@ -193,6 +180,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   className="h-8 p-1 rounded-md"
                   type="text"
                   id="phone"
+                  name="phone"
                   value={formData.phone}
                   onChange={handleChange}
                 />
@@ -203,11 +191,11 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   showSearch
                   className="gap-0"
                   className2="bg-green-100 border-none w-full h-9 flex justify-between items-center rounded-md"
-                  label={formData.state || "Select cadre"}
+                  label={formData.cadre || "Select cadre"}
                   options={cadres}
                   placeholder="Select Cadre"
                   onSelect={(selected) =>
-                    setFormData({ ...formData, state: selected })
+                    setFormData({ ...formData, cadre: selected })
                   }
                   className3="p-2 rounded-2xl bg-green-100"
                   getLabel={(cadre) => cadre}
@@ -227,6 +215,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   type="text"
                   id="username"
                   value={formData.username}
+                  name="username"
                   onChange={handleChange}
                 />
               </div>
@@ -236,6 +225,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   className="h-8 p-1 rounded-md"
                   type="password"
                   id="password"
+                  name="password"
                   value={formData.password}
                   onChange={handleChange}
                 />
@@ -246,6 +236,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   className="h-8 p-1 rounded-md"
                   type="password"
                   id="confirmPassword"
+                  name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                 />

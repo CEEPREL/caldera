@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import TeamPeofileSlider from "./TeamPeofileSlider";
+import TeamProfileSlider from "./TeamPeofileSlider";
+import AddTeamSlider from "./AddTeamSlider";
 
 interface Product {
   id: number;
@@ -10,6 +11,8 @@ interface Product {
   phoneNo: string;
   status: string;
   url: string;
+  email: string;
+  active: boolean;
 }
 const menuItems = [
   { label: "User Activity", icon: "/icons/brief_case.svg" },
@@ -26,6 +29,8 @@ const products: Product[] = [
     phoneNo: "08123456789",
     status: "Active",
     url: "/images/profile.png",
+    email: "adebowale@gmail.com",
+    active: true,
   },
   {
     id: 2,
@@ -35,6 +40,8 @@ const products: Product[] = [
     phoneNo: "08123456789",
     status: "Inactive",
     url: "/images/profile.png",
+    email: "ellena@gmail.com",
+    active: false,
   },
   {
     id: 3,
@@ -44,6 +51,8 @@ const products: Product[] = [
     phoneNo: "08123456789",
     status: "Active",
     url: "/images/profile.png",
+    email: "ayodele@gmail.com",
+    active: true,
   },
 ];
 
@@ -51,20 +60,59 @@ export default function TeamTable() {
   const [data, setData] = useState(products);
   const [extraRows, setExtraRows] = useState(0);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+  const [selectedProfileId, setSelectedProfileId] = useState<number | null>(
+    null
+  );
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [menuItem, setMenuItem] = useState<string>("");
-
+  const [menuItem, setMenuItem] = useState(menuItems);
+  const [openProfile, setOpenProfile] = useState<boolean>(false);
+  const [openEdit, setOpenEdit] = useState<boolean>(false);
+  const [activeStatus, setActiveStatus] = useState<string>("Active");
   const handleAddRow = () => {
     setExtraRows(extraRows + 1);
   };
-  const handleMenuItemClick = (label: string) => {
+  const handleMenuItemClick = (label: string, product: Product) => {
+    setMenuItem(menuItems.filter((item) => item.label === label));
+
     if (label === "User Activity") {
-      setMenuItem("User Activity");
+      setSelectedProfileId(product.id);
+      setOpenProfile(true);
+      setOpenEdit(false);
     } else if (label === "Edit Profile") {
-      setMenuItem("Edit Profile");
+      setSelectedProfileId(product.id);
+      setOpenEdit(true);
+      setOpenProfile(false);
     } else if (label === "Deactivate User") {
-      setMenuItem("Deactivate User");
+      setData((prevData) =>
+        prevData.map((user) =>
+          user.id === product.id
+            ? {
+                ...user,
+                status: (user.status = "Deactivated"),
+              }
+            : user
+        )
+      );
+      setMenuItem((prev) =>
+        prev.map((item) =>
+          item.label === "Deactivate User"
+            ? {
+                ...item,
+                label: (item.label = "Activate User"),
+                icon: (item.icon = "/icons/activate.svg"),
+              }
+            : { ...item, icon: item.icon }
+        )
+      );
+      setOpenEdit(false);
+      setOpenProfile(false);
+    } else {
+      setSelectedProfileId(null);
+      setOpenProfile(false);
+      setOpenEdit(false);
     }
+
+    setOpenDropdownId(null); // Close the dropdown
   };
 
   const toggleDropdown = (rowId: number | null) => {
@@ -117,8 +165,8 @@ export default function TeamTable() {
         <tbody>
           {data.map((product, index) =>
             product.name ? (
-              <tr key={product.id} className=" border-b">
-                <td className="justify-start items-center h-12 text-gray-400 text-xs flex w-14 p-2">
+              <tr key={product.id} className="relative border-b">
+                <td className=" justify-start items-center h-12 text-gray-400 text-xs flex w-14 p-2">
                   <span className="text-black pr-1">
                     {" "}
                     <input className="" type="checkbox" />
@@ -126,6 +174,15 @@ export default function TeamTable() {
 
                   {index + 1}
                 </td>
+                <div
+                  className={`absolute top-[8px] w-[75%] left-0 ${
+                    product.status === "Active"
+                      ? "opacity-0 "
+                      : product.status === "Deactivated"
+                      ? "opacity-80  bg-white"
+                      : "opacity-0"
+                  } h-12 `}
+                />
                 <td className="p-2">
                   <div className="flex items-center">
                     <Image
@@ -137,27 +194,55 @@ export default function TeamTable() {
                     />
                     <span className="text-black ml-2">{product.name}</span>
                   </div>
-                  {menuItem === "User Activity" && (
-                    <div className="flex flex-col gap-2">
-                      <TeamPeofileSlider
-                        isOpen={true}
-                        onClose={() => {
-                          setMenuItem("");
-                        }}
-                        id={product.id}
-                        name={product.name}
-                        phone={product.phoneNo}
-                        role={product.cadre}
-                        imageUrl={product.url}
-                        salesPick={0}
-                        activeDays={0}
-                        offlineDays={0}
-                        width="w-1/4"
-                        overlayColor="bg-black bg-opacity-50"
-                        drawerStyle="bg-white"
-                      />
-                    </div>
-                  )}
+                  {selectedProfileId === product.id &&
+                    menuItem[0]?.label === "User Activity" && (
+                      <div className="flex flex-col gap-2">
+                        <TeamProfileSlider
+                          isOpen={openProfile}
+                          onClose={() => {
+                            setOpenProfile(false);
+                          }}
+                          id={product.id}
+                          name={product.name}
+                          phone={product.phoneNo}
+                          role={product.cadre}
+                          imageUrl={product.url}
+                          salesPick={0}
+                          activeDays={0}
+                          offlineDays={0}
+                          width="w-1/4"
+                          overlayColor="bg-black bg-opacity-50"
+                          drawerStyle="bg-white"
+                        />
+                      </div>
+                    )}
+                  {selectedProfileId === product.id &&
+                    menuItem[1]?.label === "Edit Profile" && (
+                      <div className="flex justify-center items-center flex-col gap-2">
+                        <AddTeamSlider
+                          isOpen={openEdit}
+                          onClose={() => {
+                            setOpenEdit(false);
+                          }}
+                          id={product.id}
+                          tittle="Edit Team Member"
+                          name={product.name}
+                          phone={product.phoneNo}
+                          role={product.cadre}
+                          email="email.com"
+                          state="ogun"
+                          location="ogun"
+                          manager="shay"
+                          cadre="cadre 1"
+                          username="shay"
+                          password="password"
+                          confirmPassword="password"
+                          // width="w-1/4"
+                          overlayColor="bg-black bg-opacity-50"
+                          drawerStyle="bg-white"
+                        />
+                      </div>
+                    )}
                 </td>
                 <td className=" p-2">
                   <span className={`px-2 py-1 border bg-yellow-50 rounded-3xl`}>
@@ -166,12 +251,13 @@ export default function TeamTable() {
                 </td>
                 <td className=" p-2">{product.registered}</td>
                 <td className=" p-2">{product.phoneNo}</td>
+
                 <td className=" p-2">
                   <span
                     className={`px-2 py-1 border border-green-800 rounded-3xl ${
                       product.status === "Active"
                         ? "bg-green-50 text-green-800"
-                        : product.status === "Inactive"
+                        : product.status === activeStatus
                         ? "bg-gray-200 text-gray-500"
                         : "bg-red-200 text-red-800"
                     }`}
@@ -180,7 +266,9 @@ export default function TeamTable() {
                       ? "Active"
                       : product.status === "Inactive"
                       ? "Inactive"
-                      : "Pending"}
+                      : product.status === "Deactivated"
+                      ? "Deactivated"
+                      : "Active"}
                   </span>
                 </td>
                 <td className=" p-2 relative text-indigo-600 cursor-pointer">
@@ -201,7 +289,9 @@ export default function TeamTable() {
                         {menuItems.map((item, index) => (
                           <div
                             key={index}
-                            onClick={() => handleMenuItemClick(item.label)}
+                            onClick={() =>
+                              handleMenuItemClick(item.label, product)
+                            }
                             className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border hover:border-gray-500 transition cursor-pointer"
                           >
                             <Image
