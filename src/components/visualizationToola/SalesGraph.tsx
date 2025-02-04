@@ -27,11 +27,18 @@ function SalesGraph({ data }: { data: Data[] }) {
           data={data}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
         >
-          <CartesianGrid strokeDasharray="1 10" />
-          <XAxis dataKey="name" />
-          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="" tick={false} stroke="#a09fa2" />
+          <YAxis tick={false} stroke="#a09fa2" />
           <Tooltip />
-          <Area type="linear" dataKey="amt" stroke="#8884d8" fill="#8884d8" />
+          <Area
+            type="linear"
+            dataKey="amt"
+            stroke="#751fe4"
+            fill="#bbcbee"
+            fillOpacity={0.5}
+            strokeWidth={2}
+          />
         </AreaChart>
       </ResponsiveContainer>
     </div>
