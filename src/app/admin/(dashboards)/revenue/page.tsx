@@ -185,8 +185,8 @@ export function PurchasingReport() {
           <div className="flex w-full flex-row">
             <div className="flex flex-col w-1/2">
               <h1 className="text-gray-400">MOST PURCHASED</h1>
-              <div className="flex  justify-between h-[100px] flex-row">
-                <div className="flex items-center justify-center flex-row w-1/2 h-full">
+              <div className="flex  w-full h-[100px] flex-row">
+                <div className="flex items-center justify-center flex-row w-[30%] h-full">
                   <Image
                     className=" "
                     width={50}
@@ -201,8 +201,15 @@ export function PurchasingReport() {
                   </h1>
                 </div>
 
-                <div className="w-1/2 relative h-[100px]">
+                <div className="w-[70%] relative h-[100px]">
                   <SalesGraph
+                    stroke="#008342"
+                    fill="#a2d7ad"
+                    type="monotone"
+                    fontSizeX={0}
+                    fontSizeY={0}
+                    // nameKeyY="name"
+                    // nameKeyX="name"
                     data={selectedProductData?.sales[validPeriod] || []}
                   />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
@@ -222,9 +229,9 @@ export function PurchasingReport() {
               </div>
             </div>
             <div className="flex flex-col w-1/2">
-              <h1 className="text-gray-400">MOST PURCHASED</h1>
-              <div className="flex  justify-between h-[100px] flex-row">
-                <div className="flex items-center justify-center flex-row w-1/2 h-full">
+              <h1 className="text-gray-400">LEAST PURCHASED</h1>
+              <div className="flex  w-full h-[100px] flex-row">
+                <div className="flex items-center justify-center flex-row w-[30%] h-full">
                   <Image
                     className=" "
                     width={50}
@@ -238,8 +245,15 @@ export function PurchasingReport() {
                     <span className="text-green-800">0 sold </span>
                   </h1>
                 </div>
-                <div className="w-1/2 relative h-[100px]">
+                <div className="w-[70%] relative h-[100px]">
                   <SalesGraph
+                    stroke="#fc1e05"
+                    fill="#e69e9e"
+                    type="monotone"
+                    fontSizeX={0}
+                    fontSizeY={0}
+                    // nameKeyY="name"
+                    // nameKeyX="name"
                     data={selectedProductData?.sales[validPeriod] || []}
                   />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">

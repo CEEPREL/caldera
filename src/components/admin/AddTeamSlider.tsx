@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import clsx from "clsx";
 import Dropdown from "../Dropdown";
-import { useRouter } from "next/navigation";
 
 interface SlideDrawerProps {
   isOpen: boolean;
@@ -112,14 +110,6 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
           drawerStyle
         )}
       >
-        <button
-          className={`top-1 z-20 right-[20px] bg-red-300 text-black w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:bg-gray-300 transition ${
-            isOpen ? "block" : "hidden"
-          }`}
-          onClick={onClose}
-        >
-          ✕
-        </button>
         {/* Drawer Content - Form */}
         <div className="mt-2 bg w-full">
           <h2 className="text-lg font-bold mb-4">{tittle}</h2>

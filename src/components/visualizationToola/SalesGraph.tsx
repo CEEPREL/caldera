@@ -19,7 +19,25 @@ type Data = {
   amt: number;
 };
 
-function SalesGraph({ data }: { data: Data[] }) {
+function SalesGraph({
+  data,
+  stroke = "#5c56c1",
+  fill = "#bbcbee",
+  type = "linear",
+  nameKeyY = "",
+  nameKeyX = "",
+  fontSizeX = 10,
+  fontSizeY = 10,
+}: {
+  data: Data[];
+  stroke?: string;
+  fill?: string;
+  type?: "linear" | "monotone";
+  nameKeyX?: string;
+  nameKeyY?: string;
+  fontSizeX?: number;
+  fontSizeY?: number;
+}) {
   return (
     <div className="w-full h-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -28,14 +46,26 @@ function SalesGraph({ data }: { data: Data[] }) {
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="" tick={false} stroke="#a09fa2" />
-          <YAxis tick={false} stroke="#a09fa2" />
+          <XAxis
+            dataKey={nameKeyX}
+            tick={{ fontSize: fontSizeX }}
+            tickLine={false}
+            tickSize={1}
+            stroke="#a09fa2"
+          />
+          <YAxis
+            tick={{ fontSize: fontSizeY }}
+            tickLine={false}
+            tickSize={1}
+            stroke="#a09fa2"
+            dataKey={nameKeyY}
+          />
           <Tooltip />
           <Area
-            type="linear"
+            type={type}
             dataKey="amt"
-            stroke="#751fe4"
-            fill="#bbcbee"
+            stroke={stroke}
+            fill={fill}
             fillOpacity={0.5}
             strokeWidth={2}
           />

@@ -29,6 +29,7 @@ function Team() {
   return (
     <div className="w-full h-[88%] bg-white overflow-y-scroll rounded-3xl ">
       <div className="absolute top-0 right-0">
+        {/* add team component */}
         <SlideDrawer
           name=""
           phone=""
