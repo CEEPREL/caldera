@@ -1,28 +1,36 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import Dropdown from "../Dropdown";
+
+interface FormData {
+  fullName: string;
+  email: string;
+  state: string;
+  location: string;
+  manager: string;
+  cadre: string;
+  userName: string;
+  password: string;
+  confirmPassword: string;
+  phoneNumber: string;
+}
 
 interface SlideDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   width?: string;
   tittle?: string;
+  formData: FormData;
   overlayColor?: string;
   drawerStyle?: string;
   id?: number;
-  name: string;
-  phone: string;
   role: string;
-  email: string;
-  state: string;
-  location: string;
-  manager: string;
-  cadre: string;
-  username: string;
-  password: string;
-  confirmPassword: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSubmit: (formData: FormData) => void;
+  loading: boolean;
+  errorMessage: string | null;
 }
 
 const states = [
@@ -40,48 +48,40 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
   overlayColor = "bg-black bg-opacity-50",
   drawerStyle = "bg-white p-5 rounded-r-2xl shadow-lg",
   tittle = "Add Team Member",
-  name = "",
-  email = "",
-  state = "",
-  location = "",
-  manager = "",
-  phone = "",
-  cadre = "",
-  username = "",
-  password = "",
-  confirmPassword = "",
+  formData,
+  loading,
 }) => {
   // Form State
-  const [formData, setFormData] = useState({
-    name: name,
-    email: email,
-    state: state,
-    location: location,
-    manager: manager,
-    phone: phone,
-    cadre: cadre,
-    username: username,
-    password: password,
-    confirmPassword: confirmPassword,
+  const [formdata, setFormdata] = useState({
+    fullName: formData.fullName,
+    email: formData.email,
+    state: formData.state,
+    location: formData.location,
+    manager: formData.manager,
+    phoneNumber: formData.phoneNumber,
+    cadre: formData.cadre,
+    userName: formData.userName,
+    password: formData.password,
+    confirmPassword: formData.confirmPassword,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormdata({ ...formdata, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
 
-    setFormData({
-      name: "",
+    setFormdata({
+      fullName: "",
       email: "",
       cadre: "",
       location: "",
       manager: "",
-      phone: "",
+      phoneNumber: "",
       state: "",
-      username: "",
+      userName: "",
       password: "",
       confirmPassword: "",
     });
@@ -89,6 +89,22 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
     // Auto Close Drawer
     onClose();
   };
+  useEffect(() => {
+    if (isOpen) {
+      setFormdata({
+        fullName: "",
+        email: "",
+        cadre: "",
+        location: "",
+        manager: "",
+        phoneNumber: "",
+        state: "",
+        userName: "",
+        password: "",
+        confirmPassword: "",
+      });
+    }
+  }, [isOpen]);
 
   return (
     <>
@@ -130,7 +146,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   options={states}
                   placeholder="Select a State"
                   onSelect={(state) =>
-                    setFormData((prev) => ({ ...prev, state: state }))
+                    setFormdata((prev) => ({ ...prev, state: state }))
                   }
                   getLabel={(state) => state.name}
                   getSubLabel={() => ""}
@@ -160,7 +176,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   type="text"
                   id="name"
                   name="name"
-                  value={formData.name}
+                  value={formData.fullName}
                   onChange={handleChange}
                 />
               </div>
@@ -171,7 +187,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   type="text"
                   id="phone"
                   name="phone"
-                  value={formData.phone}
+                  value={formData.phoneNumber}
                   onChange={handleChange}
                 />
               </div>
@@ -185,7 +201,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   options={cadres}
                   placeholder="Select Cadre"
                   onSelect={(selected) =>
-                    setFormData({ ...formData, cadre: selected })
+                    setFormdata({ ...formdata, cadre: selected })
                   }
                   className3="p-2 rounded-2xl bg-green-100"
                   getLabel={(cadre) => cadre}
@@ -204,8 +220,8 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   className="h-8 p-1 rounded-md"
                   type="text"
                   id="username"
-                  value={formData.username}
-                  name="username"
+                  value={formData.userName}
+                  name="userName"
                   onChange={handleChange}
                 />
               </div>

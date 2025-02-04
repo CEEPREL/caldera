@@ -31,15 +31,15 @@ function Team() {
       <div className="absolute top-0 right-0">
         {/* add team component */}
         <SlideDrawer
-          name=""
-          phone=""
+          fullName=""
+          phoneNumber=""
           role=""
           email=""
           state=""
           location=""
           manager=""
           cadre=""
-          username=""
+          userName=""
           password=""
           confirmPassword=""
           isOpen={isDrawerOpen}
