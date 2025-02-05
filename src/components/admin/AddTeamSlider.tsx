@@ -50,6 +50,9 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
   tittle = "Add Team Member",
   formData,
   loading,
+  errorMessage,
+  onChange,
+  onSubmit,
 }) => {
   // Form State
   const [formdata, setFormdata] = useState({
@@ -69,26 +72,26 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
     setFormdata({ ...formdata, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form Data Submitted:", formData);
+  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   console.log("Form Data Submitted:", formData);
 
-    setFormdata({
-      fullName: "",
-      email: "",
-      cadre: "",
-      location: "",
-      manager: "",
-      phoneNumber: "",
-      state: "",
-      userName: "",
-      password: "",
-      confirmPassword: "",
-    });
+  //   setFormdata({
+  //     fullName: "",
+  //     email: "",
+  //     cadre: "",
+  //     location: "",
+  //     manager: "",
+  //     phoneNumber: "",
+  //     state: "",
+  //     userName: "",
+  //     password: "",
+  //     confirmPassword: "",
+  //   });
 
-    // Auto Close Drawer
-    onClose();
-  };
+  //   // Auto Close Drawer
+  //   onClose();
+  // };
   useEffect(() => {
     if (isOpen) {
       setFormdata({
@@ -131,7 +134,10 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
           <h2 className="text-lg font-bold mb-4">{tittle}</h2>
           <form
             className="flex w-full items-center justify-center flex-col gap-4"
-            onSubmit={handleSubmit}
+            onSubmit={(e) => {
+              e.preventDefault();
+              onSubmit(formData);
+            }}
           >
             {/* Location Section */}
             <div className="flex flex-col bg-gray-100 p-5 w-full gap-4">
@@ -248,8 +254,11 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                 />
               </div>
               <button className="bg-button text-white p-2 rounded-full">
-                Add Member
+                {loading ? "Adding..." : "Add Team Member"}
               </button>
+              {errorMessage && (
+                <p className="text-red-500 mt-4">{errorMessage}</p>
+              )}
             </div>
           </form>
         </div>

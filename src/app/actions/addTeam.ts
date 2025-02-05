@@ -1,11 +1,21 @@
+"use server";
+
+export interface TeamData {
+  fullName: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  userName: string;
+}
+
 export async function addTeamAction(
-  prevState: { error?: string; success?: boolean } | null,
-  formData: FormData
+  formData: TeamData,
+  prevState: { error?: string; success?: boolean } | null
 ) {
-  const fullName = formData.get("fullName") as string;
-  const password = formData.get("password") as string;
-  const phoneNumber = formData.get("phoneNumber") as string;
-  const userName = formData.get("userName") as string;
+  const fullName = formData.fullName;
+  const password = formData.password;
+  const phoneNumber = formData.phoneNumber;
+  const userName = formData.userName;
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/addstaff`,

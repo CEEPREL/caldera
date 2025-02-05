@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import products from "@/data/data.json";
 import TeamTable from "@/components/admin/TeamTable";
 import SlideDrawer from "@/components/admin/AddTeamSlider";
+import { addTeamAction, TeamData } from "@/app/actions/addTeam";
 
 function Team() {
   const states = [
@@ -25,25 +26,73 @@ function Team() {
   const validPeriod = selectedPeriod || "year";
   const allProduct = products.map((p) => p.name);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    state: "",
+    location: "",
+    manager: "",
+    phoneNumber: "",
+    cadre: "",
+    userName: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (formData: TeamData) => {
+    setLoading(true);
+    setErrorMessage(null);
+    const result = await addTeamAction(
+      {
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        phoneNumber: formData.phoneNumber,
+        userName: formData.userName,
+      },
+      null
+    );
+    if (result.error) {
+      setErrorMessage(result.error);
+    } else {
+      setErrorMessage(null);
+    }
+    setLoading(false);
+    setFormData({
+      fullName: "",
+      email: "",
+      state: "",
+      location: "",
+      manager: "",
+      phoneNumber: "",
+      cadre: "",
+      userName: "",
+      password: "",
+      confirmPassword: "",
+    });
+  };
 
   return (
     <div className="w-full h-[88%] bg-white overflow-y-scroll rounded-3xl ">
       <div className="absolute top-0 right-0">
         {/* add team component */}
         <SlideDrawer
-          fullName=""
-          phoneNumber=""
-          role=""
-          email=""
-          state=""
-          location=""
-          manager=""
-          cadre=""
-          userName=""
-          password=""
-          confirmPassword=""
+          formData={formData}
           isOpen={isDrawerOpen}
           onClose={() => setIsDrawerOpen(false)}
+          onChange={(e) =>
+            setFormData({ ...formData, [e.target.name]: e.target.value })
+          }
+          onSubmit={handleSubmit}
+          loading={loading}
+          errorMessage={errorMessage}
+          role={""}
         />
       </div>
       <div className="w-full p-5 relative text-black  bg-white">
