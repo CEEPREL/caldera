@@ -31,6 +31,7 @@ interface SlideDrawerProps {
   onSubmit: (formData: FormData) => void;
   loading: boolean;
   errorMessage: string | null;
+  options?: any[];
 }
 
 const states = [
@@ -53,62 +54,55 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
   errorMessage,
   onChange,
   onSubmit,
+  options = states,
 }) => {
-  // Form State
-  const [formdata, setFormdata] = useState({
-    fullName: formData.fullName,
-    email: formData.email,
-    state: formData.state,
-    location: formData.location,
-    manager: formData.manager,
-    phoneNumber: formData.phoneNumber,
-    cadre: formData.cadre,
-    userName: formData.userName,
-    password: formData.password,
-    confirmPassword: formData.confirmPassword,
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormdata({ ...formdata, [e.target.name]: e.target.value });
-  };
-
-  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   console.log("Form Data Submitted:", formData);
-
-  //   setFormdata({
-  //     fullName: "",
-  //     email: "",
-  //     cadre: "",
-  //     location: "",
-  //     manager: "",
-  //     phoneNumber: "",
-  //     state: "",
-  //     userName: "",
-  //     password: "",
-  //     confirmPassword: "",
-  //   });
-
-  //   // Auto Close Drawer
-  //   onClose();
-  // };
+  const [hasOpened, setHasOpened] = useState(false);
   useEffect(() => {
-    if (isOpen) {
-      setFormdata({
-        fullName: "",
-        email: "",
-        cadre: "",
-        location: "",
-        manager: "",
-        phoneNumber: "",
-        state: "",
-        userName: "",
-        password: "",
-        confirmPassword: "",
-      });
-    }
-  }, [isOpen]);
+    if (isOpen && !hasOpened) {
+      // Call onChange to reset the form data
+      onChange({
+        target: {
+          name: "fullName",
+          value: "",
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
 
+      onChange({
+        target: {
+          name: "email",
+          value: "",
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
+
+      onChange({
+        target: {
+          name: "password",
+          value: "",
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
+
+      onChange({
+        target: {
+          name: "phoneNumber",
+          value: "",
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
+
+      onChange({
+        target: {
+          name: "userName",
+          value: "",
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
+      onChange({
+        target: {
+          name: "confirmPassword",
+          value: "",
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
+    }
+    setHasOpened(true);
+  }, [isOpen, onChange, hasOpened]);
   return (
     <>
       {/* Overlay (blocks interaction with background) */}
@@ -118,7 +112,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
           isOpen ? "opacity-100 visible" : "opacity-0 invisible",
           overlayColor
         )}
-        onClick={onClose} // Clicking overlay closes drawer
+        onClick={onClose}
       />
 
       <div
@@ -148,12 +142,22 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   showSearch
                   className="gap-0"
                   className2="bg-white border-none w-full h-9 flex justify-between items-center rounded-md"
-                  label={formData.state || "Select a State"}
-                  options={states}
-                  placeholder="Select a State"
-                  onSelect={(state) =>
-                    setFormdata((prev) => ({ ...prev, state: state }))
+                  label={
+                    typeof formData.state === "string"
+                      ? formData.state
+                      : "Select a State"
                   }
+                  options={options}
+                  placeholder="Select a State"
+                  onSelect={(selectedState) => {
+                    // Directly call onChange from the parent to update the 'state' field
+                    onChange({
+                      target: {
+                        name: "state", // Field name to update
+                        value: selectedState, // Value from the selected state
+                      },
+                    } as React.ChangeEvent<HTMLInputElement>);
+                  }}
                   getLabel={(state) => state.name}
                   getSubLabel={() => ""}
                   id="store-state"
@@ -167,7 +171,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   id="location"
                   name="location"
                   value={formData.location}
-                  onChange={handleChange}
+                  onChange={onChange}
                 />
               </div>
             </div>
@@ -181,20 +185,20 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   className="h-8 p-1 rounded-md"
                   type="text"
                   id="name"
-                  name="name"
+                  name="fullName"
                   value={formData.fullName}
-                  onChange={handleChange}
+                  onChange={onChange}
                 />
               </div>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 ">
                 <label htmlFor="phone">Phone Number</label>
                 <input
-                  className="h-8 p-1 rounded-md"
-                  type="text"
+                  className="h-8 p-1 rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  type="number"
                   id="phone"
-                  name="phone"
+                  name="phoneNumber"
                   value={formData.phoneNumber}
-                  onChange={handleChange}
+                  onChange={onChange}
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -207,7 +211,9 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   options={cadres}
                   placeholder="Select Cadre"
                   onSelect={(selected) =>
-                    setFormdata({ ...formdata, cadre: selected })
+                    onChange({
+                      target: { name: "cadre", value: selected },
+                    } as React.ChangeEvent<HTMLInputElement>)
                   }
                   className3="p-2 rounded-2xl bg-green-100"
                   getLabel={(cadre) => cadre}
@@ -228,7 +234,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   id="username"
                   value={formData.userName}
                   name="userName"
-                  onChange={handleChange}
+                  onChange={onChange}
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -239,7 +245,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   id="password"
                   name="password"
                   value={formData.password}
-                  onChange={handleChange}
+                  onChange={onChange}
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -250,15 +256,15 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   id="confirmPassword"
                   name="confirmPassword"
                   value={formData.confirmPassword}
-                  onChange={handleChange}
+                  onChange={onChange}
                 />
               </div>
               <button className="bg-button text-white p-2 rounded-full">
                 {loading ? "Adding..." : "Add Team Member"}
               </button>
-              {errorMessage && (
+              {/* {errorMessage && (
                 <p className="text-red-500 mt-4">{errorMessage}</p>
-              )}
+              )} */}
             </div>
           </form>
         </div>

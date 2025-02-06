@@ -9,10 +9,10 @@ import { addTeamAction, TeamData } from "@/app/actions/addTeam";
 
 function Team() {
   const states = [
-    { code: "OG", name: "Ogun State" },
-    { code: "KW", name: "Kwara State" },
-    { code: "LAG", name: "Lagos State" },
-    { code: "ABJ", name: "Abuja" },
+    { code: "OG", name: "Ogun State1" },
+    { code: "KW", name: "Kwara State1" },
+    { code: "LAG", name: "Lagos State1" },
+    { code: "ABJ", name: "Abuja1" },
   ];
 
   const period = ["year", "month", "week", "day"];
@@ -48,34 +48,51 @@ function Team() {
   const handleSubmit = async (formData: TeamData) => {
     setLoading(true);
     setErrorMessage(null);
-    const result = await addTeamAction(
-      {
-        fullName: formData.fullName,
-        email: formData.email,
-        password: formData.password,
-        phoneNumber: formData.phoneNumber,
-        userName: formData.userName,
-      },
-      null
-    );
-    if (result.error) {
-      setErrorMessage(result.error);
-    } else {
-      setErrorMessage(null);
+
+    try {
+      // Passing formData to addTeamAction, structuring the data to match API expectations
+      const result = await addTeamAction(
+        {
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+          phoneNumber: formData.phoneNumber,
+          userName: formData.userName,
+        },
+        null
+      );
+
+      console.log(result);
+      // Handle result after submission
+      if (result.error) {
+        setErrorMessage(result.error);
+      } else if (result.success) {
+        // Clear the error message and reset loading state
+        setErrorMessage(null);
+        setLoading(false);
+        setFormData({
+          fullName: "",
+          email: "",
+          state: "",
+          location: "",
+          manager: "",
+          phoneNumber: "",
+          cadre: "",
+          userName: "",
+          password: "",
+          confirmPassword: "",
+        });
+      } else {
+        setErrorMessage("An error occurred while adding the team member.");
+        setLoading(false);
+      }
+    } catch (error) {
+      // Handle any errors that occur during the request
+      setErrorMessage("An error occurred while adding the team member.");
+      setLoading(false);
+      console.error(error);
+      console.log(formData);
     }
-    setLoading(false);
-    setFormData({
-      fullName: "",
-      email: "",
-      state: "",
-      location: "",
-      manager: "",
-      phoneNumber: "",
-      cadre: "",
-      userName: "",
-      password: "",
-      confirmPassword: "",
-    });
   };
 
   return (
@@ -86,13 +103,12 @@ function Team() {
           formData={formData}
           isOpen={isDrawerOpen}
           onClose={() => setIsDrawerOpen(false)}
-          onChange={(e) =>
-            setFormData({ ...formData, [e.target.name]: e.target.value })
-          }
+          onChange={(e) => handleChange(e)}
           onSubmit={handleSubmit}
           loading={loading}
           errorMessage={errorMessage}
           role={""}
+          options={states}
         />
       </div>
       <div className="w-full p-5 relative text-black  bg-white">

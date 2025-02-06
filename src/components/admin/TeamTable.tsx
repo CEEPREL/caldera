@@ -157,7 +157,7 @@ export default function TeamTable() {
         <tbody>
           {data.map((product, index) =>
             product.name ? (
-              <tr key={product.id} className="relative border-b">
+              <tr key={product.id} className=" border-b">
                 <td className=" justify-start items-center h-12 text-gray-400 text-xs flex w-14 p-2">
                   <span className="text-black pr-1">
                     {" "}

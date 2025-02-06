@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 export interface TeamData {
   fullName: string;
   email: string;
@@ -16,12 +17,24 @@ export async function addTeamAction(
   const password = formData.password;
   const phoneNumber = formData.phoneNumber;
   const userName = formData.userName;
+  const email = formData.email;
+  const token = (await cookies()).get("token")?.value;
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/addstaff`,
       {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         method: "POST",
-        body: JSON.stringify({ fullName, password, phoneNumber, userName }),
+        body: JSON.stringify({
+          fullName,
+          password,
+          phoneNumber,
+          userName,
+          email,
+        }),
       }
     );
     const data = await response.json();

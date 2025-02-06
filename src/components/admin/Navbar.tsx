@@ -2,6 +2,9 @@ import Image from "next/image";
 import React from "react";
 
 function Navbar() {
+  const handleReload = () => {
+    window.location.reload();
+  };
   return (
     <div className="py-5 gap-4 text-black bg-primary  flex items-center  flex-row w-full">
       {/* the search section  */}
@@ -21,7 +24,10 @@ function Navbar() {
         </button>
       </div>
       {/* reload */}
-      <button className="bg-white w-10 h-10 flex items-center justify-center rounded-full">
+      <button
+        onClick={handleReload}
+        className="bg-white w-10 h-10 flex items-center justify-center rounded-full"
+      >
         <Image
           //   className=" top-1 left-1"
           width={15}

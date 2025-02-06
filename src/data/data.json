@@ -1,83 +1,475 @@
 [
   {
-    "name": "Screen",
-    "sales": {
-      "year": [
-        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 2400 },
-        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 2210 },
-        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2290 },
-        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 2000 },
-        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 2181 },
-        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 2500 },
-        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 2100 }
-      ],
-      "month": [
-        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 2780 },
-        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 2210 },
-        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2246 },
-        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 3800 },
-        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 2181 },
-        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 3490 },
-        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 2100 }
-      ],
-      "week": [
-        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 2400 },
-        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 9800 },
-        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2290 },
-        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 2000 },
-        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 2181 },
-        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 2500 },
-        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 4800 }
-      ],
-      "day": [
-        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 400 },
-        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 2210 },
-        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2290 },
-        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 2000 },
-        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 4800 },
-        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 2500 },
-        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 2100 }
-      ]
-    }
+    "code": "OG",
+    "name": "Ogun State",
+    "stores": [
+      {
+        "name": "Ogun1",
+        "sales": {
+          "year": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 2400 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 2210 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2290 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 2000 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 2181 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 2500 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 2100 }
+          ],
+          "month": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 2780 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 2210 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2246 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 3800 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 2181 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 3490 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 2100 }
+          ],
+          "week": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 2400 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 9800 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2290 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 2000 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 2181 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 2500 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 4800 }
+          ],
+          "day": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 400 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 2210 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2290 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 2000 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 4800 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 2500 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 2100 }
+          ]
+        }
+      },
+      {
+        "name": "Ogun2",
+        "sales": {
+          "year": [
+            { "name": "Product A", "uv": 4500, "pv": 2600, "amt": 2500 },
+            { "name": "Product B", "uv": 3100, "pv": 1500, "amt": 2300 },
+            { "name": "Product C", "uv": 2200, "pv": 10000, "amt": 2400 },
+            { "name": "Product D", "uv": 2900, "pv": 4000, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2250 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2200 }
+          ],
+          "month": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 2800 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 3300 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2250 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2200 }
+          ],
+          "week": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 2400 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2600 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2300 }
+          ],
+          "day": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 400 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2600 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2100 }
+          ]
+        }
+      }
+    ]
   },
   {
-    "name": "Battery",
-    "sales": {
-      "year": [
-        { "name": "2018", "uv": 2802, "pv": 4222, "amt": 176 },
-        { "name": "2019", "uv": 1653, "pv": 4057, "amt": 2246 },
-        { "name": "2020", "uv": 3182, "pv": 6771, "amt": 2091 },
-        { "name": "2021", "uv": 3166, "pv": 2891, "amt": 1556 },
-        { "name": "2022", "uv": 4671, "pv": 3677, "amt": 1975 },
-        { "name": "2023", "uv": 1975, "pv": 8361, "amt": 161 }
-      ],
-      "month": [
-        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 2400 },
-        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 220 },
-        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 290 },
-        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 2000 },
-        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 2181 },
-        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 2500 },
-        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 2100 }
-      ],
-      "week": [
-        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 2400 },
-        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 2210 },
-        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2290 },
-        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 2000 },
-        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 2181 },
-        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 200 },
-        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 210 }
-      ],
-      "day": [
-        { "name": "Page A", "uv": 4000, "pv": 2400, "amt": 2400 },
-        { "name": "Page B", "uv": 3000, "pv": 1398, "amt": 2210 },
-        { "name": "Page C", "uv": 2000, "pv": 9800, "amt": 2290 },
-        { "name": "Page D", "uv": 2780, "pv": 3908, "amt": 2000 },
-        { "name": "Page E", "uv": 1890, "pv": 4800, "amt": 2181 },
-        { "name": "Page F", "uv": 2390, "pv": 3800, "amt": 2500 },
-        { "name": "Page G", "uv": 3490, "pv": 4300, "amt": 0 }
-      ]
-    }
+    "code": "KW",
+    "name": "Kwara State",
+    "stores": [
+      {
+        "name": "Kwara1",
+        "sales": {
+          "year": [
+            { "name": "Product A", "uv": 3500, "pv": 2200, "amt": 2300 },
+            { "name": "Product B", "uv": 2800, "pv": 1700, "amt": 2200 },
+            { "name": "Product C", "uv": 1900, "pv": 9500, "amt": 2200 },
+            { "name": "Product D", "uv": 2700, "pv": 3800, "amt": 2100 },
+            { "name": "Product E", "uv": 1800, "pv": 4600, "amt": 2150 },
+            { "name": "Product F", "uv": 2200, "pv": 3700, "amt": 2600 },
+            { "name": "Product G", "uv": 3300, "pv": 4200, "amt": 2000 }
+          ],
+          "month": [
+            { "name": "Product A", "uv": 3500, "pv": 2200, "amt": 2780 },
+            { "name": "Product B", "uv": 2800, "pv": 1700, "amt": 2220 },
+            { "name": "Product C", "uv": 1900, "pv": 9500, "amt": 2400 },
+            { "name": "Product D", "uv": 2700, "pv": 3800, "amt": 3200 },
+            { "name": "Product E", "uv": 1800, "pv": 4600, "amt": 2150 },
+            { "name": "Product F", "uv": 2200, "pv": 3700, "amt": 2400 },
+            { "name": "Product G", "uv": 3300, "pv": 4200, "amt": 2000 }
+          ],
+          "week": [
+            { "name": "Product A", "uv": 3500, "pv": 2200, "amt": 2300 },
+            { "name": "Product B", "uv": 2800, "pv": 1700, "amt": 2200 },
+            { "name": "Product C", "uv": 1900, "pv": 9500, "amt": 2400 },
+            { "name": "Product D", "uv": 2700, "pv": 3800, "amt": 2200 },
+            { "name": "Product E", "uv": 1800, "pv": 4600, "amt": 2150 },
+            { "name": "Product F", "uv": 2200, "pv": 3700, "amt": 2500 },
+            { "name": "Product G", "uv": 3300, "pv": 4200, "amt": 2400 }
+          ],
+          "day": [
+            { "name": "Product A", "uv": 3500, "pv": 2200, "amt": 2400 },
+            { "name": "Product B", "uv": 2800, "pv": 1700, "amt": 2210 },
+            { "name": "Product C", "uv": 1900, "pv": 9500, "amt": 2290 },
+            { "name": "Product D", "uv": 2700, "pv": 3800, "amt": 2100 },
+            { "name": "Product E", "uv": 1800, "pv": 4600, "amt": 2300 },
+            { "name": "Product F", "uv": 2200, "pv": 3700, "amt": 2400 },
+            { "name": "Product G", "uv": 3300, "pv": 4200, "amt": 2000 }
+          ]
+        }
+      },
+      {
+        "name": "Kwara2",
+        "sales": {
+          "year": [
+            { "name": "Product A", "uv": 3500, "pv": 2200, "amt": 2300 },
+            { "name": "Product B", "uv": 2800, "pv": 1700, "amt": 2200 },
+            { "name": "Product C", "uv": 1900, "pv": 9500, "amt": 2200 },
+            { "name": "Product D", "uv": 2700, "pv": 3800, "amt": 2100 },
+            { "name": "Product E", "uv": 1800, "pv": 4600, "amt": 2150 },
+            { "name": "Product F", "uv": 2200, "pv": 3700, "amt": 2600 },
+            { "name": "Product G", "uv": 3300, "pv": 4200, "amt": 2000 }
+          ],
+          "month": [
+            { "name": "Product A", "uv": 3500, "pv": 2200, "amt": 2780 },
+            { "name": "Product B", "uv": 2800, "pv": 1700, "amt": 2220 },
+            { "name": "Product C", "uv": 1900, "pv": 9500, "amt": 2400 },
+            { "name": "Product D", "uv": 2700, "pv": 3800, "amt": 3200 },
+            { "name": "Product E", "uv": 1800, "pv": 4600, "amt": 2150 },
+            { "name": "Product F", "uv": 2200, "pv": 3700, "amt": 2400 },
+            { "name": "Product G", "uv": 3300, "pv": 4200, "amt": 2000 }
+          ],
+          "week": [
+            { "name": "Product A", "uv": 3500, "pv": 2200, "amt": 2300 },
+            { "name": "Product B", "uv": 2800, "pv": 1700, "amt": 2200 },
+            { "name": "Product C", "uv": 1900, "pv": 9500, "amt": 2400 },
+            { "name": "Product D", "uv": 2700, "pv": 3800, "amt": 2200 },
+            { "name": "Product E", "uv": 1800, "pv": 4600, "amt": 2150 },
+            { "name": "Product F", "uv": 2200, "pv": 3700, "amt": 2500 },
+            { "name": "Product G", "uv": 3300, "pv": 4200, "amt": 2400 }
+          ],
+          "day": [
+            { "name": "Product A", "uv": 3500, "pv": 2200, "amt": 2400 },
+            { "name": "Product B", "uv": 2800, "pv": 1700, "amt": 2210 },
+            { "name": "Product C", "uv": 1900, "pv": 9500, "amt": 2290 },
+            { "name": "Product D", "uv": 2700, "pv": 3800, "amt": 2100 },
+            { "name": "Product E", "uv": 1800, "pv": 4600, "amt": 2300 },
+            { "name": "Product F", "uv": 2200, "pv": 3700, "amt": 2400 },
+            { "name": "Product G", "uv": 3300, "pv": 4200, "amt": 2000 }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "code": "LAG",
+    "name": "Lagos State",
+    "stores": [
+      {
+        "name": "Lagos1",
+        "sales": {
+          "year": [
+            { "name": "2018", "uv": 2902, "pv": 4002, "amt": 1700 },
+            { "name": "2019", "uv": 1502, "pv": 3302, "amt": 2021 },
+            { "name": "2020", "uv": 3121, "pv": 5000, "amt": 2500 },
+            { "name": "2021", "uv": 3160, "pv": 3800, "amt": 2000 },
+            { "name": "2022", "uv": 4500, "pv": 3200, "amt": 1900 },
+            { "name": "2023", "uv": 1800, "pv": 4400, "amt": 1750 }
+          ],
+          "month": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 2400 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 2210 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2290 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 2000 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 2181 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 2500 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 2100 }
+          ],
+          "week": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 2400 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 2210 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2290 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 2000 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 2181 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 2000 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 2100 }
+          ],
+          "day": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 2400 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 2210 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2290 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 2000 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 2181 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 2500 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 0 }
+          ]
+        }
+      },
+      {
+        "name": "Lagos2",
+        "sales": {
+          "year": [
+            { "name": "2018", "uv": 2902, "pv": 4002, "amt": 1700 },
+            { "name": "2019", "uv": 1502, "pv": 3302, "amt": 2021 },
+            { "name": "2020", "uv": 3121, "pv": 5000, "amt": 200 },
+            { "name": "2021", "uv": 3160, "pv": 3800, "amt": 2000 },
+            { "name": "2022", "uv": 4500, "pv": 3200, "amt": 1900 },
+            { "name": "2023", "uv": 1800, "pv": 4400, "amt": 1750 }
+          ],
+          "month": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 2400 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 2210 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 220 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 2000 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 2181 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 2500 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 2100 }
+          ],
+          "week": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 200 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 2210 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2290 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 200 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 2181 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 2000 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 2100 }
+          ],
+          "day": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 2400 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 3210 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2290 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 2000 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 211 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 2500 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 0 }
+          ]
+        }
+      },
+      {
+        "name": "Lagos3",
+        "sales": {
+          "year": [
+            { "name": "Product A", "uv": 4500, "pv": 2600, "amt": 2500 },
+            { "name": "Product B", "uv": 3100, "pv": 1500, "amt": 2300 },
+            { "name": "Product C", "uv": 2200, "pv": 10000, "amt": 2400 },
+            { "name": "Product D", "uv": 2900, "pv": 4000, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2250 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2200 }
+          ],
+          "month": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 2800 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 3300 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2250 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2200 }
+          ],
+          "week": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 2400 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2600 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2300 }
+          ],
+          "day": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 400 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2600 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2100 }
+          ]
+        }
+      },
+      {
+        "name": "Lagos4",
+        "sales": {
+          "year": [
+            { "name": "Product A", "uv": 4500, "pv": 2600, "amt": 2500 },
+            { "name": "Product B", "uv": 3100, "pv": 1500, "amt": 2300 },
+            { "name": "Product C", "uv": 2200, "pv": 10000, "amt": 2400 },
+            { "name": "Product D", "uv": 2900, "pv": 4000, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2250 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2200 }
+          ],
+          "month": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 2800 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 3300 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2250 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2200 }
+          ],
+          "week": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 2400 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2600 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2300 }
+          ],
+          "day": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 400 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2600 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2100 }
+          ]
+        }
+      },
+      {
+        "name": "Lagos5",
+        "sales": {
+          "year": [
+            { "name": "Product A", "uv": 4500, "pv": 2600, "amt": 2500 },
+            { "name": "Product B", "uv": 3100, "pv": 1500, "amt": 2300 },
+            { "name": "Product C", "uv": 2200, "pv": 10000, "amt": 2400 },
+            { "name": "Product D", "uv": 2900, "pv": 4000, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2250 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2200 }
+          ],
+          "month": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 2800 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 3300 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2250 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2200 }
+          ],
+          "week": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 2400 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2600 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2300 }
+          ],
+          "day": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 400 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2600 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2100 }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "code": "ABJ",
+    "name": "Abuja",
+    "stores": [
+      {
+        "name": "Abuja1",
+        "sales": {
+          "year": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 2400 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 2210 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2290 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 2000 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 2181 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 2500 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 2100 }
+          ],
+          "month": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 2780 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 2210 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2246 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 3800 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 2181 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 3490 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 2100 }
+          ],
+          "week": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 2400 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 9800 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2290 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 2000 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 2181 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 2500 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 4800 }
+          ],
+          "day": [
+            { "name": "Product A", "uv": 4000, "pv": 2400, "amt": 400 },
+            { "name": "Product B", "uv": 3000, "pv": 1398, "amt": 2210 },
+            { "name": "Product C", "uv": 2000, "pv": 9800, "amt": 2290 },
+            { "name": "Product D", "uv": 2780, "pv": 3908, "amt": 2000 },
+            { "name": "Product E", "uv": 1890, "pv": 4800, "amt": 4800 },
+            { "name": "Product F", "uv": 2390, "pv": 3800, "amt": 2500 },
+            { "name": "Product G", "uv": 3490, "pv": 4300, "amt": 2100 }
+          ]
+        }
+      },
+      {
+        "name": "Abuja2",
+        "sales": {
+          "year": [
+            { "name": "Product A", "uv": 4500, "pv": 2600, "amt": 2500 },
+            { "name": "Product B", "uv": 3100, "pv": 1500, "amt": 2300 },
+            { "name": "Product C", "uv": 2200, "pv": 10000, "amt": 2400 },
+            { "name": "Product D", "uv": 2900, "pv": 4000, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2250 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2200 }
+          ],
+          "month": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 2800 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 3300 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2250 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2200 }
+          ],
+          "week": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 2400 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2600 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2300 }
+          ],
+          "day": [
+            { "name": "Product A", "uv": 4100, "pv": 2500, "amt": 400 },
+            { "name": "Product B", "uv": 3200, "pv": 1500, "amt": 2320 },
+            { "name": "Product C", "uv": 2200, "pv": 10100, "amt": 2300 },
+            { "name": "Product D", "uv": 2900, "pv": 4100, "amt": 2200 },
+            { "name": "Product E", "uv": 2000, "pv": 4900, "amt": 2600 },
+            { "name": "Product F", "uv": 2500, "pv": 3900, "amt": 2700 },
+            { "name": "Product G", "uv": 3600, "pv": 4400, "amt": 2100 }
+          ]
+        }
+      }
+    ]
   }
 ]

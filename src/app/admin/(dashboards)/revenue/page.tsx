@@ -5,30 +5,65 @@ import Image from "next/image";
 import React, { useState } from "react";
 import products from "@/data/data.json";
 
+type PeriodType = "year" | "month" | "week" | "day";
+
 function Revenue() {
-  const states = [
-    { code: "OG", name: "Ogun State" },
-    { code: "KW", name: "Kwara State" },
-    { code: "LAG", name: "Lagos State" },
-    { code: "ABJ", name: "Abuja" },
-  ];
+  // const states = [
+  //   { code: "OG", name: "Ogun State" },
+  //   { code: "KW", name: "Kwara State" },
+  //   { code: "LAG", name: "Lagos State" },
+  //   { code: "ABJ", name: "Abuja" },
+  // ];
 
   const period = ["year", "month", "week", "day"];
+  const productList = [
+    "Screen",
+    "Downboard",
+    "Battery",
+    "Back Glass",
+    "Touch Pad",
+  ];
 
   const [selectedState, setSelectedState] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState(products[0].name);
-  const [selectedPeriod, setselectedPeriod] = useState<
-    "year" | "month" | "week" | "day"
-  >("year");
+  const [selectedProduct, setSelectedProduct] = useState("Screen");
+  const [stateIndex, setStateIndex] = useState(0);
+  const [selectedStore, setSelectedStore] = useState("");
+  const [selectedPeriod, setselectedPeriod] = useState<PeriodType>("year");
+  const [storeIndex, setStoreIndex] = useState(0);
   const selectedProductData = products.find((p) => p.name === selectedProduct);
-  const validPeriod = selectedPeriod || "year";
-  const allProduct = products.map((p) => p.name);
+  const allProduct = products.map((p) => p);
+  const allStoreNamesForFirstProduct = allProduct[0].stores.flatMap(
+    (store) => store.name
+  );
+  const states = allProduct.map((p) => p.name);
+  const storeObj = allProduct.flatMap((p) => p.stores.map((s) => s.name));
+  const stores = allProduct[stateIndex].stores;
+  const periodData = stores[storeIndex].sales[selectedPeriod];
+
+  const storeData = selectedProductData?.stores.find(
+    (store) => store.name === selectedStore
+  );
+
+  const handleStateChange = (state: string) => {
+    setSelectedState(state);
+    const stateIndex = states.findIndex((s) => s === state);
+    setStateIndex(stateIndex);
+    const stores = allProduct[stateIndex].stores;
+    setSelectedStore(stores[0].name);
+  };
+
+  const handleStoreChange = (store: string) => {
+    setSelectedStore(store);
+    const storeIndex = stores.findIndex((s) => s.name === store);
+    setStoreIndex(storeIndex);
+  };
+  const data = storeData?.sales[selectedPeriod] || [];
   const renderProductContent = () => {
     switch (selectedProduct) {
       case "Screen":
         return (
           <div className="w-full  h-[200px]">
-            <SalesGraph data={selectedProductData?.sales[validPeriod] || []} />
+            <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
           </div>
         );
       case "Downboard":
@@ -36,7 +71,7 @@ function Revenue() {
       case "Battery":
         return (
           <div className="w-full h-[200px]">
-            <SalesGraph data={selectedProductData?.sales[validPeriod] || []} />;
+            <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
           </div>
         );
       case "Back Glass":
@@ -77,38 +112,38 @@ function Revenue() {
               <Dropdown
                 showSearch
                 className="bg-white rounded-full w-1/6"
-                label={states[0].name}
+                label={states[0]}
                 options={states}
-                placeholder="Select a State"
-                onSelect={(state) => setSelectedState(state)}
-                getLabel={(state) => state.name}
+                placeholder={states[0]}
+                onSelect={(state) => handleStateChange(state)}
+                getLabel={(product) => product}
                 getSubLabel={(products) => ""}
               />
               <Dropdown
                 showSearch
                 className="bg-white rounded-full w-1/6"
                 label="Select Product"
-                options={allProduct}
-                placeholder="Select a Product"
-                onSelect={setSelectedProduct}
-                getLabel={(product) => product}
+                options={stores.map((store) => store.name)}
+                placeholder={stores[0].name}
+                onSelect={handleStoreChange}
+                getLabel={(store) => store}
               />
             </div>
 
             {/* Product Selection */}
             <div className="flex pt-5 flex-col gap-4">
               <div className="flex gap-6">
-                {products.map((p, index) => (
+                {productList.map((p, index) => (
                   <button
                     key={index}
-                    onClick={() => setSelectedProduct(p.name)}
+                    onClick={() => setSelectedProduct(p)}
                     className={`${
-                      selectedProduct === p.name
+                      selectedProduct === p
                         ? "border-b-4 border-blue-400 font-semibold"
                         : ""
                     } p-2`}
                   >
-                    {p.name}
+                    {p}
                   </button>
                 ))}
               </div>
@@ -126,11 +161,7 @@ function Revenue() {
                     label="Select Product"
                     options={period}
                     placeholder={period[0]}
-                    onSelect={(vlaue) =>
-                      setselectedPeriod(
-                        vlaue as "year" | "month" | "week" | "day"
-                      )
-                    }
+                    onSelect={(value) => setselectedPeriod(value as PeriodType)}
                     // getLabel={(period) => period}
                   />
                 </div>
