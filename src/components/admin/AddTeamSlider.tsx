@@ -34,13 +34,13 @@ interface SlideDrawerProps {
   options?: any[];
 }
 
-const states = [
+export const states = [
   { code: "OG", name: "Ogun State", cadre: "Cadre 1" },
   { code: "KW", name: "Kwara State", cadre: "Cadre 2" },
   { code: "LAG", name: "Lagos State", cadre: "Cadre 1" },
   { code: "ABJ", name: "Abuja", cadre: "Cadre 2" },
 ];
-const cadres = ["Cadre 1", "Cadre 2"];
+export const cadres = ["Cadre 1", "Cadre 2"];
 
 const SlideDrawer: React.FC<SlideDrawerProps> = ({
   isOpen,

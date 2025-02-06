@@ -2,7 +2,8 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import TeamProfileSlider from "./TeamPeofileSlider";
 import AddTeamSlider from "./AddTeamSlider";
-
+import { addTeamAction, TeamData } from "@/app/actions/addTeam";
+import { states } from "./AddTeamSlider";
 interface Product {
   id: number;
   name: string;
@@ -67,6 +68,20 @@ export default function TeamTable() {
   const [menuItem, setMenuItem] = useState(menuItems);
   const [openProfile, setOpenProfile] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    state: "",
+    location: "",
+    manager: "",
+    phoneNumber: "",
+    cadre: "",
+    userName: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [activeStatus, setActiveStatus] = useState<string>("Active");
   const handleAddRow = () => {
     setExtraRows(extraRows + 1);
@@ -139,6 +154,32 @@ export default function TeamTable() {
   const handleDeleteRow = (id: number) => {
     setData(data.filter((product) => product.id !== id));
   };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+  const handleSubmit = async (formData: TeamData) => {
+    setLoading(true);
+    setErrorMessage(null);
+
+    try {
+      // Passing formData to addTeamAction, structuring the data to match API expectations
+      const result = await addTeamAction(
+        {
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+          phoneNumber: formData.phoneNumber,
+          userName: formData.userName,
+        },
+        null
+      );
+
+      console.log(result);
+    } catch (error) {
+      console.error("Error adding team member:", error);
+    }
+  };
 
   return (
     <div className="">
@@ -157,7 +198,7 @@ export default function TeamTable() {
         <tbody>
           {data.map((product, index) =>
             product.name ? (
-              <tr key={product.id} className=" border-b">
+              <tr key={product.id} className=" relative border-b">
                 <td className=" justify-start items-center h-12 text-gray-400 text-xs flex w-14 p-2">
                   <span className="text-black pr-1">
                     {" "}
@@ -166,7 +207,7 @@ export default function TeamTable() {
 
                   {index + 1}
                 </td>
-                <div
+                <td
                   className={`absolute top-[8px] w-[75%] left-0 ${
                     product.status === "Active"
                       ? "opacity-0 "
@@ -218,17 +259,13 @@ export default function TeamTable() {
                           }}
                           id={product.id}
                           tittle="Edit Team Member"
-                          name={product.name}
-                          phone={product.phoneNo}
+                          formData={formData}
                           role={product.cadre}
-                          email="email.com"
-                          state="ogun"
-                          location="ogun"
-                          manager="shay"
-                          cadre="cadre 1"
-                          username="shay"
-                          password="password"
-                          confirmPassword="password"
+                          onChange={handleChange}
+                          onSubmit={handleSubmit}
+                          loading={loading}
+                          errorMessage={errorMessage}
+                          options={states}
                           // width="w-1/4"
                           // overlayColor="bg-black bg-opacity-50"
                           // drawerStyle="bg-white"
