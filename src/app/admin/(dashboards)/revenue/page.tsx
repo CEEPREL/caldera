@@ -38,11 +38,9 @@ function Revenue() {
   const states = allProduct.map((p) => p.name);
   const storeObj = allProduct.flatMap((p) => p.stores.map((s) => s.name));
   const stores = allProduct[stateIndex].stores;
-  const periodData = stores[storeIndex].sales[selectedPeriod];
+  // const periodData = stores[storeIndex].sales[selectedPeriod];
 
-  const storeData = selectedProductData?.stores.find(
-    (store) => store.name === selectedStore
-  );
+  const storeData = stores.find((store) => store.name === selectedStore);
 
   const handleStateChange = (state: string) => {
     setSelectedState(state);
@@ -56,28 +54,71 @@ function Revenue() {
     setSelectedStore(store);
     const storeIndex = stores.findIndex((s) => s.name === store);
     setStoreIndex(storeIndex);
+    const data = stores[storeIndex].sales[selectedPeriod] || [];
+    console.log(data);
   };
-  const data = storeData?.sales[selectedPeriod] || [];
+  const data = stores[storeIndex].sales[selectedPeriod] || [];
+  console.log(data);
+  const [toggle, setToggle] = useState(false);
+  const handleToggle = (p: string) => {
+    setToggle(!toggle);
+    setSelectedProduct(p);
+  };
+
   const renderProductContent = () => {
     switch (selectedProduct) {
       case "Screen":
         return (
           <div className="w-full  h-[200px]">
-            <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
+            <SalesGraph
+              data={data}
+              nameKeyX=""
+              nameKeyY={toggle && selectedProduct === "Screen" ? "pv" : "amt"}
+            />
           </div>
         );
       case "Downboard":
-        return <p className="text-gray-700">Downboard revenue details.</p>;
+        return (
+          <div className="w-full h-[200px]">
+            <SalesGraph
+              data={data}
+              nameKeyX=""
+              nameKeyY={
+                toggle && selectedProduct === "Downboard" ? "uv" : "amt"
+              }
+            />
+          </div>
+        );
       case "Battery":
         return (
           <div className="w-full h-[200px]">
-            <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
+            <SalesGraph
+              data={data}
+              nameKeyX=""
+              nameKeyY={toggle ? "pv" : "amt"}
+            />
           </div>
         );
       case "Back Glass":
-        return <p className="text-gray-700">Back Glass sales tracking.</p>;
+        return (
+          <div className="w-full h-[200px]">
+            <SalesGraph
+              data={data}
+              nameKeyX=""
+              nameKeyY={toggle ? "pv" : "amt"}
+            />
+          </div>
+        );
       case "Touch Pad":
-        return <p className="text-gray-700">Touch Pad revenue summary.</p>;
+        return (
+          <div className="w-full h-[200px]">
+            <SalesGraph
+              data={data}
+              nameKeyX=""
+              nameKeyY={toggle ? "pv" : "amt"}
+            />
+          </div>
+        );
       default:
         return (
           <p className="text-gray-500">Select a product to see details.</p>
@@ -136,7 +177,7 @@ function Revenue() {
                 {productList.map((p, index) => (
                   <button
                     key={index}
-                    onClick={() => setSelectedProduct(p)}
+                    onClick={() => handleToggle(p)}
                     className={`${
                       selectedProduct === p
                         ? "border-b-4 border-blue-400 font-semibold"
@@ -177,7 +218,20 @@ function Revenue() {
       ) : (
         <div className="border-t-8 border-gray-100">
           <div className="bg-white p-5">
-            <PurchasingReport />
+            <PurchasingReport
+              data={data}
+              toggle={toggle}
+              nameKeyY="amt"
+              nameKeyX=""
+              period={period}
+              products={productList}
+              selectedProduct={selectedProduct}
+              setSelectedProduct={(p) => handleToggle(p)}
+              selectedPeriod={selectedPeriod}
+              setselectedPeriod={(period) =>
+                setselectedPeriod(period as PeriodType)
+              }
+            />
           </div>
         </div>
       )}
@@ -191,24 +245,60 @@ export default Revenue;
   /* Purchase report*/
 }
 
-export function PurchasingReport() {
-  const states = [
-    { code: "OG", name: "Ogun State" },
-    { code: "KW", name: "Kwara State" },
-    { code: "LAG", name: "Lagos State" },
-    { code: "ABJ", name: "Abuja" },
+interface PurchasingReportProps {
+  data: any;
+  toggle: boolean;
+  nameKeyY: string;
+  nameKeyX: string;
+  // renderProductContent: React.ReactNode;
+  period: string[];
+  products: any[];
+  selectedProduct: string;
+  setSelectedProduct: (p: string) => void;
+  selectedPeriod: string;
+  setselectedPeriod: (period: string) => void;
+  // setselectedPeriod: (period: string) => void;
+}
+
+export function PurchasingReport({
+  data,
+  toggle,
+  nameKeyY,
+  nameKeyX,
+  // renderProductContent,
+  period,
+  products,
+  selectedPeriod,
+  setselectedPeriod,
+}: // selectedProduct,
+// setSelectedProduct,
+// setselectedPeriod,
+PurchasingReportProps) {
+  // const states = [
+  //   { code: "OG", name: "Ogun State" },
+  //   { code: "KW", name: "Kwara State" },
+  //   { code: "LAG", name: "Lagos State" },
+  //   { code: "ABJ", name: "Abuja" },
+  // ];
+
+  const productList = [
+    "Screen",
+    "Downboard",
+    "Battery",
+    "Back Glass",
+    "Touch Pad",
   ];
 
-  const period = ["year", "month", "week", "day"];
+  // const period = ["year", "month", "week", "day"];
 
   const [selectedState, setSelectedState] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(products[0].name);
-  const [selectedPeriod, setselectedPeriod] = useState<
-    "year" | "month" | "week" | "day"
-  >("year");
-  const selectedProductData = products.find((p) => p.name === selectedProduct);
-  const validPeriod = selectedPeriod || "year";
-  const allProduct = products.map((p) => p.name);
+  // const [selectedPeriod, setselectedPeriod] = useState<
+  //   "year" | "month" | "week" | "day"
+  // >("year");
+  // const selectedProductData = products.find((p) => p.name === selectedProduct);
+  // const validPeriod = selectedPeriod || "year";
+  // const allProduct = products.map((p) => p.name);
   const renderProductContent = () => {
     switch (selectedProduct) {
       case "Screen":
@@ -239,9 +329,9 @@ export function PurchasingReport() {
                     type="monotone"
                     fontSizeX={0}
                     fontSizeY={0}
-                    // nameKeyY="name"
-                    // nameKeyX="name"
-                    data={selectedProductData?.sales[validPeriod] || []}
+                    nameKeyX="name"
+                    nameKeyY={toggle ? "pv" : "amt"}
+                    data={data}
                   />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
@@ -283,9 +373,9 @@ export function PurchasingReport() {
                     type="monotone"
                     fontSizeX={0}
                     fontSizeY={0}
-                    // nameKeyY="name"
-                    // nameKeyX="name"
-                    data={selectedProductData?.sales[validPeriod] || []}
+                    nameKeyY={nameKeyY}
+                    nameKeyX={nameKeyX}
+                    data={data}
                   />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
@@ -305,14 +395,12 @@ export function PurchasingReport() {
           </div>
         );
       case "Downboard":
-        return <p className="text-gray-700">Downboard revenue details.</p>;
-      case "Battery":
         return (
           <div className="flex w-full flex-row">
             <div className="flex flex-col w-1/2">
               <h1 className="text-gray-400">MOST PURCHASED</h1>
-              <div className="flex  justify-between h-[100px] flex-row">
-                <div className="flex items-center justify-center flex-row w-1/2 h-full">
+              <div className="flex w-full justify-between h-[100px] flex-row">
+                <div className="flex items-center justify-center flex-row w-[30%] h-full">
                   <Image
                     className=" "
                     width={50}
@@ -327,10 +415,8 @@ export function PurchasingReport() {
                   </h1>
                 </div>
 
-                <div className="w-1/2 relative h-[100px]">
-                  <SalesGraph
-                    data={selectedProductData?.sales[validPeriod] || []}
-                  />
+                <div className="w-[70%] relative h-[100px]">
+                  <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
                       className=" "
@@ -350,7 +436,7 @@ export function PurchasingReport() {
             <div className="flex flex-col w-1/2">
               <h1 className="text-gray-400">MOST PURCHASED</h1>
               <div className="flex  justify-between h-[100px] flex-row">
-                <div className="flex items-center justify-center flex-row w-1/2 h-full">
+                <div className="flex items-center justify-center flex-row w-[30%] h-full">
                   <Image
                     className=" "
                     width={50}
@@ -364,10 +450,83 @@ export function PurchasingReport() {
                     <span className="text-green-800">0 sold </span>
                   </h1>
                 </div>
-                <div className="w-1/2 relative h-[100px]">
-                  <SalesGraph
-                    data={selectedProductData?.sales[validPeriod] || []}
+                <div className="w-[70%] relative h-[100px]">
+                  <SalesGraph data={data} nameKeyX="name" nameKeyY="uv" />
+                  <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
+                    <Image
+                      className=" "
+                      width={10}
+                      height={10}
+                      alt=""
+                      src={"/icons/arrow_down_red.svg"}
+                    />
+                    <h1 className=" text-sm w-full">
+                      <span className="text-red-800">0% </span>from last week
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case "Battery":
+        return (
+          <div className="flex w-full flex-row">
+            <div className="flex flex-col w-1/2">
+              <h1 className="text-gray-400">MOST PURCHASED</h1>
+              <div className="flex  justify-between h-[100px] flex-row">
+                <div className="flex items-center justify-center flex-row w-[30%] h-full">
+                  <Image
+                    className=" "
+                    width={50}
+                    height={50}
+                    alt=""
+                    src={"/icons/phone_icon.svg"}
                   />
+                  <h1 className=" text-sm w-full">
+                    Iphone XS Max
+                    <br />
+                    <span className="text-green-800">6 sold </span>
+                  </h1>
+                </div>
+
+                <div className="w-[70%] relative h-[100px]">
+                  <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
+                  <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
+                    <Image
+                      className=" "
+                      width={10}
+                      height={10}
+                      alt=""
+                      src={"/icons/arrow_up_green.svg"}
+                    />
+                    <h1 className=" text-sm w-full">
+                      <span className="text-green-600">2.8% </span>from last
+                      week
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col w-1/2">
+              <h1 className="text-gray-400">MOST PURCHASED</h1>
+              <div className="flex w-full justify-between h-[100px] flex-row">
+                <div className="flex items-center justify-center flex-row w-[30%] h-full">
+                  <Image
+                    className=" "
+                    width={50}
+                    height={50}
+                    alt=""
+                    src={"/icons/phone_icon.svg"}
+                  />
+                  <h1 className=" text-sm w-full">
+                    Iphone XS Max
+                    <br />
+                    <span className="text-green-800">0 sold </span>
+                  </h1>
+                </div>
+                <div className="w-[70%] relative h-[100px]">
+                  <SalesGraph data={data} nameKeyX="name" nameKeyY="uv" />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
                       className=" "
@@ -386,19 +545,237 @@ export function PurchasingReport() {
           </div>
         );
       case "Back Glass":
-        return <p className="text-gray-700">Back Glass sales tracking.</p>;
+        return (
+          <div className="flex w-full flex-row">
+            <div className="flex flex-col w-1/2">
+              <h1 className="text-gray-400">MOST PURCHASED</h1>
+              <div className="flex  justify-between h-[100px] flex-row">
+                <div className="flex items-center justify-center flex-row w-[30%] h-full">
+                  <Image
+                    className=" "
+                    width={50}
+                    height={50}
+                    alt=""
+                    src={"/icons/phone_icon.svg"}
+                  />
+                  <h1 className=" text-sm w-full">
+                    Iphone XS Max
+                    <br />
+                    <span className="text-green-800">6 sold </span>
+                  </h1>
+                </div>
+
+                <div className="w-[70%] relative h-[100px]">
+                  <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
+                  <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
+                    <Image
+                      className=" "
+                      width={10}
+                      height={10}
+                      alt=""
+                      src={"/icons/arrow_up_green.svg"}
+                    />
+                    <h1 className=" text-sm w-full">
+                      <span className="text-green-600">2.8% </span>from last
+                      week
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col w-1/2">
+              <h1 className="text-gray-400">MOST PURCHASED</h1>
+              <div className="flex  justify-between h-[100px] flex-row">
+                <div className="flex items-center justify-center flex-row w-[30%] h-full">
+                  <Image
+                    className=" "
+                    width={50}
+                    height={50}
+                    alt=""
+                    src={"/icons/phone_icon.svg"}
+                  />
+                  <h1 className=" text-sm w-full">
+                    Iphone XS Max
+                    <br />
+                    <span className="text-green-800">0 sold </span>
+                  </h1>
+                </div>
+                <div className="w-[70%] relative h-[100px]">
+                  <SalesGraph data={data} nameKeyX="name" nameKeyY="uv" />
+                  <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
+                    <Image
+                      className=" "
+                      width={10}
+                      height={10}
+                      alt=""
+                      src={"/icons/arrow_down_red.svg"}
+                    />
+                    <h1 className=" text-sm w-full">
+                      <span className="text-red-800">0% </span>from last week
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
       case "Touch Pad":
-        return <p className="text-gray-700">Touch Pad revenue summary.</p>;
+        return (
+          <div className="flex w-full flex-row">
+            <div className="flex flex-col w-1/2">
+              <h1 className="text-gray-400">MOST PURCHASED</h1>
+              <div className="flex  justify-between h-[100px] flex-row">
+                <div className="flex items-center justify-center flex-row w-[30%] h-full">
+                  <Image
+                    className=" "
+                    width={50}
+                    height={50}
+                    alt=""
+                    src={"/icons/phone_icon.svg"}
+                  />
+                  <h1 className=" text-sm w-full">
+                    Iphone XS Max
+                    <br />
+                    <span className="text-green-800">6 sold </span>
+                  </h1>
+                </div>
+
+                <div className="w-[70%] relative h-[100px]">
+                  <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
+                  <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
+                    <Image
+                      className=" "
+                      width={10}
+                      height={10}
+                      alt=""
+                      src={"/icons/arrow_up_green.svg"}
+                    />
+                    <h1 className=" text-sm w-full">
+                      <span className="text-green-600">2.8% </span>from last
+                      week
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col w-1/2">
+              <h1 className="text-gray-400">MOST PURCHASED</h1>
+              <div className="flex  justify-between h-[100px] flex-row">
+                <div className="flex items-center justify-center flex-row w-[30%] h-full">
+                  <Image
+                    className=" "
+                    width={50}
+                    height={50}
+                    alt=""
+                    src={"/icons/phone_icon.svg"}
+                  />
+                  <h1 className=" text-sm w-full">
+                    Iphone XS Max
+                    <br />
+                    <span className="text-green-800">0 sold </span>
+                  </h1>
+                </div>
+                <div className="w-[70%] relative h-[100px]">
+                  <SalesGraph data={data} nameKeyX="name" nameKeyY="uv" />
+                  <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
+                    <Image
+                      className=" "
+                      width={10}
+                      height={10}
+                      alt=""
+                      src={"/icons/arrow_down_red.svg"}
+                    />
+                    <h1 className=" text-sm w-full">
+                      <span className="text-red-800">0% </span>from last week
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
       default:
         return (
-          <p className="text-gray-500">Select a product to see details.</p>
+          <div className="flex w-full flex-row">
+            <div className="flex flex-col w-1/2">
+              <h1 className="text-gray-400">MOST PURCHASED</h1>
+              <div className="flex  justify-between h-[100px] flex-row">
+                <div className="flex items-center justify-center flex-row w-[30%] h-full">
+                  <Image
+                    className=" "
+                    width={50}
+                    height={50}
+                    alt=""
+                    src={"/icons/phone_icon.svg"}
+                  />
+                  <h1 className=" text-sm w-full">
+                    Iphone XS Max
+                    <br />
+                    <span className="text-green-800">6 sold </span>
+                  </h1>
+                </div>
+
+                <div className="w-[70%] relative h-[100px]">
+                  <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
+                  <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
+                    <Image
+                      className=" "
+                      width={10}
+                      height={10}
+                      alt=""
+                      src={"/icons/arrow_up_green.svg"}
+                    />
+                    <h1 className=" text-sm w-full">
+                      <span className="text-green-600">2.8% </span>from last
+                      week
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col w-1/2">
+              <h1 className="text-gray-400">MOST PURCHASED</h1>
+              <div className="flex  justify-between h-[100px] flex-row">
+                <div className="flex items-center justify-center flex-row w-[30%] h-full">
+                  <Image
+                    className=" "
+                    width={50}
+                    height={50}
+                    alt=""
+                    src={"/icons/phone_icon.svg"}
+                  />
+                  <h1 className=" text-sm w-full">
+                    Iphone XS Max
+                    <br />
+                    <span className="text-green-800">0 sold </span>
+                  </h1>
+                </div>
+                <div className="w-[70%] relative h-[100px]">
+                  <SalesGraph data={data} nameKeyX="name" nameKeyY="uv" />
+                  <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
+                    <Image
+                      className=" "
+                      width={10}
+                      height={10}
+                      alt=""
+                      src={"/icons/arrow_down_red.svg"}
+                    />
+                    <h1 className=" text-sm w-full">
+                      <span className="text-red-800">0% </span>from last week
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         );
     }
   };
 
   return (
     <div className="w-full text-black   h-[30%]  bg-white">
-      {products.length > 0 ? (
+      {data.length > 0 ? (
         <div>
           <div className="flex flex-row items-center w-full justify-between">
             <h1 className="text-black font-semibold">Purchasing Report</h1>
@@ -409,28 +786,26 @@ export function PurchasingReport() {
                 label="Select Product"
                 options={period}
                 placeholder={period[0]}
-                onSelect={(vlaue) =>
-                  setselectedPeriod(vlaue as "year" | "month" | "week" | "day")
-                }
+                onSelect={(vlaue) => setselectedPeriod(vlaue as PeriodType)}
                 // getLabel={(period) => period}
               />
             </div>
           </div>
 
           {/* Product Selection */}
-          <div className="flex flex-col gap-4">
-            <div className="flex gap-6">
-              {products.map((p, index) => (
+          <div className="flex text-black flex-col gap-4">
+            <div className="flex flex-row gap-2 ]">
+              {productList.map((p, index) => (
                 <button
                   key={index}
-                  onClick={() => setSelectedProduct(p.name)}
-                  className={`${
-                    selectedProduct === p.name
+                  onClick={() => setSelectedProduct(p)}
+                  className={` text-black ${
+                    selectedProduct === p
                       ? "border-b-4 border-blue-400 font-semibold"
                       : ""
                   } p-2`}
                 >
-                  {p.name}
+                  {p}
                 </button>
               ))}
             </div>

@@ -15,7 +15,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const pathParts = pathname.split("/");
     const storeIndex = pathParts.indexOf("stores");
-    if (storeIndex !== -1 && pathParts[storeIndex + 1]) {
+    const addStore = pathParts.includes("new");
+    if (storeIndex !== -1 && pathParts[storeIndex + 1] && !addStore) {
       setStoreId(pathParts[storeIndex + 1]);
     } else {
       setStoreId(null);
