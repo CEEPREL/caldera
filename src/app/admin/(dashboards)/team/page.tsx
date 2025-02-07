@@ -3,10 +3,10 @@ import Dropdown from "@/components/Dropdown";
 import Image from "next/image";
 import React, { useState } from "react";
 import products from "@/data/data.json";
-import TeamTable from "@/components/admin/TeamTable";
+import TeamTable, { tempProducts } from "@/components/admin/TeamTable";
 import SlideDrawer from "@/components/admin/AddTeamSlider";
 import { addTeamAction, TeamData } from "@/app/actions/addTeam";
-
+import { FormData } from "@/components/admin/AddTeamSlider";
 function Team() {
   const states = [
     { code: "OG", name: "Ogun State1" },
@@ -15,6 +15,11 @@ function Team() {
     { code: "ABJ", name: "Abuja1" },
   ];
 
+  const [data, setData] = useState<FormData[]>([
+    tempProducts[0],
+    tempProducts[1],
+    tempProducts[2],
+  ]);
   const period = ["year", "month", "week", "day"];
 
   const [selectedState, setSelectedState] = useState("");
@@ -28,7 +33,8 @@ function Team() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
+    id: products.length + 1,
     fullName: "",
     email: "",
     state: "",
@@ -39,59 +45,100 @@ function Team() {
     userName: "",
     password: "",
     confirmPassword: "",
+    profilePic: "/images/profile.png",
+    registered: new Date().toLocaleDateString(),
+    status: "Active",
+    url: "/images/profile.png",
+    active: true,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (formData: TeamData) => {
+  const handleSubmit = async (formData: FormData) => {
     setLoading(true);
     setErrorMessage(null);
 
-    try {
-      // Passing formData to addTeamAction, structuring the data to match API expectations
-      const result = await addTeamAction(
-        {
-          fullName: formData.fullName,
-          email: formData.email,
-          password: formData.password,
-          phoneNumber: formData.phoneNumber,
-          userName: formData.userName,
-        },
-        null
-      );
+    // try {
+    //   // Passing formData to addTeamAction, structuring the data to match API expectations
+    //   const result = await addTeamAction(
+    //     {
+    //       fullName: formData.fullName,
+    //       email: formData.email,
+    //       password: formData.password,
+    //       phoneNumber: formData.phoneNumber,
+    //       userName: formData.userName,
+    //     },
+    //     null
+    //   );
 
-      console.log(result);
-      // Handle result after submission
-      if (result.error) {
-        setErrorMessage(result.error);
-      } else if (result.success) {
-        // Clear the error message and reset loading state
-        setErrorMessage(null);
-        setLoading(false);
-        setFormData({
-          fullName: "",
-          email: "",
-          state: "",
-          location: "",
-          manager: "",
-          phoneNumber: "",
-          cadre: "",
-          userName: "",
-          password: "",
-          confirmPassword: "",
-        });
-      } else {
-        setErrorMessage("An error occurred while adding the team member.");
-        setLoading(false);
-      }
+    //   console.log(result);
+    //   // Handle result after submission
+    //   if (result.error) {
+    //     setErrorMessage(result.error);
+    //   } else if (result.success) {
+    //     // Clear the error message and reset loading state
+    //     setErrorMessage(null);
+    //     setLoading(false);
+    //     setFormData({
+    //       id: products.length + 1,
+    //       fullName: "",
+    //       email: "",
+    //       state: "",
+    //       location: "",
+    //       manager: "",
+    //       phoneNumber: "",
+    //       cadre: "",
+    //       userName: "",
+    //       password: "",
+    //       confirmPassword: "",
+    //       profilePic: "/images/profile.png",
+    //       registered: new Date().toLocaleDateString(),
+    //       status: "Active",
+    //       url: "/images/profile.png",
+    //       active: true,
+    //     });
+    //   } else {
+    //     setErrorMessage("An error occurred while adding the team member.");
+    //     setLoading(false);
+    //   }
+    // } catch (error) {
+    //   // Handle any errors that occur during the request
+    //   setErrorMessage("An error occurred while adding the team member.");
+    //   setLoading(false);
+    //   console.error(error);
+    //   console.log(formData);
+    // }
+
+    try {
+      setData((prevData) => [...prevData, formData]);
+
+      // Optionally reset the form after submission
+      setFormData({
+        id: products.length + 1,
+        fullName: "",
+        email: "",
+        state: "",
+        location: "",
+        manager: "",
+        phoneNumber: "",
+        cadre: "",
+        userName: "",
+        password: "",
+        confirmPassword: "",
+        profilePic: "/images/profile.png",
+        registered: new Date().toLocaleDateString(),
+        status: "Active",
+        url: "/images/profile.png",
+        active: true,
+      });
+
+      setLoading(false);
     } catch (error) {
-      // Handle any errors that occur during the request
       setErrorMessage("An error occurred while adding the team member.");
       setLoading(false);
       console.error(error);
-      console.log(formData);
     }
   };
 
@@ -162,7 +209,7 @@ function Team() {
               />
             </div>
             <div className=" pt-4">
-              <TeamTable />
+              <TeamTable data={data} setData={setData} />
             </div>
           </div>
         )}

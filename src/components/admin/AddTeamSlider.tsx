@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import Dropdown from "../Dropdown";
 
-interface FormData {
+export interface FormData {
+  id: number;
   fullName: string;
   email: string;
   state: string;
@@ -15,6 +16,11 @@ interface FormData {
   password: string;
   confirmPassword: string;
   phoneNumber: string;
+  profilePic: string;
+  registered: string;
+  status: string;
+  url: string;
+  active: boolean;
 }
 
 interface SlideDrawerProps {
@@ -28,7 +34,7 @@ interface SlideDrawerProps {
   id?: number;
   role: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSubmit: (formData: FormData) => void;
+  onSubmit: (formData: FormData) => Promise<void>;
   loading: boolean;
   errorMessage: string | null;
   options?: any[];

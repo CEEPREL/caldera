@@ -2,18 +2,29 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import TeamProfileSlider from "./TeamPeofileSlider";
 import AddTeamSlider from "./AddTeamSlider";
-import { addTeamAction, TeamData } from "@/app/actions/addTeam";
+// import { addTeamAction, TeamData } from "@/app/actions/addTeam";
 import { states } from "./AddTeamSlider";
+import { FormData } from "./AddTeamSlider";
+
 interface Product {
   id: number;
-  name: string;
+  // name: string;
   cadre: string;
   registered: string;
-  phoneNo: string;
+  // phoneNo: string;
   status: string;
   url: string;
   email: string;
   active: boolean;
+  fullName: string;
+  phoneNumber: string;
+  userName: string;
+  password: string;
+  confirmPassword: string;
+  state: string;
+  location: string;
+  manager: string;
+  profilePic: string;
 }
 const menuItems = [
   { label: "User Activity", icon: "/icons/brief_case.svg" },
@@ -21,44 +32,70 @@ const menuItems = [
   { label: "Deactivate User", icon: "/icons/deactivate.svg" },
   { label: "Remove User", icon: "/icons/delete.svg" },
 ];
-const products: Product[] = [
+export const tempProducts: Product[] = [
   {
     id: 1,
-    name: "Adebowale Olaniyan",
+    fullName: "Adebowale Olaniyan",
     cadre: "Lagos",
     registered: "2024-01-01",
-    phoneNo: "08123456789",
+    phoneNumber: "08123456789",
     status: "Active",
     url: "/images/profile.png",
     email: "adebowale@gmail.com",
     active: true,
+    userName: "adebowale",
+    password: "password",
+    confirmPassword: "password",
+    state: "Lagos",
+    location: "Lagos",
+    manager: "Adebowale Olaniyan",
+    profilePic: "/images/profile.png",
   },
   {
     id: 2,
-    name: "Ellena James",
+    fullName: "Ellena James",
     cadre: "Abuja",
     registered: "2024-01-01",
-    phoneNo: "08123456789",
+    phoneNumber: "08123456789",
     status: "Inactive",
     url: "/images/profile.png",
     email: "ellena@gmail.com",
     active: false,
+    confirmPassword: "password",
+    state: "Lagos",
+    location: "Lagos",
+    manager: "Adebowale Olaniyan",
+    profilePic: "/images/profile.png",
+    userName: "ellena",
+    password: "password",
   },
   {
     id: 3,
-    name: "Ayodele Oluwaseyi",
+    fullName: "Ayodele Oluwaseyi",
     cadre: "Ogun",
     registered: "2024-01-01",
-    phoneNo: "08123456789",
+    phoneNumber: "08123456789",
     status: "Active",
     url: "/images/profile.png",
     email: "ayodele@gmail.com",
     active: true,
+    userName: "ayodele",
+    password: "password",
+    confirmPassword: "password",
+    state: "Ogun",
+    location: "Ogun",
+    manager: "Adebowale Olaniyan",
+    profilePic: "/images/profile.png",
   },
 ];
 
-export default function TeamTable() {
-  const [data, setData] = useState(products);
+export default function TeamTable({
+  data,
+  setData,
+}: {
+  data: FormData[];
+  setData: React.Dispatch<React.SetStateAction<FormData[]>>;
+}) {
   const [extraRows, setExtraRows] = useState(0);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const [selectedProfileId, setSelectedProfileId] = useState<number | null>(
@@ -70,7 +107,8 @@ export default function TeamTable() {
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
+    id: data.length + 1,
     fullName: "",
     email: "",
     state: "",
@@ -81,6 +119,11 @@ export default function TeamTable() {
     userName: "",
     password: "",
     confirmPassword: "",
+    profilePic: "/images/profile.png",
+    registered: new Date().toLocaleDateString(),
+    status: "Active",
+    url: "/images/profile.png",
+    active: true,
   });
   const [activeStatus, setActiveStatus] = useState<string>("Active");
   const handleAddRow = () => {
@@ -158,27 +201,27 @@ export default function TeamTable() {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-  const handleSubmit = async (formData: TeamData) => {
+  const handleSubmit = async (formData: Product) => {
     setLoading(true);
     setErrorMessage(null);
 
-    try {
-      // Passing formData to addTeamAction, structuring the data to match API expectations
-      const result = await addTeamAction(
-        {
-          fullName: formData.fullName,
-          email: formData.email,
-          password: formData.password,
-          phoneNumber: formData.phoneNumber,
-          userName: formData.userName,
-        },
-        null
-      );
+    // try {
+    //   // Passing formData to addTeamAction, structuring the data to match API expectations
+    //   const result = await addTeamAction(
+    //     {
+    //       fullName: formData.fullName,
+    //       email: formData.email,
+    //       password: formData.password,
+    //       phoneNumber: formData.phoneNumber,
+    //       userName: formData.userName,
+    //     },
+    //     null
+    //   );
 
-      console.log(result);
-    } catch (error) {
-      console.error("Error adding team member:", error);
-    }
+    //   console.log(result);
+    // } catch (error) {
+    //   console.error("Error adding team member:", error);
+    // }
   };
 
   return (
@@ -197,7 +240,7 @@ export default function TeamTable() {
         </thead>
         <tbody>
           {data.map((product, index) =>
-            product.name ? (
+            product.fullName ? (
               <tr key={product.id} className=" relative border-b">
                 <td className=" justify-start items-center h-12 text-gray-400 text-xs flex w-14 p-2">
                   <span className="text-black pr-1">
@@ -220,12 +263,12 @@ export default function TeamTable() {
                   <div className="flex items-center">
                     <Image
                       src={product.url}
-                      alt={product.name}
+                      alt={product.fullName}
                       width={40}
                       height={40}
                       className="rounded-full"
                     />
-                    <span className="text-black ml-2">{product.name}</span>
+                    <span className="text-black ml-2">{product.fullName}</span>
                   </div>
                   {selectedProfileId === product.id &&
                     menuItem[0]?.label === "User Activity" && (
@@ -236,8 +279,8 @@ export default function TeamTable() {
                             setOpenProfile(false);
                           }}
                           id={product.id}
-                          name={product.name}
-                          phone={product.phoneNo}
+                          name={product.fullName}
+                          phone={product.phoneNumber}
                           role={product.cadre}
                           imageUrl={product.url}
                           salesPick={0}
@@ -279,7 +322,7 @@ export default function TeamTable() {
                   </span>
                 </td>
                 <td className=" p-2">{product.registered}</td>
-                <td className=" p-2">{product.phoneNo}</td>
+                <td className=" p-2">{product.phoneNumber}</td>
 
                 <td className=" p-2">
                   <span

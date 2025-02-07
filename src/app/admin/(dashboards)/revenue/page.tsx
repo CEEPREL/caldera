@@ -416,7 +416,7 @@ PurchasingReportProps) {
                 </div>
 
                 <div className="w-[70%] relative h-[100px]">
-                  <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
+                  <SalesGraph data={data} nameKeyX=" " nameKeyY="amt" />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
                       className=" "
@@ -451,7 +451,7 @@ PurchasingReportProps) {
                   </h1>
                 </div>
                 <div className="w-[70%] relative h-[100px]">
-                  <SalesGraph data={data} nameKeyX="name" nameKeyY="uv" />
+                  <SalesGraph data={data} nameKeyX=" " nameKeyY="uv" />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
                       className=" "
@@ -491,7 +491,7 @@ PurchasingReportProps) {
                 </div>
 
                 <div className="w-[70%] relative h-[100px]">
-                  <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
+                  <SalesGraph data={data} nameKeyX=" " nameKeyY="amt" />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
                       className=" "
@@ -526,7 +526,7 @@ PurchasingReportProps) {
                   </h1>
                 </div>
                 <div className="w-[70%] relative h-[100px]">
-                  <SalesGraph data={data} nameKeyX="name" nameKeyY="uv" />
+                  <SalesGraph data={data} nameKeyX=" " nameKeyY="uv" />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
                       className=" "
@@ -566,7 +566,7 @@ PurchasingReportProps) {
                 </div>
 
                 <div className="w-[70%] relative h-[100px]">
-                  <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
+                  <SalesGraph data={data} nameKeyX=" " nameKeyY="amt" />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
                       className=" "
@@ -601,7 +601,7 @@ PurchasingReportProps) {
                   </h1>
                 </div>
                 <div className="w-[70%] relative h-[100px]">
-                  <SalesGraph data={data} nameKeyX="name" nameKeyY="uv" />
+                  <SalesGraph data={data} nameKeyX=" " nameKeyY="uv" />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
                       className=" "
@@ -642,7 +642,7 @@ PurchasingReportProps) {
                 </div>
 
                 <div className="w-[70%] relative h-[100px]">
-                  <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
+                  <SalesGraph data={data} nameKeyX=" " nameKeyY="amt" />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
                       className=" "
@@ -677,7 +677,7 @@ PurchasingReportProps) {
                   </h1>
                 </div>
                 <div className="w-[70%] relative h-[100px]">
-                  <SalesGraph data={data} nameKeyX="name" nameKeyY="uv" />
+                  <SalesGraph data={data} nameKeyX=" " nameKeyY="uv" />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
                       className=" "
@@ -717,7 +717,7 @@ PurchasingReportProps) {
                 </div>
 
                 <div className="w-[70%] relative h-[100px]">
-                  <SalesGraph data={data} nameKeyX="name" nameKeyY="amt" />
+                  <SalesGraph data={data} nameKeyX=" " nameKeyY="amt" />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
                       className=" "
@@ -752,7 +752,7 @@ PurchasingReportProps) {
                   </h1>
                 </div>
                 <div className="w-[70%] relative h-[100px]">
-                  <SalesGraph data={data} nameKeyX="name" nameKeyY="uv" />
+                  <SalesGraph data={data} nameKeyX="" nameKeyY="uv" />
                   <div className="flex  flex-row pl-10 gap-3 justify-center items-center">
                     <Image
                       className=" "
