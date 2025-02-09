@@ -473,7 +473,7 @@ PurchasingReportProps) {
         return (
           <div className="flex w-full flex-row">
             <div className="flex flex-col w-1/2">
-              <h1 className="text-gray-400">MOST PURCHASED.</h1>
+              <h1 className="text-gray-400">MOST PURCHASED</h1>
               <div className="flex  justify-between h-[100px] flex-row">
                 <div className="flex items-center justify-center flex-row w-[30%] h-full">
                   <Image
