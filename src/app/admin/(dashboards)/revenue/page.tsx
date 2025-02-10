@@ -486,7 +486,7 @@ PurchasingReportProps) {
                   <h1 className=" text-sm w-full">
                     Iphone XS Max
                     <br />
-                    <span className="text-green-800">6 sold</span>
+                    <span className="text-green-800">6 sold </span>
                   </h1>
                 </div>
 
