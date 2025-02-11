@@ -84,7 +84,7 @@ function Team() {
           setErrorMessage("Failed to fetch data.");
         }
       };
-
+      console.log("hello");
       fetchData();
     }
   }, []);
