@@ -77,8 +77,6 @@ function Team() {
           );
           const result = await response.json();
           setData(result);
-          console.log("data", result);
-          console.log("token", storedToken);
         } catch (error) {
           console.error("Error fetching data:", error);
           setErrorMessage("Failed to fetch data.");
