@@ -6,6 +6,7 @@ import products from "@/data/data.json";
 import TeamTable, { tempProducts } from "@/components/admin/TeamTable";
 import SlideDrawer from "@/components/admin/AddTeamSlider";
 import { addTeamAction, TeamData } from "@/app/actions/addTeam";
+import { fetchStores } from "@/app/actions/fetch";
 import { FormData } from "@/components/admin/AddTeamSlider";
 
 function Team() {
@@ -16,11 +17,13 @@ function Team() {
     { code: "ABJ", name: "Abuja1" },
   ];
 
-  const [data, setData] = useState<FormData[]>([
-    tempProducts[0],
-    tempProducts[1],
-    tempProducts[2],
-  ]);
+  // const [data, setData] = useState<FormData[]>([
+  //   tempProducts[0],
+  //   tempProducts[1],
+  //   tempProducts[2],
+  // ]);
+
+  const [data, setData] = useState([{}]);
   const period = ["year", "month", "week", "day"];
 
   const [selectedState, setSelectedState] = useState("");
@@ -59,33 +62,18 @@ function Team() {
   };
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setToken(storedToken);
-
-      const fetchData = async () => {
-        try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/v1/store`,
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${storedToken}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          const result = await response.json();
-          setData(result);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          setErrorMessage("Failed to fetch data.");
-        }
-      };
-      console.log("hello");
-      fetchData();
-    }
+    const allStores = async () => {
+      const res = await fetchStores();
+      setData(res);
+      console.log(res);
+    };
+    allStores();
   }, []);
+
+  const newTeam = () => {
+    setIsDrawerOpen(true);
+    console.log(data);
+  };
 
   const handleSubmit = async (formData: FormData) => {
     setLoading(true);
@@ -178,7 +166,7 @@ function Team() {
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-medium">Team</h1>
               <button
-                onClick={() => setIsDrawerOpen(true)}
+                onClick={newTeam}
                 className="bg-button text-white p-2 px-4 rounded-full"
               >
                 Add New Team
@@ -206,7 +194,7 @@ function Team() {
               />
             </div>
             <div className=" pt-4">
-              <TeamTable data={data} setData={setData} />
+              {/* <TeamTable data={data} setData={setData} /> */}
             </div>
           </div>
         )}
