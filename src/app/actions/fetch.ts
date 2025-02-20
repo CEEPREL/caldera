@@ -20,7 +20,7 @@ export const fetchStores = async () => {
     const response = await fetch(`${apiUrl}/store`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `${token}`,
         "Content-Type": "application/json",
       },
     });
@@ -29,7 +29,7 @@ export const fetchStores = async () => {
       console.error(
         `Failed to fetch: ${response.statusText} (status: ${response.status})`
       );
-      return "nothing found";
+      return token;
     }
 
     const result = await response.json();
