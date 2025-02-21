@@ -6,7 +6,7 @@ import products from "@/data/data.json";
 import TeamTable, { tempProducts } from "@/components/admin/TeamTable";
 import SlideDrawer from "@/components/admin/AddTeamSlider";
 import { addTeamAction, TeamData } from "@/app/actions/addTeam";
-import { fetchStores } from "@/app/actions/fetch";
+import { fetchStores, fetchStaff } from "@/app/actions/fetch";
 import { FormData } from "@/components/admin/AddTeamSlider";
 
 function Team() {
@@ -17,13 +17,13 @@ function Team() {
     { code: "ABJ", name: "Abuja1" },
   ];
 
-  // const [data, setData] = useState<FormData[]>([
-  //   tempProducts[0],
-  //   tempProducts[1],
-  //   tempProducts[2],
-  // ]);
+  const [data, setData] = useState<FormData[]>([
+    tempProducts[0],
+    tempProducts[1],
+    tempProducts[2],
+  ]);
 
-  const [data, setData] = useState([{}]);
+  // const [data, setData] = useState([{}]);
   const period = ["year", "month", "week", "day"];
 
   const [selectedState, setSelectedState] = useState("");
@@ -63,7 +63,7 @@ function Team() {
 
   useEffect(() => {
     const allStores = async () => {
-      const res = await fetchStores();
+      const res = await fetchStaff();
       setData(res);
       console.log(res);
     };
@@ -194,7 +194,7 @@ function Team() {
               />
             </div>
             <div className=" pt-4">
-              {/* <TeamTable data={data} setData={setData} /> */}
+              <TeamTable data={data} setData={setData} />
             </div>
           </div>
         )}
