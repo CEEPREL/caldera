@@ -58,22 +58,11 @@ function New() {
       console.error("Error creating store:", error);
     }
   };
-  // setFormData({
-  //   storeLocation: "",
-  //   storeName: "",
-  //   storeState: "",
-  //   phoneNumber: "",
-  //   // cadre: "",
-  //   // username: "",
-  //   // password: "",
-  //   // confirmPassword: "",
-  // });
-  // };
 
   return (
     <div className="w-full h-[88%] bg-white overflow-y-scroll rounded-3xl">
       <button
-        onClick={() => router.back()}
+        onClick={() => router.push("/admin/stores")}
         className="flex sticky top-0 items-center flex-row"
       >
         <div className="flex justify-center items-center w-8 h-8 m-4 rounded-full bg-gray-300">
@@ -147,7 +136,7 @@ function New() {
                 value={formData.phoneNumber}
                 onChange={handleChange}
               />
-              <button className="bg-button text-white p-2 rounded-full">
+              <button className="bg-button mt-2 text-white p-2 rounded-full">
                 {/* {loading ? "Adding..." : "Add Team Member"} */}
                 "Add Team Member"
               </button>

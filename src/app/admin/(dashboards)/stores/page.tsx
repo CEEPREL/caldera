@@ -2,25 +2,68 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { fetchStores } from "@/app/actions/fetch";
 
-const states = [
-  { code: "OG", name: "Ogun State", stores: ["Ogun1", "Ogun2", "Ogun3"] },
-  { code: "KW", name: "Kwara State", stores: ["Kwara1", "Kwara2"] },
-  {
-    code: "LAG",
-    name: "Lagos State",
-    stores: ["Lagos1", "Lagos2", "Lagos3", "Lagos4", "Lagos5"],
-  },
-  { code: "ABJ", name: "Abuja", stores: ["Abuja1", "Abuja2"] },
-];
+// const states = [
+//   { code: "OG", name: "Ogun State", stores: ["Ogun1", "Ogun2", "Ogun3"] },
+//   { code: "KW", name: "Kwara State", stores: ["Kwara1", "Kwara2"] },
+//   {
+//     code: "LAG",
+//     name: "Lagos State",
+//     stores: ["Lagos1", "Lagos2", "Lagos3", "Lagos4", "Lagos5"],
+//   },
+//   { code: "ABJ", name: "Abuja", stores: ["Abuja1", "Abuja2"] },
+// ];
 
 function StorePage() {
-  const [selectedState, setSelectedState] = useState(states[0].name);
+  const [states, setStates] = useState<string[]>([]);
+  const [selectedState, setSelectedState] = useState(states[0]);
   const [validPeriod, setValidPeriod] = useState<string>("monthly");
+  const [data, setData] = useState<FormData[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
+  const groupStores = (stores: any[]) => {
+    return stores.reduce((acc, store) => {
+      const { state } = store;
+      if (!acc[state]) {
+        acc[state] = [];
+      }
+      acc[state].push(store);
+      return acc;
+    }, {} as Record<string, any[]>);
+  };
+
+  useEffect(() => {
+    const allStaffs = async () => {
+      setLoading(true);
+
+      const res = await fetchStores();
+      if (!res || res.length === 0) {
+        console.log("No data fetched!");
+        setLoading(false);
+        return;
+      }
+
+      console.log("Fetched Stores (res):", res); // ✅ Check raw data
+
+      const groupedStores = groupStores(res);
+      const stateNames = Object.keys(groupedStores);
+      setStates(stateNames);
+
+      console.log(
+        "Grouped Stores (Object):",
+        JSON.stringify(groupedStores, null, 2)
+      ); // ✅ Ensure it logs
+
+      setData(res); // Save raw data in state
+      setLoading(false);
+    };
+
+    allStaffs();
+  }, []);
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
       {/* Header */}
@@ -38,15 +81,15 @@ function StorePage() {
       <div className="flex pt-3 gap-6">
         {states.map((state) => (
           <button
-            key={state.code}
-            onClick={() => setSelectedState(state.name)}
+            key={state}
+            onClick={() => setSelectedState(state)}
             className={`p-2 ${
-              selectedState === state.name
+              selectedState === state
                 ? "border-b-4 text-black border-blue-400 font-semibold"
                 : "text-black"
             }`}
           >
-            {state.name}
+            {state}
           </button>
         ))}
       </div>
@@ -75,13 +118,13 @@ function StorePage() {
         ) : (
           <div className="">
             {states
-              .filter((state) => state.name === selectedState)
+              .filter((state) => state === selectedState)
               .map((state) => (
                 <div
-                  key={state.code}
+                  key={state}
                   className="pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
                 >
-                  {state.stores.map((store, index) => (
+                  {states.map((store, index) => (
                     <Link href={`/admin/stores/${store}`} key={store}>
                       <div
                         key={index}

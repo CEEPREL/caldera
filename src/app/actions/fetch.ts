@@ -69,7 +69,7 @@ export const fetchStaff = async () => {
       console.error(
         `Failed to fetch: ${response.statusText} (status: ${response.status})`
       );
-      return token;
+      return;
     }
 
     const result = await response.json();
