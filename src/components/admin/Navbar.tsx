@@ -1,9 +1,14 @@
 import Image from "next/image";
 import React from "react";
+import Dropdown from "../Dropdown";
+import { ProfileDropdown } from "../navItems/profileDropdown";
 
 function Navbar() {
   const handleReload = () => {
     window.location.reload();
+  };
+  const handleclick = () => {
+    console.log("Hi");
   };
   return (
     <div className="py-5 gap-4 text-black bg-primary  flex items-center  flex-row w-full">
@@ -46,7 +51,7 @@ function Navbar() {
           src={"/icons/notification.svg"}
         />
       </button>
-      <div className="w-[18%]  cursor-pointer justify-between px-2 items-center flex flex-row h-10 rounded-full bg-white">
+      {/* <div className=" w-38 cursor-pointer justify-between px-2 items-center flex flex-row h-10 rounded-full bg-white">
         <div className="flex gap-4 flex-row ">
           <Image
             className=" rounded-full"
@@ -56,7 +61,7 @@ function Navbar() {
             src={"/icons/notification.svg"}
           />{" "}
           <span className="hidden lg:block">Ayodele O</span>
-          <span className="hidden sm:block lg:hidden">A</span>
+          <span className="hidden sm:block lg:hidden">Ayo...</span>
         </div>
         <div className=" cursor-pointer">
           <Image
@@ -67,7 +72,9 @@ function Navbar() {
             src={"/icons/filled_dropdown.svg"}
           />
         </div>
-      </div>
+      </div> */}
+      {/* //test ui */}
+      <ProfileDropdown />
     </div>
   );
 }
