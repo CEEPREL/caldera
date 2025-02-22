@@ -2,22 +2,16 @@
 import Dropdown from "@/components/Dropdown";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useActionState, useState } from "react";
 import states from "@/data/states.json";
-
-// const states = [
-//   { code: "OG", name: "Ogun State" },
-//   { code: "KW", name: "Kwara State" },
-//   { code: "LAG", name: "Lagos State" },
-//   { code: "ABJ", name: "Abuja" },
-// ];
+import { createStore, StoreData } from "@/app/actions/createStore";
 
 function New() {
   const router = useRouter();
   const allStates = states.states.map((s) => s.name);
 
   // State for form data
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<StoreData>({
     storeLocation: "",
     storeName: "",
     storeState: "",
@@ -39,21 +33,34 @@ function New() {
   };
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form Data:", formData);
-
-    setFormData({
-      storeLocation: "",
-      storeName: "",
-      storeState: "",
-      phoneNumber: "",
-      // cadre: "",
-      // username: "",
-      // password: "",
-      // confirmPassword: "",
-    });
+  const handleSubmit = async (formData: StoreData) => {
+    console.log("Hii, result");
+    try {
+      const result = await createStore(
+        {
+          storeLocation: formData.storeLocation,
+          storeName: formData.storeName,
+          storeState: formData.storeState,
+          phoneNumber: formData.phoneNumber,
+        },
+        null
+      );
+      console.log("Store Created:", result);
+    } catch (error) {
+      console.error("Error creating store:", error);
+    }
   };
+  // setFormData({
+  //   storeLocation: "",
+  //   storeName: "",
+  //   storeState: "",
+  //   phoneNumber: "",
+  //   // cadre: "",
+  //   // username: "",
+  //   // password: "",
+  //   // confirmPassword: "",
+  // });
+  // };
 
   return (
     <div className="w-full h-[88%] bg-white overflow-y-scroll rounded-3xl">
@@ -74,10 +81,7 @@ function New() {
       </button>
 
       <div className="w-full p-5 relative flex text-black">
-        <form
-          className="flex w-full items-center justify-center flex-col gap-4"
-          onSubmit={handleSubmit}
-        >
+        <form className="flex w-full items-center justify-center flex-col gap-4">
           {/* Location Section */}
           <div className="flex flex-col bg-gray-100 p-5 w-1/2 lg:w-1/3 gap-4">
             <h1 className="text-lg font-bold">Location</h1>
@@ -130,8 +134,7 @@ function New() {
                 onChange={handleChange}
               />
               <button
-                type="submit"
-                onSubmit={handleSubmit}
+                onClick={() => handleSubmit}
                 className="bg-button text-white p-2 rounded-full"
               >
                 {/* {loading ? "Adding..." : "Add Team Member"} */}

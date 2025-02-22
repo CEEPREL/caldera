@@ -1,15 +1,15 @@
 "use server";
 
 import { cookies } from "next/headers";
-export interface TeamData {
+export interface StoreData {
   storeLocation: string;
   storeName: string;
   storeState: string;
   phoneNumber: string;
 }
 
-export async function addTeamAction(
-  formData: TeamData,
+export async function createStore(
+  formData: StoreData,
   prevState: { error?: string; success?: boolean } | null
 ) {
   const storeLocation = formData.storeLocation;
