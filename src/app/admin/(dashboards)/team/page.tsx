@@ -64,7 +64,13 @@ function Team() {
   useEffect(() => {
     const allStores = async () => {
       const res = await fetchStaff();
-      setData(res);
+      if (!res) {
+        setLoading(true);
+      }
+      {
+        setLoading(false);
+        setData(res);
+      }
       console.log(res);
     };
     allStores();

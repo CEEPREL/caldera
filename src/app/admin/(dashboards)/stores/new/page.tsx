@@ -3,27 +3,29 @@ import Dropdown from "@/components/Dropdown";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import states from "@/data/states.json";
 
-const states = [
-  { code: "OG", name: "Ogun State" },
-  { code: "KW", name: "Kwara State" },
-  { code: "LAG", name: "Lagos State" },
-  { code: "ABJ", name: "Abuja" },
-];
+// const states = [
+//   { code: "OG", name: "Ogun State" },
+//   { code: "KW", name: "Kwara State" },
+//   { code: "LAG", name: "Lagos State" },
+//   { code: "ABJ", name: "Abuja" },
+// ];
 
 function New() {
   const router = useRouter();
+  const allStates = states.states.map((s) => s.name);
 
   // State for form data
   const [formData, setFormData] = useState({
-    state: "",
-    location: "",
-    manager: "",
-    phone: "",
-    cadre: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
+    storeLocation: "",
+    storeName: "",
+    storeState: "",
+    phoneNumber: "",
+    // cadre: "",
+    // username: "",
+    // password: "",
+    // confirmPassword: "",
   });
 
   // Handle input changes
@@ -32,13 +34,9 @@ function New() {
   };
 
   // Handle state selection from dropdown
-  const handleStateSelect = (state: { code: string; name: string }) => {
-    setFormData({ ...formData, state: state.name });
+  const handleStateSelect = (state: { name: string }) => {
+    setFormData({ ...formData, storeState: state.name });
   };
-
-  //   const handleCadreSelect = (cadre: string) => {
-  //     setFormData({ ...formData, cadre });
-  //   };
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -46,17 +44,15 @@ function New() {
     console.log("Form Data:", formData);
 
     setFormData({
-      state: "",
-      location: "",
-      manager: "",
-      phone: "",
-      cadre: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
+      storeLocation: "",
+      storeName: "",
+      storeState: "",
+      phoneNumber: "",
+      // cadre: "",
+      // username: "",
+      // password: "",
+      // confirmPassword: "",
     });
-
-    setTimeout(() => router.push("/admin/stores"), 500);
   };
 
   return (
@@ -74,7 +70,7 @@ function New() {
             src={"/icons/arrow_left.svg"}
           />
         </div>
-        <h1>Create New Store</h1>
+        <h1 className="text-black">Create New Store</h1>
       </button>
 
       <div className="w-full p-5 relative flex text-black">
@@ -83,19 +79,18 @@ function New() {
           onSubmit={handleSubmit}
         >
           {/* Location Section */}
-          <div className="flex flex-col bg-gray-100 p-5 w-1/3 gap-4">
+          <div className="flex flex-col bg-gray-100 p-5 w-1/2 lg:w-1/3 gap-4">
             <h1 className="text-lg font-bold">Location</h1>
             <div className="flex flex-col gap-1">
               <label htmlFor="store-state">State</label>
               <Dropdown
-                showSearch
-                className="gap-0"
+                className="gap-0 "
                 className2="bg-white border-none w-full h-9 flex justify-between items-center rounded-md"
-                label={formData.state || "Select a State"}
-                options={states}
+                label={formData.storeState || "Select a State"}
+                options={allStates}
                 placeholder="Select a State"
-                onSelect={(state) => state}
-                getLabel={(state) => state.name}
+                onSelect={(state) => handleStateSelect({ name: state })}
+                getLabel={(state) => state}
                 getSubLabel={() => ""}
                 id="store-state"
               />
@@ -105,23 +100,23 @@ function New() {
               <input
                 className="h-8 p-1 rounded-md"
                 type="text"
-                id="location"
-                value={formData.location}
+                id="storeLocation"
+                value={formData.storeLocation}
                 onChange={handleChange}
               />
             </div>
           </div>
 
           {/* Store Manager Section */}
-          <div className="flex flex-col bg-gray-100 p-5 w-1/3 gap-4">
-            <h1 className="text-lg font-bold">Store Manager</h1>
+          <div className="flex flex-col bg-gray-100 p-5 w-1/2 lg:w-1/3 gap-4">
+            {/* <h1 className="text-lg font-bold">Store Manager</h1> */}
             <div className="flex flex-col gap-1">
-              <label htmlFor="manager">Full Name</label>
+              <label htmlFor="manager">Store Name</label>
               <input
                 className="h-8 p-1 rounded-md"
                 type="text"
-                id="manager"
-                value={formData.manager}
+                id="storeName"
+                value={formData.storeName}
                 onChange={handleChange}
               />
             </div>
@@ -130,12 +125,20 @@ function New() {
               <input
                 className="h-8 p-1 rounded-md"
                 type="text"
-                id="phone"
-                value={formData.phone}
+                id="phoneNumber"
+                value={formData.phoneNumber}
                 onChange={handleChange}
               />
+              <button
+                type="submit"
+                onSubmit={handleSubmit}
+                className="bg-button text-white p-2 rounded-full"
+              >
+                {/* {loading ? "Adding..." : "Add Team Member"} */}
+                "Add Team Member"
+              </button>
             </div>
-            <div className="flex flex-col gap-1">
+            {/* <div className="flex flex-col gap-1">
               <label htmlFor="cadre">Cadre</label>
               <input
                 className="h-8 p-1 rounded-md"
@@ -144,11 +147,11 @@ function New() {
                 value={formData.cadre}
                 onChange={handleChange}
               />
-            </div>
+            </div> */}
           </div>
 
           {/* Authentication Section */}
-          <div className="flex flex-col bg-gray-100 p-5 w-1/3 gap-4">
+          {/* <div className="flex flex-col bg-gray-100 p-5 w-1/3 gap-4">
             <h1 className="text-lg font-bold">Authentication</h1>
             <div className="flex flex-col gap-1">
               <label htmlFor="username">User Name</label>
@@ -183,7 +186,7 @@ function New() {
             <button className="bg-button text-white p-2 rounded-full">
               Create Store
             </button>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>
