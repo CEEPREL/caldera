@@ -21,7 +21,7 @@ export async function createStore(
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/store`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `${token}`,
       },
       method: "POST",
       body: JSON.stringify({

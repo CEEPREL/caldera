@@ -46,6 +46,14 @@ function New() {
         null
       );
       console.log("Store Created:", result);
+      if (result.success) {
+        setFormData({
+          storeLocation: "",
+          storeName: "",
+          storeState: "",
+          phoneNumber: "",
+        });
+      }
     } catch (error) {
       console.error("Error creating store:", error);
     }
@@ -81,7 +89,13 @@ function New() {
       </button>
 
       <div className="w-full p-5 relative flex text-black">
-        <form className="flex w-full items-center justify-center flex-col gap-4">
+        <form
+          className="flex w-full items-center justify-center flex-col gap-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(formData);
+          }}
+        >
           {/* Location Section */}
           <div className="flex flex-col bg-gray-100 p-5 w-1/2 lg:w-1/3 gap-4">
             <h1 className="text-lg font-bold">Location</h1>
@@ -133,63 +147,12 @@ function New() {
                 value={formData.phoneNumber}
                 onChange={handleChange}
               />
-              <button
-                onClick={() => handleSubmit}
-                className="bg-button text-white p-2 rounded-full"
-              >
+              <button className="bg-button text-white p-2 rounded-full">
                 {/* {loading ? "Adding..." : "Add Team Member"} */}
                 "Add Team Member"
               </button>
             </div>
-            {/* <div className="flex flex-col gap-1">
-              <label htmlFor="cadre">Cadre</label>
-              <input
-                className="h-8 p-1 rounded-md"
-                type="text"
-                id="cadre"
-                value={formData.cadre}
-                onChange={handleChange}
-              />
-            </div> */}
           </div>
-
-          {/* Authentication Section */}
-          {/* <div className="flex flex-col bg-gray-100 p-5 w-1/3 gap-4">
-            <h1 className="text-lg font-bold">Authentication</h1>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="username">User Name</label>
-              <input
-                className="h-8 p-1 rounded-md"
-                type="text"
-                id="username"
-                value={formData.username}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="password">Password</label>
-              <input
-                className="h-8 p-1 rounded-md"
-                type="password"
-                id="password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="confirmPassword">Confirm Password</label>
-              <input
-                className="h-8 p-1 rounded-md"
-                type="password"
-                id="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-              />
-            </div>
-            <button className="bg-button text-white p-2 rounded-full">
-              Create Store
-            </button>
-          </div> */}
         </form>
       </div>
     </div>

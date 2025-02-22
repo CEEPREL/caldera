@@ -25,7 +25,7 @@ export async function addTeamAction(
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `${token}`,
         },
         method: "POST",
         body: JSON.stringify({
