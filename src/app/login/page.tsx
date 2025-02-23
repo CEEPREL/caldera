@@ -12,7 +12,7 @@ function AdminLogin() {
   const [state, formAction] = useActionState(loginAction, null);
 
   if (state?.success) {
-    router.push("/admin/revenue");
+    router.push("/admin/report");
   }
 
   return (
