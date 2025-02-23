@@ -4,7 +4,7 @@ import Image from "next/image";
 import logo from "../../../public/images/Frame.svg";
 import frame from "../../../public/images/Vector (4).svg";
 import { useActionState } from "react";
-import { loginAction } from "../actions/login";
+import { loginAction } from "../actions/auth";
 import { useRouter } from "next/navigation";
 
 function AdminLogin() {

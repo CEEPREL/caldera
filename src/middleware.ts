@@ -5,24 +5,23 @@ import { jwtDecode } from "jwt-decode";
 export function middleware(req: NextRequest) {
   console.log("Middleware executed for:", req.nextUrl.pathname);
 
+  function redirectToLogin(req: NextRequest) {
+    const response = NextResponse.redirect(new URL("/login", req.url));
+
+    // Manually expire the token
+    response.cookies.set("token", "", {
+      expires: new Date(0),
+      path: "/",
+    });
+
+    return response;
+  }
+
   const token = req.cookies.get("token")?.value;
   console.log("Token:", token || "No token found");
 
-  if (!token) {
-    console.log("No token found, redirecting to login.");
-    return redirectToLogin(req);
-  }
-
-  try {
-    const decoded: { exp: number } = jwtDecode(token);
-    const currentTime = Date.now() / 1000;
-
-    if (decoded.exp < currentTime) {
-      console.log("Token expired, redirecting to login.");
-      return redirectToLogin(req);
-    }
-  } catch (error) {
-    console.error("Invalid token:", error);
+  if (!isValidToken(token)) {
+    console.log("Invalid or missing token, redirecting to login.");
     return redirectToLogin(req);
   }
 
@@ -30,16 +29,18 @@ export function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
-function redirectToLogin(req: NextRequest) {
-  const response = NextResponse.redirect(new URL("/login", req.url));
+function isValidToken(token: string | undefined): boolean {
+  if (!token) return false;
 
-  // Manually expire the token
-  response.cookies.set("token", "", {
-    expires: new Date(100 * 60 * 60 * 12),
-    path: "/",
-  });
+  try {
+    const decoded: { exp: number } = jwtDecode(token);
+    const currentTime = Date.now() / 1000;
 
-  return response;
+    return decoded.exp >= currentTime;
+  } catch (error) {
+    console.error("Invalid token:", error);
+    return false;
+  }
 }
 
 export const config = {

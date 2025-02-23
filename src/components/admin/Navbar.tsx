@@ -1,12 +1,13 @@
 import Image from "next/image";
 import React from "react";
-import Dropdown from "../Dropdown";
 import { ProfileDropdown } from "../navItems/profileDropdown";
-// import { cookies } from "next/headers";
+import { logout } from "@/app/actions/auth";
+import { redirect } from "next/navigation";
 
 function Navbar() {
-  const handlesSignOut = async () => {
-    // (await cookies()).delete;
+  const handleLogout = async () => {
+    logout();
+    redirect("/login");
   };
   const handleReload = () => {
     window.location.reload();
@@ -78,7 +79,7 @@ function Navbar() {
         </div>
       </div> */}
       {/* //test ui */}
-      <ProfileDropdown handleSignOut={handlesSignOut} />
+      <ProfileDropdown handleSignOut={handleLogout} />
     </div>
   );
 }

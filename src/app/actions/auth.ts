@@ -35,3 +35,7 @@ export async function loginAction(
     };
   }
 }
+
+export async function logout() {
+  (await cookies()).set("token", "", { expires: new Date(0) });
+}
