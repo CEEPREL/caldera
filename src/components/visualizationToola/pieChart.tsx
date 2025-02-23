@@ -2,6 +2,15 @@
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 
+type Data = {
+  name?: string;
+  value?: number;
+  // uv?: number;
+  // sales?: number;
+  // pv: number;
+  // amt: number;
+};
+
 const data = [
   { name: "Group A", value: 400 },
   { name: "Group B", value: 300 },
@@ -52,7 +61,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
   if (active && payload && payload.length) {
     return (
       <div className="custom-tooltip">
-        <p className="label">{`${label} : ${payload[0].value}`}</p>
+        {/* <p className="label">{`${label} : ${payload[0].value}`}</p> */}
         <p className="intro">{`${payload[0].name}`}</p>
       </div>
     );
@@ -61,7 +70,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
   return null;
 };
 
-export default function Piechart() {
+export default function Piechart({ data }: { data: Data[] }) {
   return (
     <PieChart width={210} height={210}>
       <Pie
@@ -72,7 +81,7 @@ export default function Piechart() {
         label={renderCustomizedLabel}
         outerRadius={80}
         fill="#8884d8"
-        dataKey="value"
+        dataKey="amt"
       >
         {data.map((entry, index) => (
           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const menuItems = [
-  { icon: "/icons/revenue.svg", label: "Revenue", href: "/admin/report" },
+  { icon: "/icons/revenue.svg", label: "Report", href: "/admin/report" },
   { icon: "/icons/stores.svg", label: "Stores", href: "/admin/stores" },
   { icon: "/icons/team.svg", label: "Team", href: "/admin/team" },
   { icon: "/icons/settings.svg", label: "Settings", href: "/admin/settings" },

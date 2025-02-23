@@ -149,7 +149,7 @@ function Revenue() {
           </div>
         ) : (
           <div>
-            <h1 className="text-black  font-semibold">Revenue</h1>
+            <h1 className="text-black  font-semibold">Report</h1>
             <div className="flex pt-4 w-[100%] gap-4 flex-row">
               <Dropdown
                 showSearch
@@ -212,7 +212,7 @@ function Revenue() {
                     {renderProductContent()}
                   </div>{" "}
                   <div className="w-[0%] lg:w-[30%]">
-                    <Piechart />
+                    <Piechart data={data} />
                   </div>{" "}
                 </div>
               </div>
