@@ -2,8 +2,12 @@ import Image from "next/image";
 import React from "react";
 import Dropdown from "../Dropdown";
 import { ProfileDropdown } from "../navItems/profileDropdown";
+// import { cookies } from "next/headers";
 
 function Navbar() {
+  const handlesSignOut = async () => {
+    // (await cookies()).delete;
+  };
   const handleReload = () => {
     window.location.reload();
   };
@@ -11,7 +15,7 @@ function Navbar() {
     console.log("Hi");
   };
   return (
-    <div className="py-5 gap-4 text-black bg-primary  flex items-center  flex-row w-full">
+    <div className="py-5 bg-[#F8F6F1] gap-4 text-black bg-primary  flex items-center  flex-row w-full">
       {/* the search section  */}
       <div className="relative w-2/3">
         <input
@@ -74,7 +78,7 @@ function Navbar() {
         </div>
       </div> */}
       {/* //test ui */}
-      <ProfileDropdown />
+      <ProfileDropdown handleSignOut={handlesSignOut} />
     </div>
   );
 }

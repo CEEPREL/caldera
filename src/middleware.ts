@@ -3,14 +3,14 @@ import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
 
 export function middleware(req: NextRequest) {
-  console.log("Middleware executed for:", req.nextUrl.pathname); // Log every request
+  console.log("Middleware executed for:", req.nextUrl.pathname);
 
   const token = req.cookies.get("token")?.value;
-  console.log("Token:", token); // Check if token exists
+  console.log("Token:", token || "No token found");
 
   if (!token) {
     console.log("No token found, redirecting to login.");
-    return NextResponse.redirect(new URL("/login", req.url));
+    return redirectToLogin(req);
   }
 
   try {
@@ -19,17 +19,27 @@ export function middleware(req: NextRequest) {
 
     if (decoded.exp < currentTime) {
       console.log("Token expired, redirecting to login.");
-      const response = NextResponse.redirect(new URL("/login", req.url));
-      response.cookies.delete("token");
-      return response;
+      return redirectToLogin(req);
     }
   } catch (error) {
     console.error("Invalid token:", error);
-    return NextResponse.redirect(new URL("/login", req.url));
+    return redirectToLogin(req);
   }
 
   console.log("Middleware passed, allowing request.");
   return NextResponse.next();
+}
+
+function redirectToLogin(req: NextRequest) {
+  const response = NextResponse.redirect(new URL("/login", req.url));
+
+  // Manually expire the token
+  response.cookies.set("token", "", {
+    expires: new Date(100 * 60 * 60 * 12),
+    path: "/",
+  });
+
+  return response;
 }
 
 export const config = {
