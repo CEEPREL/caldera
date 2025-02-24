@@ -5,6 +5,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import products from "@/data/data.json";
 import Piechart from "@/components/visualizationToola/pieChart";
+import { SelectDate } from "@/components/ui/calendar";
 
 type PeriodType = "year" | "month" | "week" | "day";
 
@@ -197,15 +198,7 @@ function Revenue() {
                     <label className="text-gray-400">Total sales</label>
                     <h1 className="text-2xl font-medium pb-8">₦97,209,080</h1>
                   </div>
-                  <Dropdown
-                    showSearch
-                    className="bg-white rounded-full h-10 w-[100px]"
-                    label="Select Product"
-                    options={period}
-                    placeholder={period[0]}
-                    onSelect={(value) => setselectedPeriod(value as PeriodType)}
-                    // getLabel={(period) => period}
-                  />
+                  <SelectDate />
                 </div>
                 <div className="flex flex-row items-center justify-start w-full">
                   <div className=" w-[70%] lg:w-[70%]">

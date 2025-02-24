@@ -20,6 +20,20 @@ const data = [
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
+function generateRandomColor() {
+  const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+  if (!COLORS.includes(randomColor)) {
+    COLORS.push(randomColor);
+  } else {
+    generateRandomColor(); // recursive call to generate a new color
+  }
+}
+
+// Generate 10 new colors
+for (let i = 0; i < 10; i++) {
+  generateRandomColor();
+}
+
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
   cx,
