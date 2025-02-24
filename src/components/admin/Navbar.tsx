@@ -16,7 +16,7 @@ function Navbar() {
     console.log("Hi");
   };
   return (
-    <div className="py-5 bg-[#f7f4ee] gap-4 text-black bg-primary  flex items-center  flex-row w-full">
+    <div className="py-5 bg-[#f6f2ea] gap-4 text-black bg-primary  flex items-center  flex-row w-full">
       {/* the search section  */}
       <div className="relative w-2/3">
         <input

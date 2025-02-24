@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 function Adminpage() {
-  return redirect("/admin/report");
+  return redirect("/user/inventory");
 }
 
 export default Adminpage;

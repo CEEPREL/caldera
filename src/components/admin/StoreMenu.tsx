@@ -36,7 +36,7 @@ function StoreMenu() {
     router.push(href);
   };
   return (
-    <div className="p-2 bg-primary h-full flex flex-col gap-10">
+    <div className="p-2 bg-white h-full flex flex-col gap-10">
       <Link
         href="/admin/revenue"
         className="flex items-center gap-2 text-lg text-black font-semibold"
