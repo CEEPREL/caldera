@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const menuItems = [
-  { icon: "/icons/revenue.svg", label: "Revenue", href: "/revenue" },
+  { icon: "/icons/revenue.svg", label: "Report", href: "/report" },
   {
     icon: "/icons/daily_record.svg",
     label: "Daily Record",
@@ -23,7 +23,7 @@ const menuItems = [
     label: "Stock Management",
     href: "/stock-management",
   },
-  { icon: "/icons/settings.svg", label: "Settings", href: "/admin/settings" },
+  { icon: "/icons/settings.svg", label: "Settings", href: "/settings" },
   { icon: "/icons/market.svg", label: "Market List", href: "/market-list" },
 ];
 
@@ -37,13 +37,22 @@ function StoreMenu() {
   };
   return (
     <div className="p-2 bg-white h-full flex flex-col gap-10">
-      <Link
-        href="/admin/revenue"
-        className="flex items-center gap-2 text-lg text-black font-semibold"
-      >
-        <Image src="/icons/curve_back.svg" alt="logo" width={20} height={20} />
-        <span>Back to Store</span>
-      </Link>
+      {pathname.includes("/admin") ? (
+        <Link
+          href="/admin/revenue"
+          className="flex items-center gap-2 text-lg text-black font-semibold"
+        >
+          <Image
+            src="/icons/curve_back.svg"
+            alt="logo"
+            width={20}
+            height={20}
+          />
+          <span>Back to Store</span>
+        </Link>
+      ) : (
+        <span className="text-2xl">Welcome</span>
+      )}
       <div className="text-gray-500 flex flex-col gap-6">
         {menuItems.map((item) => (
           <div className="flex flex-col gap-6" key={item.label}>
