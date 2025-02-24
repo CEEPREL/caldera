@@ -5,18 +5,11 @@ import Image from "next/image";
 import React, { useState } from "react";
 import products from "@/data/data.json";
 import Piechart from "@/components/visualizationToola/pieChart";
-import { SelectDate } from "@/components/ui/calendar";
+import { DateFilter } from "@/components/ui-utils/DateFilter";
 
 type PeriodType = "year" | "month" | "week" | "day";
 
-function Revenue() {
-  // const states = [
-  //   { code: "OG", name: "Ogun State" },
-  //   { code: "KW", name: "Kwara State" },
-  //   { code: "LAG", name: "Lagos State" },
-  //   { code: "ABJ", name: "Abuja" },
-  // ];
-
+function Report() {
   const period = ["year", "month", "week", "day"];
   const productList = [
     "Screen",
@@ -26,34 +19,34 @@ function Revenue() {
     "Touch Pad",
   ];
 
-  const [selectedState, setSelectedState] = useState("");
+  // const [selectedState, setSelectedState] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("Screen");
   const [stateIndex, setStateIndex] = useState(0);
-  const [selectedStore, setSelectedStore] = useState("");
+  // const [selectedStore, setSelectedStore] = useState("");
   const [selectedPeriod, setselectedPeriod] = useState<PeriodType>("year");
   const [storeIndex, setStoreIndex] = useState(0);
-  const selectedProductData = products.find((p) => p.name === selectedProduct);
+  // const selectedProductData = products.find((p) => p.name === selectedProduct);
   const allProduct = products.map((p) => p);
-  const allStoreNamesForFirstProduct = allProduct[0].stores.flatMap(
-    (store) => store.name
-  );
+  // const allStoreNamesForFirstProduct = allProduct[0].stores.flatMap(
+  //   (store) => store.name
+  // );
   const states = allProduct.map((p) => p.name);
-  const storeObj = allProduct.flatMap((p) => p.stores.map((s) => s.name));
+  // const storeObj = allProduct.flatMap((p) => p.stores.map((s) => s.name));
   const stores = allProduct[stateIndex].stores;
   // const periodData = stores[storeIndex].sales[selectedPeriod];
 
-  const storeData = stores.find((store) => store.name === selectedStore);
+  // const storeData = stores.find((store) => store.name === selectedStore);
 
   const handleStateChange = (state: string) => {
-    setSelectedState(state);
+    // setSelectedState(state);
     const stateIndex = states.findIndex((s) => s === state);
     setStateIndex(stateIndex);
     const stores = allProduct[stateIndex].stores;
-    setSelectedStore(stores[0].name);
+    // setSelectedStore(stores[0].name);
   };
 
   const handleStoreChange = (store: string) => {
-    setSelectedStore(store);
+    // setSelectedStore(store);
     const storeIndex = stores.findIndex((s) => s.name === store);
     setStoreIndex(storeIndex);
     const data = stores[storeIndex].sales[selectedPeriod] || [];
@@ -160,7 +153,7 @@ function Revenue() {
                 placeholder={states[0]}
                 onSelect={(state) => handleStateChange(state)}
                 getLabel={(product) => product}
-                getSubLabel={(products) => ""}
+                // getSubLabel={(products) => ""}
               />
               <Dropdown
                 showSearch
@@ -198,7 +191,7 @@ function Revenue() {
                     <label className="text-gray-400">Total sales</label>
                     <h1 className="text-2xl font-medium pb-8">₦97,209,080</h1>
                   </div>
-                  <SelectDate />
+                  <DateFilter />
                 </div>
                 <div className="flex flex-row items-center justify-start w-full">
                   <div className=" w-[70%] lg:w-[70%]">
@@ -239,7 +232,7 @@ function Revenue() {
   );
 }
 
-export default Revenue;
+export default Report;
 
 {
   /* Purchase report*/

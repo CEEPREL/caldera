@@ -1,9 +1,7 @@
 "use client";
 import ProductTable from "@/components/store/ProductTable";
-import { useParams } from "next/navigation";
 
 export default function StorePage() {
-  const { id } = useParams();
   return (
     <div className="w-full h-[88%] bg-white overflow-y-scroll rounded-3xl ">
       <div className="w-full p-5 relative text-black  bg-white">

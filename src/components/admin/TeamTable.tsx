@@ -1,13 +1,14 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import TeamProfileSlider from "./TeamPeofileSlider";
+import TeamProfileSlider from "./TeamProfileSlider";
 import AddTeamSlider from "./AddTeamSlider";
 // import { addTeamAction, TeamData } from "@/app/actions/addTeam";
 import { states } from "./AddTeamSlider";
 import { FormData } from "./AddTeamSlider";
+// import { randomUUID } from "crypto";
 
 interface Product {
-  id: number;
+  userId: string;
   // name: string;
   cadre: string;
   registered: string;
@@ -34,7 +35,7 @@ const menuItems = [
 ];
 export const tempProducts: Product[] = [
   {
-    id: 1,
+    userId: "1",
     fullName: "Adebowale Olaniyan",
     cadre: "Lagos",
     registered: "2024-01-01",
@@ -52,7 +53,7 @@ export const tempProducts: Product[] = [
     profilePic: "/images/profile.png",
   },
   {
-    id: 2,
+    userId: "2",
     fullName: "Ellena James",
     cadre: "Abuja",
     registered: "2024-01-01",
@@ -70,7 +71,7 @@ export const tempProducts: Product[] = [
     password: "password",
   },
   {
-    id: 3,
+    userId: "3",
     fullName: "Ayodele Oluwaseyi",
     cadre: "Ogun",
     registered: "2024-01-01",
@@ -97,8 +98,8 @@ export default function TeamTable({
   setData: React.Dispatch<React.SetStateAction<FormData[]>>;
 }) {
   const [extraRows, setExtraRows] = useState(0);
-  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
-  const [selectedProfileId, setSelectedProfileId] = useState<number | null>(
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [selectedProfileId, setSelectedProfileId] = useState<string | null>(
     null
   );
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -108,7 +109,7 @@ export default function TeamTable({
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
-    id: data.length + 1,
+    userId: crypto.randomUUID(),
     fullName: "",
     email: "",
     state: "",
@@ -131,17 +132,17 @@ export default function TeamTable({
   };
   const handleMenuItemClick = (label: string, product: Product) => {
     if (label === "User Activity") {
-      setSelectedProfileId(product.id);
+      setSelectedProfileId(product.userId);
       setOpenProfile(true);
       setOpenEdit(false);
     } else if (label === "Edit Profile") {
-      setSelectedProfileId(product.id);
+      setSelectedProfileId(product.userId);
       setOpenEdit(true);
       setOpenProfile(false);
     } else if (label === "Deactivate User" || label === "Activate User") {
       setData((prevData) =>
         prevData.map((user) =>
-          user.id === product.id
+          user.userId.toString() === product.userId
             ? {
                 ...user,
                 status:
@@ -165,7 +166,7 @@ export default function TeamTable({
     setOpenDropdownId(null); // Close the dropdown
   };
 
-  const toggleDropdown = (rowId: number | null) => {
+  const toggleDropdown = (rowId: string | null) => {
     setOpenDropdownId((prev) => (prev === rowId ? null : rowId));
     setTimeout(() => {
       setOpenDropdownId((prev) => (prev === rowId ? null : rowId));
@@ -194,8 +195,8 @@ export default function TeamTable({
     };
   }, []);
 
-  const handleDeleteRow = (id: number) => {
-    setData(data.filter((product) => product.id !== id));
+  const handleDeleteRow = (id: string) => {
+    setData(data.filter((product) => product.userId !== id));
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -241,7 +242,7 @@ export default function TeamTable({
         <tbody>
           {data.map((product, index) =>
             product.fullName ? (
-              <tr key={product.id} className=" relative border-b">
+              <tr key={product.userId} className=" relative border-b">
                 <td className=" justify-start items-center h-12 text-gray-400 text-xs flex w-14 p-2">
                   <span className="text-black pr-1">
                     {" "}
@@ -251,7 +252,7 @@ export default function TeamTable({
                   {index + 1}
                 </td>
                 <td
-                  className={`absolute top-[8px] w-[75%] left-0 ${
+                  className={`absolute top-[8px] h-[90%] w-[75%] left-0 ${
                     product.status === "Active"
                       ? "opacity-0 "
                       : product.status === "Deactivated"
@@ -270,7 +271,7 @@ export default function TeamTable({
                     />
                     <span className="text-black ml-2">{product.fullName}</span>
                   </div>
-                  {selectedProfileId === product.id &&
+                  {selectedProfileId === product.userId &&
                     menuItem[0]?.label === "User Activity" && (
                       <div className="flex flex-col gap-2">
                         <TeamProfileSlider
@@ -278,7 +279,7 @@ export default function TeamTable({
                           onClose={() => {
                             setOpenProfile(false);
                           }}
-                          id={product.id}
+                          id={product.userId}
                           name={product.fullName}
                           phone={product.phoneNumber}
                           role={product.cadre}
@@ -292,7 +293,7 @@ export default function TeamTable({
                         />
                       </div>
                     )}
-                  {selectedProfileId === product.id &&
+                  {selectedProfileId === product.userId &&
                     menuItem[1]?.label === "Edit Profile" && (
                       <div className="">
                         <AddTeamSlider
@@ -300,7 +301,7 @@ export default function TeamTable({
                           onClose={() => {
                             setOpenEdit(false);
                           }}
-                          id={product.id}
+                          id={product.userId}
                           tittle="Edit Team Member"
                           formData={formData}
                           role={product.cadre}
@@ -346,13 +347,13 @@ export default function TeamTable({
                 <td className=" p-2 relative text-indigo-600 cursor-pointer">
                   <button
                     className=" pr-1"
-                    onClick={(e) => {
-                      toggleDropdown(product.id);
+                    onClick={() => {
+                      toggleDropdown(product.userId);
                     }}
                   >
                     •••
                   </button>
-                  {openDropdownId === product.id && (
+                  {openDropdownId === product.userId && (
                     <div
                       className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-50"
                       ref={dropdownRef}
@@ -364,8 +365,8 @@ export default function TeamTable({
                           let newLabel =
                             product.status === "Active" && isDeactivate
                               ? "Deactivate User"
-                              : product.status === "Inactive" && isDeactivate
-                              ? "Deactivate User"
+                              : product.status === "Deactivated" && isDeactivate
+                              ? "Activate User"
                               : item.label;
                           let newIcon =
                             product.status === "Active" && isDeactivate

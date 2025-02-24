@@ -8,10 +8,7 @@ export interface StoreData {
   phoneNumber: string;
 }
 
-export async function createStore(
-  formData: StoreData,
-  prevState: { error?: string; success?: boolean } | null
-) {
+export async function createStore(formData: StoreData) {
   const storeLocation = formData.storeLocation;
   const storeName = formData.storeName;
   const storeState = formData.storeState;

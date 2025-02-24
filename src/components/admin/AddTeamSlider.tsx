@@ -5,7 +5,7 @@ import clsx from "clsx";
 import Dropdown from "../Dropdown";
 
 export interface FormData {
-  id: number;
+  userId: string;
   fullName: string;
   email: string;
   state: string;
@@ -31,7 +31,7 @@ interface SlideDrawerProps {
   formData: FormData;
   overlayColor?: string;
   drawerStyle?: string;
-  id?: number;
+  id?: string;
   role: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (formData: FormData) => Promise<void>;

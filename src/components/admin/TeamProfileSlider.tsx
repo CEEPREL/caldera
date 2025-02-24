@@ -3,11 +3,9 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
-import Dropdown from "../Dropdown";
-import { useRouter } from "next/navigation";
 
 interface UserProfile {
-  id: number;
+  id: string;
   name: string;
   phone: string;
   role: string;
@@ -22,12 +20,12 @@ interface UserProfile {
   drawerStyle: string;
 }
 
-// const states = [
-//   { code: "OG", name: "Ogun State", cadre: "Cadre 1" },
-//   { code: "KW", name: "Kwara State", cadre: "Cadre 2" },
-//   { code: "LAG", name: "Lagos State", cadre: "Cadre 1" },
-//   { code: "ABJ", name: "Abuja", cadre: "Cadre 2" },
-// ];
+const states = [
+  { code: "OG", name: "Ogun State", cadre: "Cadre 1" },
+  { code: "KW", name: "Kwara State", cadre: "Cadre 2" },
+  { code: "LAG", name: "Lagos State", cadre: "Cadre 1" },
+  { code: "ABJ", name: "Abuja", cadre: "Cadre 2" },
+];
 const cadres = ["Cadre 1", "Cadre 2"];
 
 const ProfileSlider: React.FC<UserProfile> = ({
@@ -44,7 +42,6 @@ const ProfileSlider: React.FC<UserProfile> = ({
   activeDays,
   offlineDays,
 }) => {
-  // Form State
   const [formData, setFormData] = useState({
     name: "",
     email: "",

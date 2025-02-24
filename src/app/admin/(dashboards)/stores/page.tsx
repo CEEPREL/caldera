@@ -8,9 +8,9 @@ import { fetchStores } from "@/app/actions/fetch";
 function StorePage() {
   const [states, setStates] = useState<string[]>([]);
   const [selectedState, setSelectedState] = useState<string | null>(null);
-  const [validPeriod, setValidPeriod] = useState<string>("monthly");
-  const [data, setData] = useState<FormData[]>([]);
-  const [loading, setLoading] = useState(false);
+  // const [validPeriod, setValidPeriod] = useState<string>("monthly");
+  // const [data, setData] = useState<FormData[]>([]);
+  // const [loading, setLoading] = useState(false);
   const [stateObj, setStateObj] = useState<Record<string, any[]>>({});
 
   const router = useRouter();
@@ -28,12 +28,12 @@ function StorePage() {
 
   useEffect(() => {
     const allStaffs = async () => {
-      setLoading(true);
+      // setLoading(true);
 
       const res = await fetchStores();
       if (!res || res.length === 0) {
         console.log("No data fetched!");
-        setLoading(false);
+        // setLoading(false);
         return;
       }
 
@@ -44,8 +44,8 @@ function StorePage() {
 
       setStates(stateNames);
       setStateObj(groupedStores);
-      setData(res);
-      setLoading(false);
+      // setData(res);
+      // setLoading(false);
 
       // Set the first state as selected after fetching
       if (stateNames.length > 0) {
@@ -109,7 +109,6 @@ function StorePage() {
           </div>
         ) : (
           <div className="pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {/* ✅ Correctly display stores from selected state */}
             {selectedState &&
               stateObj[selectedState]?.map((store) => (
                 <Link
@@ -136,7 +135,7 @@ function StorePage() {
                     <div className="w-full h-[200px]">
                       {/* Example Graph Placeholder */}
                       <p className="text-gray-500">
-                        [Sales Graph for {validPeriod}]
+                        {/* [Sales Graph for {validPeriod}] */}
                       </p>
                     </div>
                     <div className="flex justify-between items-center">

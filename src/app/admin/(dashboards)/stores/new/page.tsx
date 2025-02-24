@@ -2,7 +2,7 @@
 import Dropdown from "@/components/Dropdown";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useActionState, useState } from "react";
+import React, { useState } from "react";
 import states from "@/data/states.json";
 import { createStore, StoreData } from "@/app/actions/createStore";
 
@@ -36,15 +36,12 @@ function New() {
   const handleSubmit = async (formData: StoreData) => {
     console.log("Hii, result");
     try {
-      const result = await createStore(
-        {
-          storeLocation: formData.storeLocation,
-          storeName: formData.storeName,
-          storeState: formData.storeState,
-          phoneNumber: formData.phoneNumber,
-        },
-        null
-      );
+      const result = await createStore({
+        storeLocation: formData.storeLocation,
+        storeName: formData.storeName,
+        storeState: formData.storeState,
+        phoneNumber: formData.phoneNumber,
+      });
       console.log("Store Created:", result);
       if (result.success) {
         setFormData({

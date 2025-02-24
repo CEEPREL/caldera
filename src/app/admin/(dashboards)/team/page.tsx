@@ -5,8 +5,8 @@ import React, { useEffect, useState } from "react";
 import products from "@/data/data.json";
 import TeamTable, { tempProducts } from "@/components/admin/TeamTable";
 import SlideDrawer from "@/components/admin/AddTeamSlider";
-import { addTeamAction, TeamData } from "@/app/actions/addTeam";
-import { fetchStores, fetchStaff } from "@/app/actions/fetch";
+import { addTeamAction } from "@/app/actions/addTeam";
+import { fetchStaff } from "@/app/actions/fetch";
 import { FormData } from "@/components/admin/AddTeamSlider";
 
 function Team() {
@@ -24,22 +24,13 @@ function Team() {
   ]);
 
   // const [data, setData] = useState([{}]);
-  const period = ["year", "month", "week", "day"];
 
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState(products[0].name);
-  const [selectedPeriod, setselectedPeriod] = useState<
-    "year" | "month" | "week" | "day"
-  >("year");
-  const selectedProductData = products.find((p) => p.name === selectedProduct);
-  const validPeriod = selectedPeriod || "year";
-  const allProduct = products.map((p) => p.name);
+  // const allProduct = products.map((p) => p.name);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
-    id: products.length + 1,
+    userId: crypto.randomUUID(),
     fullName: "",
     email: "",
     state: "",
@@ -83,16 +74,13 @@ function Team() {
     setErrorMessage(null);
 
     try {
-      const result = await addTeamAction(
-        {
-          fullName: formData.fullName,
-          email: formData.email,
-          password: formData.password,
-          phoneNumber: formData.phoneNumber,
-          userName: formData.userName,
-        },
-        null
-      );
+      const result = await addTeamAction({
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        phoneNumber: formData.phoneNumber,
+        userName: formData.userName,
+      });
 
       console.log(result);
       if (result.error) {
@@ -101,7 +89,7 @@ function Team() {
         setErrorMessage(null);
         setLoading(false);
         setFormData({
-          id: products.length + 1,
+          userId: crypto.randomUUID(),
           fullName: "",
           email: "",
           state: "",
@@ -175,27 +163,7 @@ function Team() {
                 Add New Team
               </button>
             </div>
-            <div className="flex pt-4 w-[100%] gap-4 flex-row">
-              <Dropdown
-                showSearch
-                className="bg-white rounded-full w-1/6"
-                label={states[0].name}
-                options={states}
-                placeholder="Select a State"
-                onSelect={(state) => setSelectedState(state)}
-                getLabel={(state) => state.name}
-                getSubLabel={(products) => ""}
-              />
-              <Dropdown
-                showSearch
-                className="bg-white rounded-full w-1/6"
-                label="Select Product"
-                options={allProduct}
-                placeholder="Select a Product"
-                onSelect={setSelectedProduct}
-                getLabel={(product) => product}
-              />
-            </div>
+
             <div className=" pt-4">
               <TeamTable data={data} setData={setData} />
             </div>

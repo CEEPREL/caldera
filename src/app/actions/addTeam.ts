@@ -9,10 +9,7 @@ export interface TeamData {
   userName: string;
 }
 
-export async function addTeamAction(
-  formData: TeamData,
-  prevState: { error?: string; success?: boolean } | null
-) {
+export async function addTeamAction(formData: TeamData) {
   const fullName = formData.fullName;
   const password = formData.password;
   const phoneNumber = formData.phoneNumber;
