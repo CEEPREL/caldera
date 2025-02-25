@@ -23,7 +23,9 @@ function New() {
   });
 
   // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
@@ -34,6 +36,7 @@ function New() {
 
   // Handle form submission
   const handleSubmit = async (formData: StoreData) => {
+    console.log("Hii, result");
     try {
       const result = await createStore({
         storeLocation: formData.storeLocation,
@@ -70,7 +73,7 @@ function New() {
             src={"/icons/arrow_left.svg"}
           />
         </div>
-        <h1 className="text-black">Create New Store</h1>
+        <h1 className="text-black">Purchase Order</h1>
       </button>
 
       <div className="w-full p-5 relative flex text-black">
@@ -83,9 +86,9 @@ function New() {
         >
           {/* Location Section */}
           <div className="flex flex-col bg-gray-100 p-5 w-1/2 lg:w-1/3 gap-4">
-            <h1 className="text-lg font-bold">Location</h1>
+            <h1 className="text-lg font-bold">Create New Order</h1>
             <div className="flex flex-col gap-1">
-              <label htmlFor="store-state">State</label>
+              <label htmlFor="store-state">Category</label>
               <Dropdown
                 className="gap-0 "
                 className2="bg-white border-none w-full h-9 flex justify-between items-center rounded-md"
@@ -99,7 +102,7 @@ function New() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="location">Enter Store Location</label>
+              <label htmlFor="location">Product Name</label>
               <input
                 className="h-8 p-1 rounded-md"
                 type="text"
@@ -114,7 +117,7 @@ function New() {
           <div className="flex flex-col bg-gray-100 p-5 w-1/2 lg:w-1/3 gap-4">
             {/* <h1 className="text-lg font-bold">Store Manager</h1> */}
             <div className="flex flex-col gap-1">
-              <label htmlFor="manager">Store Name</label>
+              <label htmlFor="manager">Product Quantity</label>
               <input
                 className="h-8 p-1 rounded-md"
                 type="text"
@@ -124,17 +127,16 @@ function New() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="phone">Phone Number</label>
-              <input
-                className="h-8 p-1 rounded-md"
-                type="text"
+              <label htmlFor="phone">Send Note</label>
+              <textarea
+                className="h-12 p-1 rounded-md"
                 id="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
               />
               <button className="bg-button mt-2 text-white p-2 rounded-full">
                 {/* {loading ? "Adding..." : "Add Team Member"} */}
-                "Add Team Member"
+                Send Order
               </button>
             </div>
           </div>

@@ -9,6 +9,11 @@ const menuItems = [
   { icon: "/icons/stores.svg", label: "Stores", href: "/admin/stores" },
   { icon: "/icons/team.svg", label: "Team", href: "/admin/team" },
   { icon: "/icons/settings.svg", label: "Settings", href: "/admin/settings" },
+  {
+    icon: "/icons/market.svg",
+    label: "Purchase Order",
+    href: "/admin/purchase-order",
+  },
 ];
 
 function Menu() {

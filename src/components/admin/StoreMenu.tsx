@@ -39,7 +39,7 @@ function StoreMenu() {
     <div className="p-2 bg-white h-full flex flex-col gap-10">
       {pathname.includes("/admin") ? (
         <Link
-          href="/admin/revenue"
+          href="/admin/report"
           className="flex items-center gap-2 text-lg text-black font-semibold"
         >
           <Image

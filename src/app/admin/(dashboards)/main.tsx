@@ -17,7 +17,7 @@ export default function DashboardContent({
       <div className="md:w-1/12 lg:w-1/6 xl:w-1/6 w-1/6">
         {isStorePage ? <StoreMenu /> : <Menu />}
       </div>
-      <div className="w-5/6 px-5 bg-primary bg-[#f3efe8] overflow-scroll md:w-11/12 lg:w-5/6 xl:w-5/6">
+      <div className="w-5/6 px-5 bg-primary !bg-[#f1ede5] overflow-scroll md:w-11/12 lg:w-5/6 xl:w-5/6">
         <Navbar />
         {children}
       </div>
