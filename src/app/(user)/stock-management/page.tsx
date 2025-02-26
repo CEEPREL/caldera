@@ -36,9 +36,13 @@ const columns = [
     render: (row: any) => (
       <button
         onClick={() => handleAction(row)}
-        className="bg-blue-500 rounded-sm px-2 py-1 hover:bg-blue-300 text-white font-semibold"
+        className={`${
+          row.status === "Pending"
+            ? "bg-gray-400 w-full"
+            : "bg-blue-500 w-full hover:bg-blue-300"
+        }  rounded-sm px-2 py-1  text-white font-semibold`}
       >
-        {row.status === "Pending" ? "Approve" : "View"}
+        {row.status === "Pending" ? "Pending" : "View"}
       </button>
     ),
   },

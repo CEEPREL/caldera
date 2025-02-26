@@ -73,7 +73,7 @@ function New() {
             src={"/icons/arrow_left.svg"}
           />
         </div>
-        <h1 className="text-black">Purchase Order</h1>
+        <h1 className="text-black">Confirm Order</h1>
       </button>
 
       <div className="w-full p-5 relative flex text-black">
@@ -127,7 +127,37 @@ function New() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="phone">Send Note</label>
+              <label htmlFor="manager">Selling Price</label>
+              <input
+                className="h-8 p-1 rounded-md"
+                type="text"
+                id="storeName"
+                value={formData.storeName}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="manager">Purchased Price</label>
+              <input
+                className="h-8 p-1 rounded-md"
+                type="text"
+                id="storeName"
+                value={formData.storeName}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="manager">Set Stock</label>
+              <input
+                className="h-8 p-1 rounded-md"
+                type="text"
+                id="storeName"
+                value={formData.storeName}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="phone">Add Note</label>
               <textarea
                 className="h-12 p-1 rounded-md"
                 id="phoneNumber"
@@ -136,7 +166,7 @@ function New() {
               />
               <button className="bg-button mt-2 text-white p-2 rounded-full">
                 {/* {loading ? "Adding..." : "Add Team Member"} */}
-                Send Order
+                Confirm
               </button>
             </div>
           </div>
