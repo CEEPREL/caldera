@@ -2,7 +2,6 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import TeamProfileSlider from "./TeamProfileSlider";
 import AddTeamSlider from "./AddTeamSlider";
-// import { addTeamAction, TeamData } from "@/app/actions/addTeam";
 import { states } from "./AddTeamSlider";
 import { FormData } from "./AddTeamSlider";
 // import { randomUUID } from "crypto";

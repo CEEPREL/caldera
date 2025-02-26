@@ -6,13 +6,13 @@ import Image from "next/image";
 interface Column {
   key: string;
   label: string;
-  render?: (row: any) => React.ReactNode; // Function to render UI elements
+  render?: (row: any) => React.ReactNode;
 }
 
 interface PurchaseOrderTableProps {
   columns: Column[];
-  data: { [key: string]: string | number }[]; // API data (raw, no JSX)
-  onActionClick?: (row: any) => void; // Client-side action handler
+  data: { [key: string]: string | number }[];
+  onActionClick?: (row: any) => void;
 }
 
 function PurchaseOrderTable({

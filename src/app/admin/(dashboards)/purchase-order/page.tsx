@@ -1,7 +1,16 @@
 "use client";
+import { PurchaseOrderButton } from "@/components/admin/PurchaseOrderButton";
+import MenuComponent from "@/components/ui-utils/SmallMenuComp";
 import PurchaseOrderTable from "@/components/ui-utils/purchaseOrderTable";
-import Link from "next/link";
-import React from "react";
+
+import React, { useState, useRef, useEffect, RefObject } from "react";
+
+interface MenuItem {
+  label: string;
+  icon: string;
+  actionType?: "link" | "button" | "div";
+  href?: string;
+}
 
 const apiData = [
   {
@@ -18,54 +27,114 @@ const apiData = [
     cadre: "Abuja 2",
     quantity: 5,
     note: "Urgent replacement needed.",
-    status: "Approved",
+    status: "Pending",
   },
 ];
 
-// Table Columns with Conditional Rendering
-const columns = [
-  { key: "id", label: "#" },
-  { key: "productName", label: "Product Name" },
-  { key: "cadre", label: "Cadre" },
-  { key: "quantity", label: "Quantity" },
-  { key: "note", label: "Note" },
-  { key: "status", label: "Status" },
+const menuItems: MenuItem[] = [
   {
-    key: "action",
-    label: "Action",
-    render: (row: any) => (
-      <button
-        onClick={() => handleAction(row)}
-        className="bg-blue-500 rounded-sm px-2 py-1 hover:bg-blue-300 text-white font-semibold"
-      >
-        {row.status === "Pending" ? "Approve" : "View"}
-      </button>
-    ),
+    label: "Confirm Order",
+    icon: "/icons/brief_case.svg",
+    actionType: "link",
+    href: "/admin/purchase-order/update-order",
+  },
+  {
+    label: "View Store",
+    icon: "/icons/stores.svg",
+    actionType: "link",
+    href: "/settings",
+  },
+  {
+    label: "Remove Order",
+    icon: "/icons/delete.svg",
+    actionType: "button",
   },
 ];
 
-// Function to Handle Button Clicks
-const handleAction = (row: any) => {
-  console.log("Perform action on:", row);
-  alert(`Action performed on ${row.productName}`);
-};
+function Page() {
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+  const dropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
-function page() {
+  const handleWindowBlur = () => {
+    setOpenDropdownId(null);
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      openDropdownId !== null &&
+      dropdownRefs.current[openDropdownId] &&
+      !dropdownRefs.current[openDropdownId]?.contains(event.target as Node) &&
+      !(event.target as HTMLElement).closest(".dropdown-toggle")
+    ) {
+      setOpenDropdownId(null);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("blur", handleWindowBlur);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openDropdownId]);
+
+  const handleMenuItemClick = (label: string, row: any) => {
+    if (label === "Confirm Order") {
+    }
+    setOpenDropdownId(null);
+  };
+
+  const columns = [
+    { key: "id", label: "#" },
+    { key: "productName", label: "Product Name" },
+    { key: "cadre", label: "Cadre" },
+    { key: "quantity", label: "Quantity" },
+    { key: "note", label: "Note" },
+    { key: "status", label: "Status" },
+    {
+      key: "action",
+      label: "Action",
+      render: (row: any) => (
+        <div className="relative">
+          <button
+            className="dropdown-toggle"
+            onClick={() =>
+              setOpenDropdownId(openDropdownId === row.id ? null : row.id)
+            }
+          >
+            •••
+          </button>
+          {openDropdownId === row.id && (
+            <div
+              className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-50"
+              ref={(el) => {
+                dropdownRefs.current[row.id] = el;
+              }}
+            >
+              <div className="flex flex-col gap-2 p-2">
+                <MenuComponent
+                  menuItems={menuItems}
+                  onMenuItemClick={handleMenuItemClick}
+                  product={row}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
-      {/* Header */}
-      <div className="flex flex-col ">
+      <div className="flex flex-col">
         <h1 className="text-2xl font-medium">Purchase Order</h1>
-        <div className="">
-          <PurchaseOrderTable
-            columns={columns}
-            data={apiData}
-            onActionClick={handleAction}
-          />
+        <div>
+          <PurchaseOrderTable columns={columns} data={apiData} />
         </div>
       </div>
     </div>
   );
 }
 
-export default page;
+export default Page;
