@@ -3,24 +3,25 @@ import PurchaseOrderTable from "@/components/ui-utils/purchaseOrderTable";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
+import SalesHistorySlider from "@/components/user/SalesHistorySlider";
 
 const dailySalesData = [
   {
-    id: 1,
+    id: "1",
     date: "Today",
     totalSales: 15000,
     totalOrders: 5,
     status: "20 Products",
   },
   {
-    id: 2,
+    id: "2",
     date: "Yesterday",
     totalSales: 12000,
     totalOrders: 3,
     status: "20 Products",
   },
   {
-    id: 3,
+    id: " 3",
     date: "2024-01-03",
     totalSales: 18000,
     totalOrders: 7,
@@ -30,27 +31,27 @@ const dailySalesData = [
 
 const productRecordData = [
   {
-    id: 1,
+    id: "1",
     productName: "iPhone X Screen",
-    amount: 5000,
+    revenue: 5000,
     date: "2024-01-01",
-    stock: 0,
+    sales: 0,
     payment: "Out of Stock",
   },
   {
-    id: 2,
+    id: "2",
     productName: "Samsung Battery",
-    amount: 3000,
+    revenue: 3000,
     date: "2024-01-02",
-    stock: 2,
+    sales: 2,
     payment: "In Stock",
   },
   {
-    id: 3,
+    id: "3",
     productName: "MacBook Charger",
-    amount: 8000,
+    revenue: 8000,
     date: "2024-01-03",
-    stock: 5,
+    sales: 5,
     payment: "In Stock",
   },
 ];
@@ -65,7 +66,7 @@ const productList = [
 
 function Page() {
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
-
+  const [open, setOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("Screen");
   const [toggle, setToggle] = useState(false);
   const handleToggle = (p: string) => {
@@ -76,12 +77,34 @@ function Page() {
   const columns = [
     { key: "id", label: "#" },
     { key: "productName", label: "Product" },
-    { key: "amount", label: "Amount" },
-    { key: "date", label: "Date" },
-    { key: "stock", label: "Stock" },
-    { key: "payment", label: "Payment" },
-  ];
+    { key: "sales", label: "Number of sales" },
+    { key: "revenue", label: "Total Revenue" },
 
+    {
+      key: "action",
+      label: "",
+      render: (row: any) => (
+        <div>
+          <button onClick={() => setOpen(true)} className={``}>
+            <ChevronRight />
+          </button>
+
+          <SalesHistorySlider
+            isOpen={open}
+            onClose={() => setOpen(false)}
+            data={productRecordData} // Pass the entire array
+            width="w-1/4"
+            overlayColor="bg-black bg-opacity-50"
+            drawerStyle="bg-white"
+          />
+        </div>
+      ),
+    },
+  ];
+  const handleAction = (row: any) => {
+    console.log("Perform action on:", row);
+    alert(`Action performed on ${row.productName}`);
+  };
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
       <div className="flex gap-2 flex-col">
@@ -144,7 +167,11 @@ function Page() {
                 </button>
               ))}
             </div>
-            <PurchaseOrderTable columns={columns} data={productRecordData} />
+            <PurchaseOrderTable
+              columns={columns}
+              data={productRecordData}
+              onActionClick={handleAction}
+            />
           </div>
         )}
       </div>

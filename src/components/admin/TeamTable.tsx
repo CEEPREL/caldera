@@ -204,24 +204,6 @@ export default function TeamTable({
   const handleSubmit = async (formData: Product) => {
     setLoading(true);
     setErrorMessage(null);
-
-    // try {
-    //   // Passing formData to addTeamAction, structuring the data to match API expectations
-    //   const result = await addTeamAction(
-    //     {
-    //       fullName: formData.fullName,
-    //       email: formData.email,
-    //       password: formData.password,
-    //       phoneNumber: formData.phoneNumber,
-    //       userName: formData.userName,
-    //     },
-    //     null
-    //   );
-
-    //   console.log(result);
-    // } catch (error) {
-    //   console.error("Error adding team member:", error);
-    // }
   };
 
   return (
