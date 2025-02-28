@@ -1,9 +1,10 @@
 "use client";
-import PurchaseOrderTable from "@/components/ui-utils/purchaseOrderTable";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
-import SalesHistorySlider from "@/components/user/SalesHistorySlider";
+// import SalesHistorySlider from "@/components/user/SalesHistorySlider";
+import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
+import SalesHistorySlider from "@/components/store/sales_rec/SalesHistorySlider";
 
 const dailySalesData = [
   {
@@ -108,7 +109,7 @@ function Page() {
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
       <div className="flex gap-2 flex-col">
-        <h1 className="text-2xl font-medium">Sales</h1>
+        <h1 className="text-2xl font-medium">Sales Record</h1>
         <div className="flex gap-2 flex-row">
           <button
             className={`${
@@ -118,7 +119,7 @@ function Page() {
             } p-2 px-4 rounded-full `}
             onClick={() => setSalesToggle("daily")}
           >
-            Daily Sales
+            Daily Record
           </button>
           <button
             className={`${

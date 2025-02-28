@@ -1,5 +1,5 @@
 "use client";
-import ProductTable from "@/components/store/ProductTable";
+import ProductTable from "@/components/store/general_UI/ProductTable";
 import Image from "next/image";
 import { useState } from "react";
 

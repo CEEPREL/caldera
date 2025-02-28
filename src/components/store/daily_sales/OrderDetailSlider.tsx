@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import clsx from "clsx";
-import { DateFilter } from "../ui-utils/DateFilter";
 
 interface Data {
   id: string;
@@ -20,7 +19,7 @@ interface UserProfile {
   drawerStyle?: string;
 }
 
-const CartSlider: React.FC<UserProfile> = ({
+const OrderDetailSlider: React.FC<UserProfile> = ({
   data,
   isOpen,
   onClose,
@@ -81,4 +80,4 @@ const CartSlider: React.FC<UserProfile> = ({
   );
 };
 
-export default CartSlider;
+export default OrderDetailSlider;

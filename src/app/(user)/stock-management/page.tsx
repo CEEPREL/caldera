@@ -1,5 +1,5 @@
 "use client";
-import PurchaseOrderTable from "@/components/ui-utils/purchaseOrderTable";
+import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import Link from "next/link";
 import React from "react";
 

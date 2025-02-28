@@ -2,8 +2,10 @@
 
 import { ChevronRight, ShoppingBasket } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import DailySalesRec from "@/components/ui-utils/DailySalesRec";
-import CartSlider from "@/components/user/CartSlider";
+import DailySalesRec from "@/components/store/daily_sales/DailySalesRec";
+import CartSlider from "@/components/store/daily_sales/CartSlider";
+import OrderDetailSlider from "@/components/store/daily_sales/OrderDetailSlider";
+// import CartSlider from "@/components/store/daily_rec/CartSlider";
 
 interface Product {
   id: string;
@@ -20,23 +22,23 @@ const dailySalesData = [
   {
     id: "1",
     date: "Today",
-    totalSales: 15000,
-    totalOrders: 5,
-    status: "20 Products",
+    revenue: 15000,
+    quantity: 5,
+    payment: "20 Products",
   },
   {
     id: "2",
     date: "Yesterday",
-    totalSales: 12000,
-    totalOrders: 3,
-    status: "20 Products",
+    revenue: 12000,
+    quantity: 3,
+    payment: "20 Products",
   },
   {
     id: " 3",
     date: "2024-01-03",
-    totalSales: 18000,
-    totalOrders: 7,
-    status: "20 Products",
+    revenue: 18000,
+    quantity: 7,
+    payment: "20 Products",
   },
 ];
 
@@ -76,7 +78,8 @@ const productList = [
 ];
 
 function Page() {
-  const [open, setOpen] = useState(false);
+  const [openCart, setOpenCart] = useState(false);
+  const [openDetail, setOpenDetail] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("Screen");
   const [toggle, setToggle] = useState(false);
   const [cart, setCart] = useState<Cart>({ cartItems: [] });
@@ -85,6 +88,7 @@ function Page() {
     { id: "2", name: "Product 2", quantity: 1, price: 5.99 },
     { id: "3", name: "Product 3", quantity: 1, price: 7.99 },
   ]);
+  const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
   const handleToggle = (p: string) => {
     setToggle(!toggle);
     setSelectedProduct(p);
@@ -101,13 +105,13 @@ function Page() {
       label: "",
       render: (row: any) => (
         <div>
-          <button onClick={() => setOpen(true)} className={``}>
+          <button onClick={() => setOpenDetail(true)} className={``}>
             <ChevronRight />
           </button>
 
-          <CartSlider
-            isOpen={open}
-            onClose={() => setOpen(false)}
+          <OrderDetailSlider
+            isOpen={openDetail}
+            onClose={() => setOpenDetail(false)}
             data={productRecordData}
             width="w-1/4"
             overlayColor="bg-black bg-opacity-50"
@@ -120,6 +124,9 @@ function Page() {
   const handleAction = (row: any) => {
     console.log("Perform action on:", row);
     alert(`Action performed on ${row.productName}`);
+  };
+  const handleOnDelete = () => {
+    console.log("Hi");
   };
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
@@ -143,7 +150,7 @@ function Page() {
         <div className="flex flex-row justify-between">
           <h1 className="text-2xl font-medium">Daily Record</h1>
 
-          <button onClick={() => setOpen(true)} className="relative">
+          <button onClick={() => setOpenCart(true)} className="relative">
             <h1 className="flex text-xs -top-2 right-0 absolute w-5 h-5 items-center justify-center bg-red-400 text-white rounded-full">
               {}
             </h1>
@@ -151,29 +158,88 @@ function Page() {
               <ShoppingBasket />
             </div>
           </button>
+          <CartSlider
+            onDelete={handleOnDelete}
+            isOpen={openCart}
+            onClose={() => setOpenCart(false)}
+            data={dailySalesData}
+            width="w-1/4"
+            overlayColor="bg-black bg-opacity-50"
+            drawerStyle="bg-white"
+          />
         </div>
 
         <div className="gap-2 flex flex-col">
-          <div className="flex gap-6">
-            {productList.map((p, index) => (
-              <button
-                key={index}
-                onClick={() => handleToggle(p)}
-                className={`${
-                  selectedProduct === p
-                    ? "border-b-4 border-blue-400 font-semibold"
-                    : ""
-                } p-2`}
-              >
-                {p}
-              </button>
-            ))}
+          <div className="flex gap-2 flex-row">
+            <button
+              className={`${
+                salesToggle === "daily"
+                  ? "bg-button text-white"
+                  : "border bg-white"
+              } p-2 px-4 rounded-full `}
+              onClick={() => setSalesToggle("daily")}
+            >
+              Daily Record
+            </button>
+            <button
+              className={`${
+                salesToggle === "product"
+                  ? "bg-button text-white"
+                  : "border bg-white"
+              } p-2 px-4 rounded-full `}
+              onClick={() => setSalesToggle("product")}
+            >
+              Products
+            </button>
           </div>
-          <DailySalesRec
-            columns={columns}
-            data={productRecordData}
-            onActionClick={handleAction}
-          />
+          {salesToggle === "daily" ? (
+            <div className="">
+              <div className="flex gap-6">
+                {productList.map((p, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleToggle(p)}
+                    className={`${
+                      selectedProduct === p
+                        ? "border-b-4 border-blue-400 font-semibold"
+                        : ""
+                    } p-2`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+              <DailySalesRec
+                columns={columns}
+                data={productRecordData}
+                onActionClick={handleAction}
+              />
+            </div>
+          ) : (
+            <div>
+              {" "}
+              <div className="flex gap-6">
+                {productList.map((p, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleToggle(p)}
+                    className={`${
+                      selectedProduct === p
+                        ? "border-b-4 border-blue-400 font-semibold"
+                        : ""
+                    } p-2`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+              <DailySalesRec
+                columns={columns}
+                data={dailySalesData}
+                onActionClick={handleAction}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

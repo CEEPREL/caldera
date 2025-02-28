@@ -1,5 +1,4 @@
-import PurchaseOrderTable from "@/components/ui-utils/purchaseOrderTable";
-import Link from "next/link";
+import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import React from "react";
 
 interface MenuItem {

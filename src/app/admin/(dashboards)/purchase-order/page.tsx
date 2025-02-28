@@ -1,7 +1,7 @@
 "use client";
 import { PurchaseOrderButton } from "@/components/admin/PurchaseOrderButton";
-import MenuComponent from "@/components/ui-utils/SmallMenuComp";
-import PurchaseOrderTable from "@/components/ui-utils/purchaseOrderTable";
+import PurchaseOrderTableAdmin from "@/components/admin/purchaseOrderTableAdmin";
+import MenuComponent from "@/components/store/general_UI/SmallMenuComp";
 
 import React, { useState, useRef, useEffect, RefObject } from "react";
 
@@ -130,7 +130,7 @@ function Page() {
       <div className="flex flex-col">
         <h1 className="text-2xl font-medium">Purchase Order</h1>
         <div>
-          <PurchaseOrderTable columns={columns} data={apiData} />
+          <PurchaseOrderTableAdmin columns={columns} data={apiData} />
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 "use client";
-import ProductTable from "@/components/store/ProductTable";
+import ProductTable from "@/components/store/general_UI/ProductTable";
 
 export default function StorePage() {
   return (

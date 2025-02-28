@@ -5,7 +5,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import products from "@/data/data.json";
 import Piechart from "@/components/visualizationToola/pieChart";
-import { DateFilter } from "@/components/ui-utils/DateFilter";
+import { DateFilter } from "@/components/store/general_UI/DateFilter";
 
 type PeriodType = "year" | "month" | "week" | "day";
 
