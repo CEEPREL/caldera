@@ -1,9 +1,9 @@
 "use client";
-import PurchaseOrderTable from "@/components/ui-utils/purchaseOrderTable";
+
 import { ChevronRight, ShoppingBasket } from "lucide-react";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import SalesHistorySlider from "@/components/user/SalesHistorySlider";
+import DailySalesRec from "@/components/ui-utils/DailySalesRec";
+import CartSlider from "@/components/user/CartSlider";
 
 interface Product {
   id: string;
@@ -105,7 +105,7 @@ function Page() {
             <ChevronRight />
           </button>
 
-          <SalesHistorySlider
+          <CartSlider
             isOpen={open}
             onClose={() => setOpen(false)}
             data={productRecordData}
@@ -143,7 +143,7 @@ function Page() {
         <div className="flex flex-row justify-between">
           <h1 className="text-2xl font-medium">Daily Record</h1>
 
-          <button className="relative">
+          <button onClick={() => setOpen(true)} className="relative">
             <h1 className="flex text-xs -top-2 right-0 absolute w-5 h-5 items-center justify-center bg-red-400 text-white rounded-full">
               {}
             </h1>
@@ -169,7 +169,7 @@ function Page() {
               </button>
             ))}
           </div>
-          <PurchaseOrderTable
+          <DailySalesRec
             columns={columns}
             data={productRecordData}
             onActionClick={handleAction}

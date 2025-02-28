@@ -135,7 +135,7 @@ function Page() {
         {salesToggle === "daily" ? (
           <div className="pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {dailySalesData.map((sale) => (
-              <Link key={sale.id} href={`/sales/${sale.id}`}>
+              <Link key={sale.id} href={`/sales-record/${sale.id}`}>
                 <div className="bg-gradient-to-t from-gray-100 to-gray-300 shadow-2xl rounded-lg p-5">
                   <div className="flex justify-between items-center">
                     <div className="flex w-full flex-col gap-8">

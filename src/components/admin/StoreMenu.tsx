@@ -1,17 +1,17 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const menuItems = [
   { icon: "/icons/revenue.svg", label: "Report", href: "/report" },
   {
     icon: "/icons/daily_record.svg",
-    label: "Daily Record",
-    href: "/daily-record",
+    label: "Daily Sales",
+    href: "/daily-sales",
   },
-  { icon: "/icons/sales.svg", label: "Sales", href: "/sales" },
+  { icon: "/icons/sales.svg", label: "Sales Record", href: "/sales-record" },
   {
     icon: "/icons/debt_mgt.svg",
     label: "Debt Management",
@@ -35,6 +35,9 @@ function StoreMenu() {
     setSelectedItem(item);
     router.push(href);
   };
+  const welcomeRedirect = () => {
+    redirect("/user/report");
+  };
   return (
     <div className="p-2 bg-white h-full flex flex-col gap-10">
       {pathname.includes("/admin") ? (
@@ -51,7 +54,12 @@ function StoreMenu() {
           <span>Back to Store</span>
         </Link>
       ) : (
-        <span className="text-2xl">Welcome</span>
+        <Link
+          href="/report"
+          className="flex items-center gap-2 text-lg text-black font-semibold"
+        >
+          <span className="text-2xl">Welcome</span>
+        </Link>
       )}
       <div className="text-gray-500 flex flex-col gap-6">
         {menuItems.map((item) => (

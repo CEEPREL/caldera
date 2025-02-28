@@ -45,7 +45,7 @@ function page() {
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
       <div className="flex flex-col">
-        <h1 className="text-2xl font-medium">Purchase Order</h1>
+        <h1 className="text-2xl font-medium">Inventory</h1>
         <div>
           <PurchaseOrderTable columns={columns} data={apiData} />
         </div>
