@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { fetchStores } from "@/app/actions/fetch";
+import { Trash2 } from "lucide-react";
 
 function StorePage() {
   const [states, setStates] = useState<string[]>([]);
@@ -112,19 +113,34 @@ function StorePage() {
             {selectedState &&
               stateObj[selectedState]?.map((store) => (
                 <Link
+                  className=" cursor-auto"
                   href={`/admin/stores/${store.storeId}`}
                   key={store.storeId}
                 >
                   <div className="bg-gradient-to-t from-gray-100 to-gray-300 shadow-2xl rounded-lg p-5">
                     <div className="flex justify-between items-center">
-                      <div className="flex justify-center items-center gap-2">
+                      <div className="flex flex-col justify-center w-full gap-2">
                         <Image
                           width={30}
                           height={30}
                           alt="No Data"
                           src={"/icons/stores.svg"}
                         />
-                        <h2 className="text-lg font-bold">{store.storeName}</h2>
+                        <div className="flex flex-row  w-full justify-between items-center gap-2">
+                          <h2 className="text-lg font-bold">
+                            {store.storeName}
+                          </h2>
+                          <button
+                            onClick={(e) => {
+                              console.log("hello");
+                              e.stopPropagation();
+                              e.preventDefault();
+                            }}
+                            className=""
+                          >
+                            <Trash2 className="text-red-600" />
+                          </button>
+                        </div>
                       </div>
                     </div>
 

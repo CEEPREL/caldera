@@ -41,8 +41,8 @@ function StoreMenu() {
   return (
     <div className="p-2 bg-white h-full flex flex-col gap-10">
       {pathname.includes("/admin") ? (
-        <Link
-          href="/admin/report"
+        <button
+          onClick={() => router.back()}
           className="flex items-center gap-2 text-lg text-black font-semibold"
         >
           <Image
@@ -51,8 +51,8 @@ function StoreMenu() {
             width={20}
             height={20}
           />
-          <span>Back to Store</span>
-        </Link>
+          <span className="hidden lg:flex ">Back to Store</span>
+        </button>
       ) : (
         <Link
           href="/report"

@@ -1,8 +1,6 @@
 "use client";
-import Menu from "@/components/admin/Menu";
 import Navbar from "@/components/admin/Navbar";
-import StoreMenu from "@/components/admin/StoreMenu";
-import { useStore } from "@/ContextAPI/storeContex";
+import StoreMenu from "@/components/store/StoreMenu";
 
 export default function DashboardContent({
   children,
