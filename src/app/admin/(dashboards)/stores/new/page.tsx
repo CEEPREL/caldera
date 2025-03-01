@@ -41,7 +41,6 @@ function New() {
         storeState: formData.storeState,
         phoneNumber: formData.phoneNumber,
       });
-      console.log("Store Created:", result);
       if (result.success) {
         setFormData({
           storeLocation: "",

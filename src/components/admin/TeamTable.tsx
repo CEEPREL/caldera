@@ -4,6 +4,9 @@ import TeamProfileSlider from "./TeamProfileSlider";
 import AddTeamSlider from "./AddTeamSlider";
 import { states } from "./AddTeamSlider";
 import { FormData } from "./AddTeamSlider";
+import { deleteStaff } from "@/app/actions/delete";
+import { Trash2 } from "lucide-react";
+import Confirm from "@/components/store/general_UI/ConfirmBox";
 // import { randomUUID } from "crypto";
 
 interface Product {
@@ -30,63 +33,7 @@ const menuItems = [
   { label: "User Activity", icon: "/icons/brief_case.svg" },
   { label: "Edit Profile", icon: "/icons/user_icon.svg" },
   { label: "Deactivate User", icon: "/icons/deactivate.svg" },
-  { label: "Remove User", icon: "/icons/delete.svg" },
-];
-export const tempProducts: Product[] = [
-  {
-    userId: "1",
-    fullName: "Adebowale Olaniyan",
-    cadre: "Lagos",
-    registered: "2024-01-01",
-    phoneNumber: "08123456789",
-    status: "Active",
-    url: "/icons/user_icon.svg",
-    email: "adebowale@gmail.com",
-    active: true,
-    userName: "adebowale",
-    password: "password",
-    confirmPassword: "password",
-    state: "Lagos",
-    location: "Lagos",
-    manager: "Adebowale Olaniyan",
-    profilePic: "/icons/user_icon.svg",
-  },
-  {
-    userId: "2",
-    fullName: "Ellena James",
-    cadre: "Abuja",
-    registered: "2024-01-01",
-    phoneNumber: "08123456789",
-    status: "Inactive",
-    url: "/icons/user_icon.svg",
-    email: "ellena@gmail.com",
-    active: false,
-    confirmPassword: "password",
-    state: "Lagos",
-    location: "Lagos",
-    manager: "Adebowale Olaniyan",
-    profilePic: "/icons/user_icon.svg",
-    userName: "ellena",
-    password: "password",
-  },
-  {
-    userId: "3",
-    fullName: "Ayodele Oluwaseyi",
-    cadre: "Ogun",
-    registered: "2024-01-01",
-    phoneNumber: "08123456789",
-    status: "Active",
-    url: "/icons/user_icon.svg",
-    email: "ayodele@gmail.com",
-    active: true,
-    userName: "ayodele",
-    password: "password",
-    confirmPassword: "password",
-    state: "Ogun",
-    location: "Ogun",
-    manager: "Adebowale Olaniyan",
-    profilePic: "/icons/user_icon.svg",
-  },
+  { label: "Remove Staff", icon: "/icons/delete.svg" },
 ];
 
 export default function TeamTable({
@@ -96,11 +43,11 @@ export default function TeamTable({
   data: FormData[];
   setData: React.Dispatch<React.SetStateAction<FormData[]>>;
 }) {
-  const [extraRows, setExtraRows] = useState(0);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [selectedProfileId, setSelectedProfileId] = useState<string | null>(
     null
   );
+  // const [deleting, setDeleting] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [menuItem, setMenuItem] = useState(menuItems);
   const [openProfile, setOpenProfile] = useState<boolean>(false);
@@ -126,10 +73,23 @@ export default function TeamTable({
     active: true,
   });
   const [activeStatus, setActiveStatus] = useState<string>("Active");
-  const handleAddRow = () => {
-    setExtraRows(extraRows + 1);
+
+  const handleDelStaff = async (id: string) => {
+    try {
+      // setDeleting(id);
+      const response = await deleteStaff(id);
+      alert(response.message);
+    } catch (error) {
+      console.error("Failed to delete staff:", error);
+      alert("Error deleting staff");
+    } finally {
+      // setDeleting(null);
+      console.error(errorMessage);
+    }
   };
-  const handleMenuItemClick = (label: string, product: Product) => {
+
+  const handleMenuItemClick = async (label: string, product: Product) => {
+    if (loading) return;
     if (label === "User Activity") {
       setSelectedProfileId(product.userId);
       setOpenProfile(true);
@@ -138,7 +98,10 @@ export default function TeamTable({
       setSelectedProfileId(product.userId);
       setOpenEdit(true);
       setOpenProfile(false);
+    } else if (label === "Remove Staff") {
+      await handleDelStaff(product.userId); // Call handleDelStaff asynchronously with the product.userId
     } else if (label === "Deactivate User" || label === "Activate User") {
+      setLoading(true);
       setData((prevData) =>
         prevData.map((user) =>
           user.userId.toString() === product.userId
@@ -162,7 +125,7 @@ export default function TeamTable({
       setOpenEdit(false);
     }
 
-    setOpenDropdownId(null); // Close the dropdown
+    setOpenDropdownId(null);
   };
 
   const toggleDropdown = (rowId: string | null) => {
@@ -194,9 +157,6 @@ export default function TeamTable({
     };
   }, []);
 
-  const handleDeleteRow = (id: string) => {
-    setData(data.filter((product) => product.userId !== id));
-  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -241,10 +201,11 @@ export default function TeamTable({
                       : "opacity-0"
                   } h-12 `}
                 />
+
                 <td className="p-2">
                   <div className="flex items-center">
                     <Image
-                      src={product.url}
+                      src={product.url || "/icons/user_icon.svg"}
                       alt={product.fullName}
                       width={40}
                       height={40}
@@ -291,9 +252,6 @@ export default function TeamTable({
                           loading={loading}
                           errorMessage={errorMessage}
                           options={states}
-                          // width="w-1/4"
-                          // overlayColor="bg-black bg-opacity-50"
-                          // drawerStyle="bg-white"
                         />
                       </div>
                     )}
@@ -357,23 +315,42 @@ export default function TeamTable({
                               : item.icon;
 
                           return (
-                            <div
-                              key={index}
-                              onClick={() =>
-                                handleMenuItemClick(newLabel, product)
-                              }
-                              className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border hover:border-gray-500 transition cursor-pointer"
-                            >
-                              <Image
-                                src={newIcon}
-                                alt={newLabel}
-                                width={14}
-                                height={14}
-                              />
-                              <h1 className="text-sm text-gray-700">
-                                {newLabel}
-                              </h1>
-                            </div>
+                            <>
+                              {item.label === "Remove Staff" ? (
+                                <Confirm
+                                  message={`Are you sure you want to delete ${product.fullName}?`}
+                                  button={
+                                    <button className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border-gray-500 transition cursor-pointer">
+                                      <Trash2 className="text-red-600" />
+                                      <h1 className="text-sm text-gray-700">
+                                        Remove Staff
+                                      </h1>
+                                    </button>
+                                  }
+                                  onConfirm={() =>
+                                    handleDelStaff(product.userId)
+                                  }
+                                />
+                              ) : (
+                                <button
+                                  key={index}
+                                  onClick={() =>
+                                    handleMenuItemClick(newLabel, product)
+                                  }
+                                  className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border-gray-500 transition cursor-pointer"
+                                >
+                                  <Image
+                                    src={newIcon}
+                                    alt={newLabel}
+                                    width={14}
+                                    height={14}
+                                  />
+                                  <h1 className="text-sm text-gray-700">
+                                    {newLabel}
+                                  </h1>
+                                </button>
+                              )}
+                            </>
                           );
                         })}
                       </div>
@@ -383,19 +360,6 @@ export default function TeamTable({
               </tr>
             ) : null
           )}
-
-          {/* Extra Rows for Adding More */}
-          {[...Array(extraRows)].map((_, i) => (
-            <tr key={data.length + i + 1} className="border bg-gray-50">
-              <td className="border p-2">{data.length + i + 1}</td>
-              <td className="border p-2"></td>
-              <td className="border p-2"></td>
-              <td className="border p-2"></td>
-              <td className="border p-2"></td>
-              <td className="border p-2"></td>
-              <td className="border p-2"></td>
-            </tr>
-          ))}
         </tbody>
       </table>
     </div>

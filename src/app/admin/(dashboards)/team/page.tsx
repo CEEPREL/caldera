@@ -1,9 +1,7 @@
 "use client";
-import Dropdown from "@/components/Dropdown";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import products from "@/data/data.json";
-import TeamTable, { tempProducts } from "@/components/admin/TeamTable";
+import TeamTable from "@/components/admin/TeamTable";
 import SlideDrawer from "@/components/admin/AddTeamSlider";
 import { addTeamAction } from "@/app/actions/addTeam";
 import { fetchStaff } from "@/app/actions/fetch";
@@ -11,21 +9,13 @@ import { FormData } from "@/components/admin/AddTeamSlider";
 
 function Team() {
   const states = [
-    { code: "OG", name: "Ogun State1" },
-    { code: "KW", name: "Kwara State1" },
-    { code: "LAG", name: "Lagos State1" },
-    { code: "ABJ", name: "Abuja1" },
+    { code: "OG", name: "Ogun State" },
+    { code: "KW", name: "Kwara State" },
+    { code: "LAG", name: "Lagos State" },
+    { code: "ABJ", name: "Abuja" },
   ];
 
-  const [data, setData] = useState<FormData[]>([
-    tempProducts[0],
-    tempProducts[1],
-    tempProducts[2],
-  ]);
-
-  // const [data, setData] = useState([{}]);
-
-  // const allProduct = products.map((p) => p.name);
+  const [data, setData] = useState<FormData[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -53,20 +43,22 @@ function Team() {
   };
 
   useEffect(() => {
-    const allStores = async () => {
+    const fetchData = async () => {
       setLoading(true);
-      const res = await fetchStaff();
-
-      setData(res);
-      console.log(res);
+      try {
+        const res = await fetchStaff();
+        setData(res);
+      } catch (error) {
+        console.error("Error fetching staff:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-    allStores();
-    setLoading(false);
+    fetchData();
   }, []);
 
   const newTeam = () => {
     setIsDrawerOpen(true);
-    console.log(data);
   };
 
   const handleSubmit = async (formData: FormData) => {
@@ -82,12 +74,10 @@ function Team() {
         userName: formData.userName,
       });
 
-      console.log(result);
       if (result.error) {
         setErrorMessage(result.error);
-      } else if (result.success) {
+      } else {
         setErrorMessage(null);
-        setLoading(false);
         setFormData({
           userId: crypto.randomUUID(),
           fullName: "",
@@ -106,44 +96,42 @@ function Team() {
           url: "/images/profile.png",
           active: true,
         });
-      } else {
-        setErrorMessage("An error occurred while adding the team member.");
-        setLoading(false);
+        // Refresh data after adding a new team member
+        const updatedData = await fetchStaff();
+        setData(updatedData);
       }
     } catch (error) {
       setErrorMessage("An error occurred while adding the team member.");
-      setLoading(false);
       console.error(error);
-      console.log(formData);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="w-full h-[88%] bg-white overflow-y-scroll rounded-3xl ">
+    <div className="w-full h-[88%] bg-white overflow-y-scroll rounded-3xl">
       <div className="absolute top-0 right-0">
-        {/* add team component */}
         <SlideDrawer
           formData={formData}
           isOpen={isDrawerOpen}
           onClose={() => setIsDrawerOpen(false)}
-          onChange={(e) => handleChange(e)}
+          onChange={handleChange}
           onSubmit={handleSubmit}
           loading={loading}
           errorMessage={errorMessage}
-          role={""}
+          role=""
           options={states}
         />
       </div>
-      <div className="w-full p-5 relative text-black  bg-white">
-        {products.length === 0 ? (
-          <div
-            className={`flex flex-col ${
-              products.length === 0 ? "min-h-[80vh]" : "min-h-0"
-            } justify-center items-center w-full`}
-          >
-            <div className="flex justify-center  items-center w-48 h-48 rounded-full bg-gradient-to-t from-white to-gray-100">
+      <div className="w-full p-5 relative text-black bg-white">
+        {loading ? (
+          <div className="flex justify-center items-center min-h-[80vh]">
+            <p>Loading...</p>
+          </div>
+        ) : data.length === 0 ? (
+          <div className="flex flex-col min-h-[80vh] justify-center items-center w-full">
+            <div className="flex justify-center items-center w-48 h-48 rounded-full bg-gradient-to-t from-white to-gray-100">
               <Image
-                className="top-3 left-1"
                 width={100}
                 height={100}
                 alt="No Data"
@@ -153,7 +141,7 @@ function Team() {
             <h2>No team record yet</h2>
           </div>
         ) : (
-          <div className=" ">
+          <div>
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-medium">Team</h1>
               <button
@@ -164,7 +152,7 @@ function Team() {
               </button>
             </div>
 
-            <div className=" pt-4">
+            <div className="pt-4">
               <TeamTable data={data} setData={setData} />
             </div>
           </div>

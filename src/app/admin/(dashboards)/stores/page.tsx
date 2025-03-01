@@ -5,14 +5,15 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { fetchStores } from "@/app/actions/fetch";
 import { Trash2 } from "lucide-react";
+import { deleteStore } from "@/app/actions/delete";
+import Confirm from "@/components/store/general_UI/ConfirmBox";
 
 function StorePage() {
   const [states, setStates] = useState<string[]>([]);
   const [selectedState, setSelectedState] = useState<string | null>(null);
-  // const [validPeriod, setValidPeriod] = useState<string>("monthly");
-  // const [data, setData] = useState<FormData[]>([]);
-  // const [loading, setLoading] = useState(false);
   const [stateObj, setStateObj] = useState<Record<string, any[]>>({});
+  const [loading, setLoading] = useState<boolean>(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -28,34 +29,61 @@ function StorePage() {
   };
 
   useEffect(() => {
-    const allStaffs = async () => {
-      // setLoading(true);
+    const allStores = async () => {
+      setLoading(true);
 
-      const res = await fetchStores();
-      if (!res || res.length === 0) {
-        console.log("No data fetched!");
-        // setLoading(false);
-        return;
-      }
+      try {
+        const res = await fetchStores();
+        if (!res || res.length === 0) {
+          console.log("No data fetched!");
+          return;
+        }
 
-      console.log("Fetched Stores (res):", res);
+        console.log("Fetched Stores (res):", res);
 
-      const groupedStores = groupStores(res);
-      const stateNames = Object.keys(groupedStores);
+        const groupedStores = groupStores(res);
+        const stateNames = Object.keys(groupedStores);
 
-      setStates(stateNames);
-      setStateObj(groupedStores);
-      // setData(res);
-      // setLoading(false);
+        setStates(stateNames);
+        setStateObj(groupedStores);
 
-      // Set the first state as selected after fetching
-      if (stateNames.length > 0) {
-        setSelectedState(stateNames[0]);
+        if (stateNames.length > 0) {
+          setSelectedState(stateNames[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching stores:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    allStaffs();
+    allStores();
   }, []);
+
+  // Delete store
+  const handleDelete = async (id: string) => {
+    try {
+      setDeleting(id);
+      const response = await deleteStore(id);
+      alert(response.message);
+
+      // Reload the store list after deletion
+      const res = await fetchStores();
+      const groupedStores = groupStores(res);
+      setStateObj(groupedStores);
+      setStates(Object.keys(groupedStores));
+
+      //  Reset selected state if empty
+      if (Object.keys(groupedStores).length === 0) {
+        setSelectedState(null);
+      }
+    } catch (error) {
+      console.error("Failed to delete store:", error);
+      alert("Error deleting store");
+    } finally {
+      setDeleting(null);
+    }
+  };
 
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
@@ -87,9 +115,13 @@ function StorePage() {
         ))}
       </div>
 
-      {/* Store Content - Only Render Selected State */}
+      {/* Store Content */}
       <div className="w-full relative text-black bg-white">
-        {states.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center min-h-[80vh]">
+            <p className="text-lg font-bold text-gray-600">Loading stores...</p>
+          </div>
+        ) : states.length === 0 ? (
           <div className="flex flex-col min-h-[80vh] justify-center items-center w-full">
             <div className="flex justify-center items-center w-48 h-48 rounded-full bg-gradient-to-t from-white to-gray-100">
               <Image
@@ -132,13 +164,24 @@ function StorePage() {
                           </h2>
                           <button
                             onClick={(e) => {
-                              console.log("hello");
                               e.stopPropagation();
                               e.preventDefault();
                             }}
                             className=""
                           >
-                            <Trash2 className="text-red-600" />
+                            <Confirm
+                              message={`Are you sure you want to delete ${store.storeName}?`}
+                              button={
+                                deleting === store.storeId ? (
+                                  <span className="text-red-600">
+                                    Deleting...
+                                  </span>
+                                ) : (
+                                  <Trash2 className="text-red-600" />
+                                )
+                              }
+                              onConfirm={() => handleDelete(store.storeId)}
+                            />
                           </button>
                         </div>
                       </div>
