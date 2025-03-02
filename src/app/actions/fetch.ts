@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-
+//fetch all stores and states
 export const fetchStores = async () => {
   const token = (await cookies()).get("token")?.value;
 

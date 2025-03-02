@@ -41,3 +41,28 @@ export async function createStore(formData: StoreData) {
     };
   }
 }
+
+// Assign user
+
+interface assignStoreInfoProp {
+  userId: string;
+  storeId: string;
+}
+export async function assignStore(assignStoreInfo: assignStoreInfoProp) {
+  const userId = assignStoreInfo.userId;
+  const storeId = assignStoreInfo.storeId;
+  const token = (await cookies()).get("token")?.value;
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/assignstore`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${token}`,
+    },
+    method: "POST",
+    body: JSON.stringify({
+      storeId,
+      userId,
+    }),
+  });
+  const data = await res.json();
+  return { message: data.message };
+}

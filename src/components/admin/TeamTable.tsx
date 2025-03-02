@@ -52,6 +52,7 @@ export default function TeamTable({
   const [menuItem, setMenuItem] = useState(menuItems);
   const [openProfile, setOpenProfile] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
@@ -79,6 +80,7 @@ export default function TeamTable({
       // setDeleting(id);
       const response = await deleteStaff(id);
       alert(response.message);
+      console.log(id);
     } catch (error) {
       console.error("Failed to delete staff:", error);
       alert("Error deleting staff");
@@ -97,9 +99,26 @@ export default function TeamTable({
     } else if (label === "Edit Profile") {
       setSelectedProfileId(product.userId);
       setOpenEdit(true);
-      setOpenProfile(false);
+      setFormData({
+        userId: product.userId,
+        fullName: product.fullName,
+        email: product.email,
+        state: product.state || "",
+        location: product.location || "",
+        manager: product.manager || "",
+        phoneNumber: product.phoneNumber || "",
+        cadre: product.cadre || "",
+        userName: product.userName || "",
+        password: "", // Keep empty for security
+        confirmPassword: "", // Keep empty for security
+        profilePic: product.url || "/icons/user_icon.svg",
+        registered: product.registered || new Date().toLocaleDateString(),
+        status: product.status || "Active",
+        url: product.url || "/icons/user_icon.svg",
+        active: product.status === "Active",
+      });
     } else if (label === "Remove Staff") {
-      await handleDelStaff(product.userId); // Call handleDelStaff asynchronously with the product.userId
+      setConfirmDelete(product.userId);
     } else if (label === "Deactivate User" || label === "Activate User") {
       setLoading(true);
       setData((prevData) =>
@@ -194,7 +213,7 @@ export default function TeamTable({
                 </td>
                 <td
                   className={`absolute top-[8px] h-[90%] w-[75%] left-0 ${
-                    product.status === "Active"
+                    product.status === "active"
                       ? "opacity-0 "
                       : product.status === "Deactivated"
                       ? "opacity-80  bg-white"
@@ -238,6 +257,7 @@ export default function TeamTable({
                   {selectedProfileId === product.userId &&
                     menuItem[1]?.label === "Edit Profile" && (
                       <div className="">
+                        {/* Edit Team */}
                         <AddTeamSlider
                           isOpen={openEdit}
                           onClose={() => {
@@ -247,6 +267,7 @@ export default function TeamTable({
                           tittle="Edit Team Member"
                           formData={formData}
                           role={product.cadre}
+                          resetPass={true}
                           onChange={handleChange}
                           onSubmit={handleSubmit}
                           loading={loading}

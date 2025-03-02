@@ -38,6 +38,7 @@ interface SlideDrawerProps {
   loading: boolean;
   errorMessage: string | null;
   options?: any[];
+  resetPass?: boolean;
 }
 
 export const states = [
@@ -60,6 +61,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
   errorMessage,
   onChange,
   onSubmit,
+  resetPass,
   options = states,
 }) => {
   const [hasOpened, setHasOpened] = useState(false);
@@ -80,12 +82,14 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
         },
       } as React.ChangeEvent<HTMLInputElement>);
 
-      onChange({
-        target: {
-          name: "password",
-          value: "",
-        },
-      } as React.ChangeEvent<HTMLInputElement>);
+      if (resetPass) {
+        onChange({
+          target: {
+            name: "password",
+            value: "Reset",
+          },
+        } as React.ChangeEvent<HTMLInputElement>);
+      }
 
       onChange({
         target: {
@@ -97,12 +101,6 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
       onChange({
         target: {
           name: "userName",
-          value: "",
-        },
-      } as React.ChangeEvent<HTMLInputElement>);
-      onChange({
-        target: {
-          name: "confirmPassword",
           value: "",
         },
       } as React.ChangeEvent<HTMLInputElement>);
@@ -207,26 +205,6 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   onChange={onChange}
                 />
               </div>
-              <div className="flex flex-col gap-1">
-                <label htmlFor="cadre">Cadre</label>
-                <Dropdown
-                  showSearch
-                  className="gap-0"
-                  className2="bg-green-100 border-none w-full h-9 flex justify-between items-center rounded-md"
-                  label={formData.cadre || "Select cadre"}
-                  options={cadres}
-                  placeholder="Select Cadre"
-                  onSelect={(selected) =>
-                    onChange({
-                      target: { name: "cadre", value: selected },
-                    } as React.ChangeEvent<HTMLInputElement>)
-                  }
-                  className3="p-2 rounded-2xl bg-green-100"
-                  getLabel={(cadre) => cadre}
-                  getSubLabel={() => ""}
-                  id="store-state"
-                />
-              </div>
             </div>
 
             {/* Authentication Section */}
@@ -243,28 +221,33 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   onChange={onChange}
                 />
               </div>
-              <div className="flex flex-col gap-1">
-                <label htmlFor="password">Password</label>
-                <input
-                  className="h-8 p-1 rounded-md"
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={onChange}
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <input
-                  className="h-8 p-1 rounded-md"
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={onChange}
-                />
-              </div>
+              {resetPass && (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="resetPass"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        onChange({
+                          target: {
+                            name: "password",
+                            value: "Reset",
+                          },
+                        } as React.ChangeEvent<HTMLInputElement>);
+                      } else {
+                        onChange({
+                          target: {
+                            name: "password",
+                            value: "",
+                          },
+                        } as React.ChangeEvent<HTMLInputElement>);
+                      }
+                    }}
+                  />
+                  <label htmlFor="resetPass">Reset Password</label>
+                </div>
+              )}
+
               <button className="bg-button text-white p-2 rounded-full">
                 {loading ? "Adding..." : "Add Team Member"}
               </button>

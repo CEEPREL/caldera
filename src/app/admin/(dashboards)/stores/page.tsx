@@ -39,8 +39,6 @@ function StorePage() {
           return;
         }
 
-        console.log("Fetched Stores (res):", res);
-
         const groupedStores = groupStores(res);
         const stateNames = Object.keys(groupedStores);
 
