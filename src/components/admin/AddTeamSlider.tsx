@@ -13,8 +13,6 @@ export interface FormData {
   manager: string;
   cadre: string;
   userName: string;
-  password: string;
-  confirmPassword: string;
   phoneNumber: string;
   profilePic: string;
   registered: string;
@@ -38,6 +36,7 @@ interface SlideDrawerProps {
   loading: boolean;
   errorMessage: string | null;
   options?: any[];
+  optionslocation?: any[];
   resetPass?: boolean;
 }
 
@@ -63,6 +62,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
   onSubmit,
   resetPass,
   options = states,
+  optionslocation = states,
 }) => {
   const [hasOpened, setHasOpened] = useState(false);
   useEffect(() => {
@@ -169,13 +169,29 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
               </div>
               <div className="flex flex-col gap-1">
                 <label htmlFor="location">Enter Store Location</label>
-                <input
-                  className="h-8 p-1 rounded-md"
-                  type="text"
+                <Dropdown
+                  showSearch
+                  className="gap-0"
+                  className2="bg-white border-none w-full h-9 flex justify-between items-center rounded-md"
+                  label={
+                    typeof formData.location === "string"
+                      ? formData.location
+                      : "Select a State"
+                  }
+                  options={optionslocation}
+                  placeholder="Select a State"
+                  onSelect={(selectedState) => {
+                    // Directly call onChange from the parent to update the 'state' field
+                    onChange({
+                      target: {
+                        name: "location", // Field name to update
+                        value: selectedState, // Value from the selected state
+                      },
+                    } as React.ChangeEvent<HTMLInputElement>);
+                  }}
+                  getLabel={(state) => state.name}
+                  getSubLabel={() => ""}
                   id="location"
-                  name="location"
-                  value={formData.location}
-                  onChange={onChange}
                 />
               </div>
             </div>
@@ -218,6 +234,17 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   id="username"
                   value={formData.userName}
                   name="userName"
+                  onChange={onChange}
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label htmlFor="email">Email</label>
+                <input
+                  className="h-8 p-1 rounded-md"
+                  type="email"
+                  id="email"
+                  value={formData.email}
+                  name="email"
                   onChange={onChange}
                 />
               </div>

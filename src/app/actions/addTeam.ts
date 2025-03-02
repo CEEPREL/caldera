@@ -4,14 +4,12 @@ import { cookies } from "next/headers";
 export interface TeamData {
   fullName: string;
   email: string;
-  password: string;
   phoneNumber: string;
   userName: string;
 }
 
 export async function addTeamAction(formData: TeamData) {
   const fullName = formData.fullName;
-  const password = formData.password;
   const phoneNumber = formData.phoneNumber;
   const userName = formData.userName;
   const email = formData.email;
@@ -27,7 +25,6 @@ export async function addTeamAction(formData: TeamData) {
         method: "POST",
         body: JSON.stringify({
           fullName,
-          password,
           phoneNumber,
           userName,
           email,

@@ -14,7 +14,7 @@ export async function deleteStore(id: string) {
   return { message: data.message };
 }
 
-// Delete  store
+// Delete  staff
 export async function deleteStaff(id: string) {
   const token = (await cookies()).get("token")?.value;
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/staff/${id}`, {

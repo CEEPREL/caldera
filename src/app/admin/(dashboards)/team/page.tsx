@@ -29,8 +29,6 @@ function Team() {
     phoneNumber: "",
     cadre: "",
     userName: "",
-    password: "",
-    confirmPassword: "",
     profilePic: "/images/profile.png",
     registered: new Date().toLocaleDateString(),
     status: "Active",
@@ -69,7 +67,6 @@ function Team() {
       const result = await addTeamAction({
         fullName: formData.fullName,
         email: formData.email,
-        password: formData.password,
         phoneNumber: formData.phoneNumber,
         userName: formData.userName,
       });
@@ -88,8 +85,6 @@ function Team() {
           phoneNumber: "",
           cadre: "",
           userName: "",
-          password: "",
-          confirmPassword: "",
           profilePic: "/images/profile.png",
           registered: new Date().toLocaleDateString(),
           status: "Active",
