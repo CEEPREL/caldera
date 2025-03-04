@@ -19,11 +19,27 @@ interface Store {
   phoneNumber: string;
 }
 
+interface product {
+  createdDate: string;
+
+  createdTime: string;
+  productId: string;
+  productName: string;
+  userId: string;
+  userName: string;
+}
+
+interface ProductsProps {
+  categoryName: string;
+  categoryId: string;
+  product: product[];
+}
+
 // Context type definition
 interface StoreContextType {
   storeId: string | null;
   stateObj: Record<string, Store[]>; // Grouped products and stores
-  products: Store[]; // Raw product data
+  products: ProductsProps[]; // Raw product data
   stores: Store[]; // Raw store data
   loading: boolean;
 }
@@ -36,7 +52,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [storeId, setStoreId] = useState<string | null>(null);
   const [stateObj, setStateObj] = useState<Record<string, Store[]>>({});
-  const [products, setProducts] = useState<Store[]>([]);
+  const [products, setProducts] = useState<ProductsProps[]>([]);
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 

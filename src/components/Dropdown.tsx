@@ -100,7 +100,7 @@ const Dropdown = <T,>({
               //   placeholder="Search Airport"
             />
           )} */}
-          <div className="bg-white h-[400px] gap-2 flex flex-col overflow-y-scroll">
+          <div className="bg-white max-h-[400px] gap-2 flex flex-col overflow-y-scroll">
             {filteredOptions.map((option, index) => (
               <div
                 key={index}

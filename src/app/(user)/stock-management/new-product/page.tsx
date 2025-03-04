@@ -108,19 +108,16 @@ function New() {
           className="flex w-full items-center justify-center flex-col gap-4"
           onSubmit={handleSubmit}
         >
-          <div
-            onClick={() => console.log(products)}
-            className="flex flex-col bg-gray-100 p-5 w-1/2 lg:w-1/3 gap-4"
-          >
+          <div className="flex flex-col bg-gray-100 p-5 w-1/2 lg:w-1/3 gap-4">
             <h1 className="text-lg font-bold">Create New Products</h1>
             <label htmlFor="store-state">Categories</label>
             <Dropdown
               className="gap-0 "
               className2="bg-white border-none w-full h-9 flex justify-between items-center rounded-md"
               label={formData.categoryName || "Select a Category"}
-              options={categories}
+              options={products}
               onSelect={handleStateSelect}
-              getLabel={(category) => category}
+              getLabel={(category) => category.categoryName}
               getSubLabel={() => ""}
               id="store-state"
               placeholder="Select existing category"
