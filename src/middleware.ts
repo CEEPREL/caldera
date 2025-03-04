@@ -8,24 +8,30 @@ export function middleware(req: NextRequest) {
   function redirectToLogin(req: NextRequest) {
     const response = NextResponse.redirect(new URL("/login", req.url));
 
-    // Manually expire the token
+    // Expire the token
     response.cookies.set("token", "", {
-      expires: new Date(0),
+      maxAge: 0,
       path: "/",
     });
 
     return response;
   }
 
-  const token = req.cookies.get("token")?.value;
+  let token = req.cookies.get("token")?.value;
   console.log("Token:", token || "No token found");
 
+  if (token) {
+    // Remove "Bearer " prefix if it exists
+    if (token.startsWith("Bearer ")) {
+      token = token.slice(7);
+    }
+  }
+
   if (!isValidToken(token)) {
-    console.log("Invalid or missing token, redirecting to login.");
+    console.log("Invalid or expired token, redirecting to login.");
     return redirectToLogin(req);
   }
 
-  console.log("Middleware passed, allowing request.");
   return NextResponse.next();
 }
 
@@ -36,7 +42,14 @@ function isValidToken(token: string | undefined): boolean {
     const decoded: { exp: number } = jwtDecode(token);
     const currentTime = Date.now() / 1000;
 
-    return decoded.exp >= currentTime;
+    console.log(
+      "Decoded Token Expiry:",
+      decoded.exp,
+      "| Current Time:",
+      currentTime
+    );
+
+    return decoded.exp > currentTime; // Ensure token hasn't expired
   } catch (error) {
     console.error("Invalid token:", error);
     return false;
@@ -44,5 +57,5 @@ function isValidToken(token: string | undefined): boolean {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/dashboard/:path*"],
+  matcher: ["/admin/:path*"],
 };

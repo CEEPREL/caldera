@@ -1,4 +1,3 @@
-import { StoreProvider } from "@/ContextAPI/storeContex";
 import DashboardContent from "./main";
 
 export default function DashboardLayout({
@@ -6,9 +5,5 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <StoreProvider>
-      <DashboardContent>{children}</DashboardContent>
-    </StoreProvider>
-  );
+  return <DashboardContent>{children}</DashboardContent>;
 }

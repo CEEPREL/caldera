@@ -1,69 +1,107 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
-import { fetchStores } from "@/app/actions/fetch";
 
-interface StoreContextType {
-  storeId: string | null;
-  stateObj: Record<string, any[]>; // State-wise grouped stores
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { usePathname } from "next/navigation";
+import { fetchProduct, fetchStores } from "@/app/actions/fetch";
+
+// Store type definition
+interface Store {
+  storeId: string;
+  storeLocation: string;
+  storeName: string;
+  state: string;
+  phoneNumber: string;
 }
 
+// Context type definition
+interface StoreContextType {
+  storeId: string | null;
+  stateObj: Record<string, Store[]>; // Grouped products and stores
+  products: Store[]; // Raw product data
+  stores: Store[]; // Raw store data
+  loading: boolean;
+}
+
+// Create context
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
-export function StoreProvider({ children }: { children: React.ReactNode }) {
+// Provider component
+export function StoreProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [storeId, setStoreId] = useState<string | null>(null);
-  const [stateObj, setStateObj] = useState<Record<string, any[]>>({});
+  const [stateObj, setStateObj] = useState<Record<string, Store[]>>({});
+  const [products, setProducts] = useState<Store[]>([]);
+  const [stores, setStores] = useState<Store[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   // Function to group stores by state
-  const groupStores = (stores: any[]) => {
+  const groupStores = (stores: Store[]): Record<string, Store[]> => {
     return stores.reduce((acc, store) => {
-      const { state } = store;
-      if (!acc[state]) {
-        acc[state] = [];
-      }
-      acc[state].push(store);
+      if (!acc[store.state]) acc[store.state] = [];
+      acc[store.state].push(store);
       return acc;
-    }, {} as Record<string, any[]>);
+    }, {} as Record<string, Store[]>);
   };
 
   // Extract storeId from pathname
   useEffect(() => {
     const pathParts = pathname.split("/");
     const storeIndex = pathParts.indexOf("stores");
-    const addStore = pathParts.includes("new");
+    const isNewStore = pathParts.includes("new");
 
-    if (storeIndex !== -1 && pathParts[storeIndex + 1] && !addStore) {
+    if (storeIndex !== -1 && pathParts[storeIndex + 1] && !isNewStore) {
       setStoreId(pathParts[storeIndex + 1]);
     } else {
       setStoreId(null);
     }
   }, [pathname]);
 
-  // Fetch and group stores
+  // Fetch grouped products and stores
   useEffect(() => {
-    const getStores = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const data = await fetchStores();
+        // Fetch both products and stores
+        const [fetchedProducts, fetchedStores] = await Promise.all([
+          fetchProduct(),
+          fetchStores(),
+        ]);
 
-        if (Array.isArray(data)) {
-          const groupedStores = groupStores(data);
-          setStateObj(groupedStores);
-        } else {
-          console.error("Invalid stores data received:", data);
-          setStateObj({}); // Reset to empty object if data is invalid
-        }
+        // Save raw data for child components
+        setProducts(fetchedProducts || []);
+        setStores(fetchedStores || []);
+
+        // Ensure both responses are arrays before processing
+        const groupedProducts = Array.isArray(fetchedProducts)
+          ? groupStores(fetchedProducts)
+          : {};
+        const groupedStores = Array.isArray(fetchedStores)
+          ? groupStores(fetchedStores)
+          : {};
+
+        // Merge results
+        setStateObj({ ...groupedProducts, ...groupedStores });
       } catch (error) {
-        console.error("Error fetching stores:", error);
-        setStateObj({}); // Ensure state doesn't break on error
+        console.error("Error fetching data:", error);
+        setStateObj({});
+      } finally {
+        setLoading(false);
       }
     };
 
-    getStores();
+    fetchData();
   }, []);
 
   return (
-    <StoreContext.Provider value={{ storeId, stateObj }}>
+    <StoreContext.Provider
+      value={{ storeId, stateObj, products, stores, loading }}
+    >
       {children}
     </StoreContext.Provider>
   );

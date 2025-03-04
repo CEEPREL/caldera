@@ -1,9 +1,9 @@
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TeamProfileSlider from "./TeamProfileSlider";
-import AddTeamSlider from "./AddTeamSlider";
-import { states } from "./AddTeamSlider";
+import AddTeamSlider from "@/components/admin/AddTeamSlider";
 import { FormData } from "./AddTeamSlider";
+import { useStore } from "@/ContextAPI/storeContex";
 import { deleteStaff } from "@/app/actions/delete";
 import { Trash2 } from "lucide-react";
 import Confirm from "@/components/store/general_UI/ConfirmBox";
@@ -17,7 +17,7 @@ const menuItems = [
 ];
 
 export default function TeamTable({
-  data,
+  data = [],
   setData,
 }: {
   data: FormData[];
@@ -28,10 +28,10 @@ export default function TeamTable({
     null
   );
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [menuItem, setMenuItem] = useState(menuItems);
+  const menuItem = menuItems;
   const [openProfile, setOpenProfile] = useState<boolean>(false);
+
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
@@ -44,44 +44,77 @@ export default function TeamTable({
     phoneNumber: "",
     cadre: "",
     userName: "",
+    storeId: "",
+    storeName: "",
     profilePic: "",
     registered: "",
     status: "",
     url: "",
     active: true,
   });
-  const [activeStatus, setActiveStatus] = useState<string>("Active");
+  const activeStatus = "Active";
+
+  const { stateObj } = useStore();
+
+  const allStates = stateObj ? Object.values(stateObj) : [];
+
+  const flatStores = allStates.flat();
 
   const handleUpdateStaff = async (id: string) => {
     try {
-      const originalStaff = data.find((staff) => staff.userId === id);
-      if (!originalStaff) return;
+      setLoading(true);
 
+      const originalStaff = data.find((staff) => staff.userId === id);
+      if (!originalStaff) {
+        setErrorMessage("Staff not found.");
+        setLoading(false);
+        return;
+      }
+      // Find store based on selected location
+      const selectedStore = flatStores.find(
+        (store) => store.storeLocation === formData.location
+      );
+
+      if (!selectedStore) {
+        setErrorMessage("Invalid store selection.");
+        setLoading(false);
+        return;
+      }
+      const storeId = selectedStore.storeId;
+      const storeName = selectedStore.storeName;
       const updatedFields: UpdateStaffInfoProp = {
         fullName: formData.fullName ?? originalStaff.fullName,
         phoneNumber: formData.phoneNumber ?? originalStaff.phoneNumber,
         userName: formData.userName ?? originalStaff.userName,
+        storeId: storeId ?? originalStaff.storeId,
+        storeName: storeName ?? originalStaff.storeName,
+        email: formData.email ?? originalStaff.email,
       };
-
       await updateStaff(updatedFields, id);
       alert("Staff updated successfully!");
+
+      console.log("Selected Store ID:", updatedFields);
+      // Await the store assignment request
+      // await assignStore(storeId, id);
+
+      alert("Store assigned successfully!");
     } catch (error) {
-      console.error("Failed to update staff:", error);
-      alert("Error updating staff");
+      console.error("Error:", error);
+      alert("An error occurred while updating staff.");
+    } finally {
+      setLoading(false);
+      setOpenEdit(false);
+      window.location.reload();
     }
   };
 
   const handleDelStaff = async (id: string) => {
+    console.log(id);
     try {
-      // setDeleting(id);
       const response = await deleteStaff(id);
       alert(response.message);
-      console.log(id);
     } catch (error) {
-      console.error("Failed to delete staff:", error);
-      alert("Error deleting staff");
     } finally {
-      // setDeleting(null);
       console.error(errorMessage);
     }
   };
@@ -101,23 +134,19 @@ export default function TeamTable({
         fullName: staff.fullName || prev.fullName || "",
         email: staff.email || prev.email || "",
         state: staff.state || prev.state || "",
+        storeName: staff.storeName || prev.storeName || "any",
         location: staff.location || prev.location || "",
         manager: staff.manager || prev.manager || "",
         phoneNumber: staff.phoneNumber || prev.phoneNumber || "",
         cadre: staff.cadre || prev.cadre || "",
         userName: staff.userName || prev.userName || "",
-
         profilePic: staff.url || prev.profilePic || "/icons/user_icon.svg",
-        registered:
-          staff.registered ||
-          prev.registered ||
-          new Date().toLocaleDateString(),
+        registered: staff.registered || prev.registered || "",
         status: staff.status || prev.status || "Active",
         url: staff.url || prev.url || "/icons/user_icon.svg",
         active: staff.status === "Active",
       }));
     } else if (label === "Remove Staff") {
-      setConfirmDelete(staff.userId);
     } else if (label === "Deactivate User" || label === "Activate User") {
       setLoading(true);
       setData((prevData) =>
@@ -202,10 +231,6 @@ export default function TeamTable({
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-  const handleSubmit = async (formData: FormData) => {
-    setLoading(true);
-    setErrorMessage(null);
-  };
 
   return (
     <div className="">
@@ -265,8 +290,8 @@ export default function TeamTable({
                           id={staff.userId}
                           name={staff.fullName}
                           phone={staff.phoneNumber}
-                          role={staff.cadre}
-                          imageUrl={staff.url}
+                          role={staff.storeName || "Store not assigned"}
+                          imageUrl={staff.url || "/icons/user_icon.svg"}
                           salesPick={0}
                           activeDays={0}
                           offlineDays={0}
@@ -294,14 +319,15 @@ export default function TeamTable({
                           onSubmit={() => handleUpdateStaff(staff.userId)}
                           loading={loading}
                           errorMessage={errorMessage}
-                          options={states}
+                          // options={flatStores}
+                          optionslocation={flatStores}
                         />
                       </div>
                     )}
                 </td>
                 <td className=" p-2">
                   <span className={`px-2 py-1 border bg-yellow-50 rounded-3xl`}>
-                    {staff.cadre}
+                    {staff.storeName}
                   </span>
                 </td>
                 <td className=" p-2">{staff.registered}</td>
@@ -340,10 +366,9 @@ export default function TeamTable({
                       className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-50"
                       ref={dropdownRef}
                     >
-                      <div className="flex flex-col gap-2 p-2">
+                      <div key={index} className="flex flex-col gap-2 p-2">
                         {menuItems.map((item, index) => {
                           let isDeactivate = item.label === "Deactivate User";
-                          let isActive = staff.status === "Activate User";
                           let newLabel =
                             staff.status === "Active" && isDeactivate
                               ? "Deactivate User"
@@ -358,23 +383,27 @@ export default function TeamTable({
                               : item.icon;
 
                           return (
-                            <>
+                            <React.Fragment key={`staff-${index}`}>
                               {item.label === "Remove Staff" ? (
                                 <Confirm
                                   message={`Are you sure you want to delete ${staff.fullName}?`}
                                   button={
-                                    <button className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border-gray-500 transition cursor-pointer">
+                                    <button
+                                      className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border-gray-500 transition cursor-pointer"
+                                      onClick={(e) => {
+                                        e.stopPropagation(); // Prevents event bubbling issues
+                                      }}
+                                    >
                                       <Trash2 className="text-red-600" />
                                       <h1 className="text-sm text-gray-700">
                                         Remove Staff
                                       </h1>
                                     </button>
                                   }
-                                  onConfirm={() => handleDelStaff(staff.userId)}
+                                  onConfirm={() => console.log(staff.userId)}
                                 />
                               ) : (
                                 <button
-                                  key={index}
                                   onClick={() =>
                                     handleMenuItemClick(newLabel, staff)
                                   }
@@ -391,7 +420,7 @@ export default function TeamTable({
                                   </h1>
                                 </button>
                               )}
-                            </>
+                            </React.Fragment>
                           );
                         })}
                       </div>

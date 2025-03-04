@@ -12,6 +12,8 @@ export interface FormData {
   location: string;
   manager: string;
   cadre: string;
+  storeId?: string;
+  storeName?: string;
   userName: string;
   phoneNumber: string;
   profilePic: string;
@@ -40,14 +42,6 @@ interface SlideDrawerProps {
   resetPass?: boolean;
 }
 
-export const states = [
-  { code: "OG", name: "Ogun State", cadre: "Cadre 1" },
-  { code: "KW", name: "Kwara State", cadre: "Cadre 2" },
-  { code: "LAG", name: "Lagos State", cadre: "Cadre 1" },
-  { code: "ABJ", name: "Abuja", cadre: "Cadre 2" },
-];
-export const cadres = ["Cadre 1", "Cadre 2"];
-
 const SlideDrawer: React.FC<SlideDrawerProps> = ({
   isOpen,
   onClose,
@@ -61,8 +55,8 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
   onChange,
   onSubmit,
   resetPass,
-  options = states,
-  optionslocation = states,
+  options,
+  optionslocation,
 }) => {
   const [hasOpened, setHasOpened] = useState(false);
   useEffect(() => {
@@ -140,7 +134,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
             {/* Location Section */}
             <div className="flex flex-col bg-gray-100 p-5 w-full gap-4">
               <h1 className="text-lg font-bold">Location</h1>
-              <div className="flex flex-col gap-1">
+              {/* <div className="flex flex-col gap-1">
                 <label htmlFor="state">State</label>
                 <Dropdown
                   showSearch
@@ -162,11 +156,11 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                       },
                     } as React.ChangeEvent<HTMLInputElement>);
                   }}
-                  getLabel={(state) => state.name}
+                  getLabel={(state) => state.state}
                   getSubLabel={() => ""}
                   id="store-state"
                 />
-              </div>
+              </div> */}
               <div className="flex flex-col gap-1">
                 <label htmlFor="location">Enter Store Location</label>
                 <Dropdown
@@ -178,7 +172,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                       ? formData.location
                       : "Select a State"
                   }
-                  options={optionslocation}
+                  options={optionslocation || []}
                   placeholder="Select a State"
                   onSelect={(selectedState) => {
                     // Directly call onChange from the parent to update the 'state' field
@@ -189,7 +183,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                       },
                     } as React.ChangeEvent<HTMLInputElement>);
                   }}
-                  getLabel={(state) => state.name}
+                  getLabel={(state) => state.storeLocation}
                   getSubLabel={() => ""}
                   id="location"
                 />

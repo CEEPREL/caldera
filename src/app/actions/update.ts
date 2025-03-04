@@ -5,21 +5,51 @@ export interface UpdateStaffInfoProp {
   fullName: string;
   phoneNumber: string;
   userName: string;
+  storeId?: string;
+  storeName?: string;
+  email?: string;
 }
 
-// Update user
+// Update staff
 export async function updateStaff(staffInfo: UpdateStaffInfoProp, id: string) {
-  const { fullName, phoneNumber, userName } = staffInfo;
+  const { fullName, phoneNumber, userName, storeId, storeName, email } =
+    staffInfo;
 
   const token = (await cookies()).get("token")?.value;
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/staff/${id}`, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      Authorization: `${token}`,
     },
     method: "PUT",
-    body: JSON.stringify({ fullName, phoneNumber, userName }),
+    body: JSON.stringify({
+      fullName,
+      phoneNumber,
+      userName,
+      storeId,
+      storeName,
+      email,
+    }),
+  });
+
+  const data = await res.json();
+  return { message: data.message };
+}
+
+//Assign store
+export async function assignStore(storesId: string, id: string) {
+  const storeId = storesId;
+  const userId = id;
+  const token = (await cookies()).get("token")?.value;
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/assignstore`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${token}`,
+    },
+    method: "POST",
+    body: JSON.stringify({ storeId, userId }),
   });
 
   const data = await res.json();

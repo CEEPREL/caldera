@@ -20,14 +20,6 @@ interface UserProfile {
   drawerStyle: string;
 }
 
-const states = [
-  { code: "OG", name: "Ogun State", cadre: "Cadre 1" },
-  { code: "KW", name: "Kwara State", cadre: "Cadre 2" },
-  { code: "LAG", name: "Lagos State", cadre: "Cadre 1" },
-  { code: "ABJ", name: "Abuja", cadre: "Cadre 2" },
-];
-const cadres = ["Cadre 1", "Cadre 2"];
-
 const ProfileSlider: React.FC<UserProfile> = ({
   isOpen,
   onClose,
@@ -35,7 +27,7 @@ const ProfileSlider: React.FC<UserProfile> = ({
   overlayColor = "bg-black bg-opacity-50",
   drawerStyle = "bg-white p-5 rounded-r-2xl shadow-lg",
   name,
-  imageUrl = "/images/profile.png",
+  imageUrl,
   phone,
   role,
   salesPick,
@@ -116,8 +108,8 @@ const ProfileSlider: React.FC<UserProfile> = ({
             {/* Location Section */}
             <div className="flex flex-row bg-gray-100 p-5 w-full gap-4">
               <Image
-                src={imageUrl} //pass as a prop
-                alt="picture" //pass as a prop
+                src={imageUrl}
+                alt="picture"
                 width={70}
                 height={70}
                 className="rounded-full w-[35%]"
@@ -138,7 +130,7 @@ const ProfileSlider: React.FC<UserProfile> = ({
             <div className="flex flex-col bg-gray-100 p-5 w-full gap-4">
               <h1 className="text-lg font-bold">Activity Summary</h1>
               {/* clsx classname style as prop, map through the array and pass as a prop */}
-              <div className="flex overflow-x-scroll flex-row gap-2 w-full">
+              {/* <div className="flex overflow-x-scroll flex-row gap-2 w-full">
                 <p className="text-sm cursor-pointer w-full bg-gray-200 rounded-lg px-2 py-1 ">
                   This Week
                 </p>
@@ -151,11 +143,11 @@ const ProfileSlider: React.FC<UserProfile> = ({
                 <p className="text-sm cursor-pointer w-full bg-gray-200 rounded-lg px-2 py-1 ">
                   All Time
                 </p>
-              </div>
+              </div> */}
               {/* map through the array and pass as a prop */}
               <div className="flex text-gray-500 flex-col gap-5">
                 <div className="flex flex-row justify-between gap-3">
-                  <p className="text-lg ">Total sales pick</p>
+                  <p className="text-lg ">Total sales </p>
                   <p className="text-lg">{salesPick}</p>
                 </div>
                 <div className="flex flex-row justify-between gap-1">

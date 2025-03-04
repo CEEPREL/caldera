@@ -43,9 +43,12 @@ const Dropdown = <T,>({
     setSearchTerm("");
   };
 
-  const filteredOptions = options.filter((option) =>
-    getLabel(option).toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredOptions = options.filter((option) => {
+    const label = getLabel(option);
+    return label
+      ? label.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+  });
   const handleClickOutside = (event: MouseEvent) => {
     if (
       dropdownRef.current &&
@@ -87,7 +90,7 @@ const Dropdown = <T,>({
         />
       </div>
       {isOpen && (
-        <div className="absolute z-50 bg-white border border-gray-200 rounded mt-1 w-full shadow">
+        <div className="absolute  z-50 bg-black border border-gray-200 rounded mt-1 w-full shadow">
           {/* {showSearch === true && (
             <input
               className="w-full rounded-full px-2 focus:bg-blue-50 focus:rounded-full"
@@ -97,12 +100,12 @@ const Dropdown = <T,>({
               //   placeholder="Search Airport"
             />
           )} */}
-          <div className=" h-fit gap-2 flex flex-col overflow-y-scroll">
+          <div className="bg-white h-[400px] gap-2 flex flex-col overflow-y-scroll">
             {filteredOptions.map((option, index) => (
               <div
                 key={index}
                 className={clsx(
-                  `p-2  w-full  hover:bg-gray-100 cursor-pointer `,
+                  `p-2  w-full   hover:bg-gray-100 cursor-pointer `,
                   className3
                 )}
                 onClick={() =>

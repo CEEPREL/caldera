@@ -44,23 +44,23 @@ export async function createStore(formData: StoreData) {
 
 // Assign user
 
-interface assignStoreInfoProp {
-  userId: string;
-  storeId: string;
+interface createProductProps {
+  categoryName: string;
+  product: { productName: string }[];
 }
-export async function assignStore(assignStoreInfo: assignStoreInfoProp) {
-  const userId = assignStoreInfo.userId;
-  const storeId = assignStoreInfo.storeId;
+export async function createProduct(assignStoreInfo: createProductProps) {
+  const categoryName = assignStoreInfo.categoryName;
+  const product = assignStoreInfo.product;
   const token = (await cookies()).get("token")?.value;
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/assignstore`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `${token}`,
     },
     method: "POST",
     body: JSON.stringify({
-      storeId,
-      userId,
+      categoryName,
+      product,
     }),
   });
   const data = await res.json();

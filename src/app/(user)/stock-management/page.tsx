@@ -1,7 +1,7 @@
 "use client";
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 const apiData = [
   {
@@ -55,26 +55,79 @@ const handleAction = (row: any) => {
 };
 
 function page() {
+  const [salesToggle, setSalesToggle] = useState<"purchase order" | "product">(
+    "purchase order"
+  );
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
       {/* Header */}
       <div className="flex flex-col">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-medium">Stock Management</h1>
-          <Link
-            href="/stock-management/purchase-order"
-            className="bg-button text-white p-2 px-4 rounded-full"
-          >
-            Purchase Order
-          </Link>
         </div>
-        <div className="">
-          <PurchaseOrderTable
-            columns={columns}
-            data={apiData}
-            onActionClick={handleAction}
-          />
+        <div className="flex justify-between">
+          <div className="flex gap-2 py-2 flex-row">
+            <button
+              className={`${
+                salesToggle === "purchase order"
+                  ? "bg-button text-white"
+                  : "border bg-white"
+              } p-2 px-4 rounded-full `}
+              onClick={() => setSalesToggle("purchase order")}
+            >
+              Purchase Order
+            </button>
+            <button
+              className={`${
+                salesToggle === "product"
+                  ? "bg-button text-white"
+                  : "border bg-white"
+              } p-2 px-4 rounded-full `}
+              onClick={() => setSalesToggle("product")}
+            >
+              Products
+            </button>
+          </div>
+          {salesToggle === "purchase order" ? (
+            <div className="flex gap-2 py-2 flex-row">
+              {" "}
+              <Link
+                href="/stock-management/purchase-order"
+                className="bg-button text-white  p-2 px-4 rounded-full"
+              >
+                Purchase Order
+              </Link>
+            </div>
+          ) : (
+            <div className="flex gap-2 py-2 flex-row">
+              {" "}
+              <Link
+                href="/stock-management/new-product"
+                className="bg-button text-white  p-2 px-4 rounded-full"
+              >
+                Create new Product
+              </Link>
+            </div>
+          )}
         </div>
+
+        {salesToggle === "purchase order" ? (
+          <div className="">
+            <PurchaseOrderTable
+              columns={columns}
+              data={apiData}
+              onActionClick={handleAction}
+            />
+          </div>
+        ) : (
+          <div>
+            <PurchaseOrderTable
+              columns={columns}
+              data={apiData}
+              onActionClick={handleAction}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

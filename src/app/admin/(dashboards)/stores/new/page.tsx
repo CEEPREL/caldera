@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import states from "@/data/states.json";
-import { createStore, StoreData } from "@/app/actions/createStore";
+import { createStore, StoreData } from "@/app/actions/create";
 
 function New() {
   const router = useRouter();

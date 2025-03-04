@@ -6,14 +6,14 @@ import SlideDrawer from "@/components/admin/AddTeamSlider";
 import { addTeamAction } from "@/app/actions/addTeam";
 import { fetchStaff } from "@/app/actions/fetch";
 import { FormData } from "@/components/admin/AddTeamSlider";
+import { useStore } from "@/ContextAPI/storeContex";
 
 function Team() {
-  const states = [
-    { code: "OG", name: "Ogun State" },
-    { code: "KW", name: "Kwara State" },
-    { code: "LAG", name: "Lagos State" },
-    { code: "ABJ", name: "Abuja" },
-  ];
+  const { stateObj } = useStore();
+
+  const allStates = stateObj ? Object.values(stateObj) : [];
+
+  const flatStores = allStates.flat();
 
   const [data, setData] = useState<FormData[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -115,7 +115,7 @@ function Team() {
           loading={loading}
           errorMessage={errorMessage}
           role=""
-          options={states}
+          optionslocation={flatStores}
         />
       </div>
       <div className="w-full p-5 relative text-black bg-white">
@@ -123,7 +123,7 @@ function Team() {
           <div className="flex justify-center items-center min-h-[80vh]">
             <p>Loading...</p>
           </div>
-        ) : data.length === 0 ? (
+        ) : !data || data.length === 0 ? (
           <div className="flex flex-col min-h-[80vh] justify-center items-center w-full">
             <div className="flex justify-center items-center w-48 h-48 rounded-full bg-gradient-to-t from-white to-gray-100">
               <Image

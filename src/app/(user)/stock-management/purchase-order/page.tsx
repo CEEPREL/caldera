@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import states from "@/data/states.json";
-import { createStore, StoreData } from "@/app/actions/createStore";
+import { createStore, StoreData } from "@/app/actions/create";
 
 function New() {
   const router = useRouter();
@@ -73,7 +73,7 @@ function New() {
             src={"/icons/arrow_left.svg"}
           />
         </div>
-        <h1 className="text-black">Purchase Order</h1>
+        <h1 className="text-black">Back</h1>
       </button>
 
       <div className="w-full p-5 relative flex text-black">
