@@ -1,18 +1,33 @@
 "use client";
-
 import Image from "next/image";
 import logo from "../../../public/images/Frame.svg";
 import frame from "../../../public/images/Vector (4).svg";
-import { useActionState } from "react";
+import { useState } from "react";
 import { loginAction } from "../actions/auth";
 import { useRouter } from "next/navigation";
 
 function AdminLogin() {
   const router = useRouter();
-  const [state, formAction] = useActionState(loginAction, null);
+  const [formState, setFormState] = useState<{
+    error?: string;
+    success?: boolean;
+    redirectTo?: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  if (state?.success) {
-    router.push("/admin/report");
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+
+    const formData = new FormData(event.currentTarget);
+    const result = await loginAction(null, formData);
+
+    setFormState(result);
+    setLoading(false);
+
+    if (result?.success && result.redirectTo) {
+      router.push(result.redirectTo);
+    }
   }
 
   return (
@@ -27,7 +42,7 @@ function AdminLogin() {
             </h1>
             <form
               className="bg-white flex flex-col gap-2 rounded-b-2xl text-gray-400 p-10"
-              action={formAction}
+              onSubmit={handleSubmit}
             >
               <div className="flex flex-col">
                 <label>Username</label>
@@ -47,12 +62,15 @@ function AdminLogin() {
                   required
                 />
               </div>
-              {state?.error && <p className="text-red-500">{state.error}</p>}
+              {formState?.error && (
+                <p className="text-red-500">{formState.error}</p>
+              )}
               <button
                 type="submit"
                 className="bg-[#7D95EE] text-white p-2 rounded-xl mt-4"
+                disabled={loading}
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </button>
             </form>
           </div>

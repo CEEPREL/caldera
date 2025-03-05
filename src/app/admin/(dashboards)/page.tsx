@@ -1,7 +1,5 @@
 import { redirect } from "next/navigation";
 
-function Adminpage() {
-  return redirect("/admin/report");
+export default function AdminPage() {
+  redirect("/admin/report"); // Redirect on the server before rendering
 }
-
-export default Adminpage;

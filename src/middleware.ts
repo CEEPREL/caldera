@@ -1,3 +1,5 @@
+"use server";
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
@@ -6,29 +8,46 @@ export function middleware(req: NextRequest) {
   console.log("Middleware executed for:", req.nextUrl.pathname);
 
   function redirectToLogin(req: NextRequest) {
+    if (req.nextUrl.pathname === "/login") {
+      return NextResponse.next(); // Allow access to login page
+    }
+
     const response = NextResponse.redirect(new URL("/login", req.url));
-
-    // Expire the token
-    response.cookies.set("token", "", {
-      maxAge: 0,
-      path: "/",
-    });
-
+    response.cookies.set("token", "", { maxAge: 0, path: "/" }); // Expire token
     return response;
   }
 
   let token = req.cookies.get("token")?.value;
+
   console.log("Token:", token || "No token found");
 
-  if (token) {
-    // Remove "Bearer " prefix if it exists
-    if (token.startsWith("Bearer ")) {
-      token = token.slice(7);
-    }
+  if (!token || !isValidToken(token)) {
+    console.log("Invalid or expired token, redirecting to login.");
+    return redirectToLogin(req);
   }
 
-  if (!isValidToken(token)) {
-    console.log("Invalid or expired token, redirecting to login.");
+  // Decode the token
+  try {
+    const decoded: any = jwtDecode(token);
+    console.log("Decoded Token:", decoded);
+
+    const userRole = decoded?.role;
+    console.log("User Role:", userRole || "No role found");
+
+    if (!userRole) {
+      console.log("No role found in token, redirecting to login.");
+      return redirectToLogin(req);
+    }
+
+    // Ensure users don't get redirected infinitely
+    if (userRole !== "admin") {
+      return NextResponse.redirect(new URL("/report", req.url));
+    }
+    if (userRole !== "staff") {
+      return NextResponse.redirect(new URL("/admin", req.url));
+    }
+  } catch (error) {
+    console.error("Error decoding token:", error);
     return redirectToLogin(req);
   }
 
@@ -41,15 +60,7 @@ function isValidToken(token: string | undefined): boolean {
   try {
     const decoded: { exp: number } = jwtDecode(token);
     const currentTime = Date.now() / 1000;
-
-    console.log(
-      "Decoded Token Expiry:",
-      decoded.exp,
-      "| Current Time:",
-      currentTime
-    );
-
-    return decoded.exp > currentTime; // Ensure token hasn't expired
+    return decoded.exp > currentTime; // Token must still be valid
   } catch (error) {
     console.error("Invalid token:", error);
     return false;
@@ -57,5 +68,5 @@ function isValidToken(token: string | undefined): boolean {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/report/:path*"], // Middleware won't run on /login
 };

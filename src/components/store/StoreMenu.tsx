@@ -1,45 +1,71 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { redirect, usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 
-const menuItems = [
-  { icon: "/icons/revenue.svg", label: "Report", href: "/report" },
+// Function to generate menu items dynamically
+const getMenuItems = (basePath: string, storeId: string) => [
+  {
+    icon: "/icons/revenue.svg",
+    label: "Report",
+    href: `${basePath}/${storeId}/report`,
+  },
   {
     icon: "/icons/daily_record.svg",
     label: "Daily Sales",
-    href: "/daily-sales",
+    href: `${basePath}/${storeId}/daily-sales`,
   },
-  { icon: "/icons/sales.svg", label: "Sales Record", href: "/sales-record" },
+  {
+    icon: "/icons/sales.svg",
+    label: "Sales Record",
+    href: `${basePath}/${storeId}/sales-record`,
+  },
   {
     icon: "/icons/debt_mgt.svg",
     label: "Debt Management",
-    href: "/debt-management",
+    href: `${basePath}/${storeId}/debt-management`,
   },
-  { icon: "/icons/inventory.svg", label: "Inventory", href: "/inventory" },
+  {
+    icon: "/icons/inventory.svg",
+    label: "Inventory",
+    href: `${basePath}/${storeId}/inventory`,
+  },
   {
     icon: "/icons/stock_mgt.svg",
     label: "Stock Management",
-    href: "/stock-management",
+    href: `${basePath}/${storeId}/stock-management`,
   },
-  { icon: "/icons/settings.svg", label: "Settings", href: "/settings" },
-  { icon: "/icons/market.svg", label: "Market List", href: "/market-list" },
+  {
+    icon: "/icons/settings.svg",
+    label: "Settings",
+    href: `${basePath}/${storeId}/settings`,
+  },
+  {
+    icon: "/icons/market.svg",
+    label: "Market List",
+    href: `${basePath}/${storeId}/market-list`,
+  },
 ];
 
-function StoreMenu() {
+function StoreMenu({ params }: { params: { storeId: string } }) {
   const router = useRouter();
   const pathname = usePathname();
   const [selectedItem, setSelectedItem] = useState(pathname);
-  const handleClick = (item: string, href: string) => {
-    setSelectedItem(item);
+
+  // Determine if the user is in `/caldera` (user) or `/admin`
+  const basePath = pathname.includes("/admin") ? "/admin" : "/caldera";
+
+  // Handle menu click
+  const handleClick = (href: string) => {
+    setSelectedItem(href);
     router.push(href);
   };
-  const welcomeRedirect = () => {
-    redirect("/user/report");
-  };
+
   return (
     <div className="p-2 bg-white h-full flex flex-col gap-10">
+      {/* Back Button for Admins */}
       {pathname.includes("/admin") ? (
         <button
           onClick={() => router.back()}
@@ -51,33 +77,29 @@ function StoreMenu() {
             width={20}
             height={20}
           />
-          <span className="hidden lg:flex ">Back to Store</span>
+          <span className="hidden lg:flex">Back to Store</span>
         </button>
       ) : (
         <Link
-          href="/report"
+          href={`${basePath}/${params.storeId}/report`}
           className="flex items-center gap-2 text-lg text-black font-semibold"
         >
           <span className="text-2xl">Welcome</span>
         </Link>
       )}
+
+      {/* Menu Items */}
       <div className="text-gray-500 flex flex-col gap-6">
-        {menuItems.map((item) => (
+        {getMenuItems(basePath, params.storeId).map((item) => (
           <div className="flex flex-col gap-6" key={item.label}>
             <Link
               className={`flex p-2 rounded-3xl gap-2 ${
                 selectedItem === item.href ? "bg-selected" : ""
               }`}
               href={item.href}
-              onClick={() => handleClick(item.href, item.href)}
+              onClick={() => handleClick(item.href)}
             >
-              <Image
-                className=""
-                src={item.icon}
-                alt=""
-                width={20}
-                height={20}
-              />
+              <Image src={item.icon} alt="" width={20} height={20} />
               <span className="hidden lg:block">{item.label}</span>
             </Link>
           </div>
