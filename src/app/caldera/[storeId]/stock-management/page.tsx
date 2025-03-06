@@ -1,11 +1,23 @@
 "use client";
 import { useStore } from "@/ContextAPI/storeContex";
 import { getStoreId } from "@/app/actions/auth";
+import { fetchProduct, getallpurchaseOrder } from "@/app/actions/fetch";
 import CartSlider from "@/components/store/daily_sales/CartSlider";
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import { ShoppingBasket } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+type Product = {
+  productId: string;
+  userId: string;
+  userName: string;
+  productName: string;
+  createdDate: string;
+  createdTime: string;
+  categoryId: string;
+  categoryName: string;
+};
 
 const apiData = [
   {
@@ -79,15 +91,15 @@ const columns = [
 const productsTable = [
   { key: "id", label: "#" },
   { key: "productName", label: "Product Name" },
-  { key: "category", label: "Category" },
-  { key: "userId", label: "Append By" },
+  { key: "categoryName", label: "Category" },
+  { key: "userName", label: "Append By" },
   {
     key: "action",
-    label: "Action",
+    label: "",
     render: (row: any) => (
       <button
         onClick={() => handleAction(row)}
-        className={`text-button w-fullbg-blue-500 w-full hover:text-blue-300  rounded-sm px-2 py-1 font-semibold`}
+        className={`text-button w-fullbg-blue-500 text-center w-full hover:text-blue-300  rounded-sm px-2 py-1 font-semibold`}
       >
         Add
       </button>
@@ -105,10 +117,51 @@ function page() {
   const { storeData } = useStore();
   const storeId = storeData?.data.storeId;
   const [openCart, setOpenCart] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [poData, setPoData] = useState<any>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const [salesToggle, setSalesToggle] = useState<"purchase order" | "product">(
     "purchase order"
   );
+  useEffect(() => {
+    const getProducts = async () => {
+      setLoading(true);
+      const data = await fetchProduct();
+      if (data && Array.isArray(data)) {
+        const allProducts = data
+          .filter((category) => category.product.length > 0)
+          .flatMap((category) =>
+            category.product.map((product: Product) => ({
+              ...product,
+              categoryId: category.categoryId,
+              categoryName: category.categoryName,
+            }))
+          );
+        setProducts(allProducts);
+      }
+      setLoading(false);
+    };
+
+    getProducts();
+  }, []);
+
+  useEffect(() => {
+    if (!storeId) return;
+
+    const fetchPoData = async () => {
+      const result = await getallpurchaseOrder("9033519996");
+      if (!result.status) {
+        setError(result.error || "Unknown error");
+      } else {
+        setPoData(result);
+        console.log(result.data);
+      }
+    };
+
+    fetchPoData();
+  }, [storeId]);
 
   const handleOnDelete = () => {
     console.log("Hi");
@@ -197,7 +250,7 @@ function page() {
           <div>
             <PurchaseOrderTable
               columns={productsTable}
-              data={apiData}
+              data={products}
               onActionClick={handleAction}
             />
           </div>

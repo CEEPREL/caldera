@@ -152,7 +152,7 @@ function Page() {
 
           <button onClick={() => setOpenCart(true)} className="relative">
             <h1 className="flex text-xs -top-2 right-0 absolute w-5 h-5 items-center justify-center bg-red-400 text-white rounded-full">
-              {}
+              hi
             </h1>
             <div className="bg-gray-200 rounded-full p-1">
               <ShoppingBasket />
