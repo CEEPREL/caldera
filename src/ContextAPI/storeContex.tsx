@@ -9,6 +9,7 @@ import {
 } from "react";
 import { usePathname } from "next/navigation";
 import { fetchProduct, fetchStores } from "@/app/actions/fetch";
+import { getStoreData } from "@/app/actions/auth";
 
 // Store type definition
 interface Store {
@@ -19,29 +20,53 @@ interface Store {
   phoneNumber: string;
 }
 
-interface product {
-  createdDate: string;
+type StoreData = {
+  status: boolean;
+  data: {
+    userId: string;
+    fullName: string;
+    phoneNumber: string;
+    role: string;
+    userName: string;
+    email: string;
+    storeId: string;
+    storeName: string;
+    profileImg: object;
+    ipAddress: null | string;
+    createdDate: null | string;
+    createdTime: null | string;
+    loginDate: string;
+    loginTime: string;
+    login: boolean;
+    status: string;
+  };
+  token: string;
+};
 
+interface Product {
+  createdDate: string;
   createdTime: string;
   productId: string;
   productName: string;
   userId: string;
   userName: string;
+  storeData: any;
 }
 
 interface ProductsProps {
   categoryName: string;
   categoryId: string;
-  product: product[];
+  product: Product[];
 }
 
 // Context type definition
 interface StoreContextType {
   storeId: string | null;
-  stateObj: Record<string, Store[]>; // Grouped products and stores
+  stateObj: Record<string, Store[]>; // Grouped stores
   products: ProductsProps[]; // Raw product data
   stores: Store[]; // Raw store data
   loading: boolean;
+  storeData: StoreData | null;
 }
 
 // Create context
@@ -55,6 +80,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [products, setProducts] = useState<ProductsProps[]>([]);
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [storeData, setStoreData] = useState<StoreData | null>(null);
 
   // Function to group stores by state
   const groupStores = (stores: Store[]): Record<string, Store[]> => {
@@ -78,7 +104,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
   }, [pathname]);
 
-  // Fetch grouped products and stores
+  // Fetch stores and products
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -93,16 +119,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setProducts(fetchedProducts || []);
         setStores(fetchedStores || []);
 
-        // Ensure both responses are arrays before processing
-        const groupedProducts = Array.isArray(fetchedProducts)
-          ? groupStores(fetchedProducts)
-          : {};
+        // Ensure stores are grouped correctly
         const groupedStores = Array.isArray(fetchedStores)
           ? groupStores(fetchedStores)
           : {};
 
-        // Merge results
-        setStateObj({ ...groupedProducts, ...groupedStores });
+        // Set grouped data
+        setStateObj(groupedStores);
       } catch (error) {
         console.error("Error fetching data:", error);
         setStateObj({});
@@ -114,9 +137,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     fetchData();
   }, []);
 
+  // Fetch store data
+  useEffect(() => {
+    const fetchStoreData = async () => {
+      const storedData = await getStoreData();
+      setStoreData(storedData);
+    };
+    fetchStoreData();
+  }, []);
+
   return (
     <StoreContext.Provider
-      value={{ storeId, stateObj, products, stores, loading }}
+      value={{ storeId, stateObj, products, stores, loading, storeData }}
     >
       {children}
     </StoreContext.Provider>

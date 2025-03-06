@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
 // Function to generate menu items dynamically
@@ -49,15 +49,32 @@ const getMenuItems = (basePath: string, storeId: string) => [
   },
 ];
 
-function StoreMenu({ params }: { params: { storeId: string } }) {
+function StoreMenu() {
   const router = useRouter();
   const pathname = usePathname();
-  const [selectedItem, setSelectedItem] = useState(pathname);
+  const params = useParams<{ storeId?: string }>();
 
-  // Determine if the user is in `/caldera` (user) or `/admin`
-  const basePath = pathname.includes("/admin") ? "/admin" : "/caldera";
+  // Ensure `storeId` is correctly extracted
+  let storeId: string | undefined = params.storeId;
+
+  if (!storeId) {
+    const match =
+      pathname.match(/stores\/([^/]+)/) || pathname.match(/caldera\/([^/]+)/);
+    storeId = match?.[1];
+  }
+
+  const basePath = pathname.startsWith("/admin/stores")
+    ? "/admin/stores"
+    : "/caldera";
+
+  if (!storeId) {
+    console.error("Store ID is missing:", pathname);
+    return null;
+  }
 
   // Handle menu click
+  const [selectedItem, setSelectedItem] = useState(pathname);
+
   const handleClick = (href: string) => {
     setSelectedItem(href);
     router.push(href);
@@ -68,7 +85,7 @@ function StoreMenu({ params }: { params: { storeId: string } }) {
       {/* Back Button for Admins */}
       {pathname.includes("/admin") ? (
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push("/admin/stores")}
           className="flex items-center gap-2 text-lg text-black font-semibold"
         >
           <Image
@@ -81,7 +98,7 @@ function StoreMenu({ params }: { params: { storeId: string } }) {
         </button>
       ) : (
         <Link
-          href={`${basePath}/${params.storeId}/report`}
+          href={`${basePath}/${storeId}/report`}
           className="flex items-center gap-2 text-lg text-black font-semibold"
         >
           <span className="text-2xl">Welcome</span>
@@ -90,19 +107,21 @@ function StoreMenu({ params }: { params: { storeId: string } }) {
 
       {/* Menu Items */}
       <div className="text-gray-500 flex flex-col gap-6">
-        {getMenuItems(basePath, params.storeId).map((item) => (
-          <div className="flex flex-col gap-6" key={item.label}>
-            <Link
-              className={`flex p-2 rounded-3xl gap-2 ${
-                selectedItem === item.href ? "bg-selected" : ""
-              }`}
-              href={item.href}
-              onClick={() => handleClick(item.href)}
-            >
-              <Image src={item.icon} alt="" width={20} height={20} />
-              <span className="hidden lg:block">{item.label}</span>
-            </Link>
-          </div>
+        {getMenuItems(basePath, storeId).map((item) => (
+          <Link
+            key={item.label}
+            className={`flex p-2 rounded-3xl gap-2 ${
+              selectedItem === item.href ? "bg-selected" : ""
+            }`}
+            href={item.href}
+            onClick={(e) => {
+              e.preventDefault(); // Prevent full reload
+              handleClick(item.href);
+            }}
+          >
+            <Image src={item.icon} alt="" width={20} height={20} />
+            <span className="hidden lg:block">{item.label}</span>
+          </Link>
         ))}
       </div>
     </div>

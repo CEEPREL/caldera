@@ -27,29 +27,29 @@ export function middleware(req: NextRequest) {
   }
 
   // Decode the token
-  try {
-    const decoded: any = jwtDecode(token);
-    console.log("Decoded Token:", decoded);
+  // try {
+  //   const decoded: any = jwtDecode(token);
+  //   console.log("Decoded Token:", decoded);
 
-    const userRole = decoded?.role;
-    console.log("User Role:", userRole || "No role found");
+  //   const userRole = decoded?.role;
+  //   console.log("User Role:", userRole || "No role found");
 
-    if (!userRole) {
-      console.log("No role found in token, redirecting to login.");
-      return redirectToLogin(req);
-    }
+  //   if (!userRole) {
+  //     console.log("No role found in token, redirecting to login.");
+  //     return redirectToLogin(req);
+  //   }
 
-    // Ensure users don't get redirected infinitely
-    if (userRole !== "admin") {
-      return NextResponse.redirect(new URL("/report", req.url));
-    }
-    if (userRole !== "staff") {
-      return NextResponse.redirect(new URL("/admin", req.url));
-    }
-  } catch (error) {
-    console.error("Error decoding token:", error);
-    return redirectToLogin(req);
-  }
+  //   // Ensure users don't get redirected infinitely
+  //   if (userRole !== "admin") {
+  //     return NextResponse.redirect(new URL("/report", req.url));
+  //   }
+  //   if (userRole !== "staff") {
+  //     return NextResponse.redirect(new URL("/admin", req.url));
+  //   }
+  // } catch (error) {
+  //   console.error("Error decoding token:", error);
+  //   return redirectToLogin(req);
+  // }
 
   return NextResponse.next();
 }
@@ -60,7 +60,7 @@ function isValidToken(token: string | undefined): boolean {
   try {
     const decoded: { exp: number } = jwtDecode(token);
     const currentTime = Date.now() / 1000;
-    return decoded.exp > currentTime; // Token must still be valid
+    return decoded.exp > currentTime;
   } catch (error) {
     console.error("Invalid token:", error);
     return false;

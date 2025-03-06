@@ -20,6 +20,7 @@ interface UserProfile {
   overlayColor?: string;
   drawerStyle?: string;
   onDelete: (id: string) => void;
+  form?: string;
 }
 
 const CartSlider: React.FC<UserProfile> = ({
@@ -30,6 +31,7 @@ const CartSlider: React.FC<UserProfile> = ({
   overlayColor = "bg-black bg-opacity-50",
   drawerStyle = "bg-white p-5 rounded-r-2xl shadow-lg",
   onDelete,
+  form,
 }) => {
   const [quantities, setQuantities] = useState<{ [key: string]: number }>(
     Object.fromEntries(data.map((item) => [item.id, item.quantity || 1]))
@@ -38,6 +40,7 @@ const CartSlider: React.FC<UserProfile> = ({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [amountPaid, setAmountPaid] = useState(0);
   const [isPending, setIsPending] = useState(false);
+  const [formDisplay, setFormDisplay] = useState(form || null);
 
   const totalPrice = data.reduce(
     (sum, item) => sum + item.revenue * quantities[item.id],
@@ -160,54 +163,56 @@ const CartSlider: React.FC<UserProfile> = ({
             </div>
           ))}
 
-          <form
-            onSubmit={handleSubmit}
-            className="mt-5 p-4 bg-gray-100 rounded-lg"
-          >
-            <h2 className="text-lg font-semibold">Customer Details</h2>
-            <input
-              type="checkbox"
-              checked={isPending}
-              onChange={() => setIsPending(!isPending)}
-              className="mr-2"
-            />{" "}
-            Order Pending
-            <input
-              type="text"
-              placeholder="Customer Name"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              className="w-full border p-2 mt-2"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Phone Number"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              className="w-full border p-2 mt-2"
-              inputMode="numeric"
-              required
-            />
-            <input
-              type="number"
-              placeholder="Amount Paid"
-              value={amountPaid}
-              onChange={handleAmountChange}
-              className="w-full border p-2 mt-2"
-              min="0"
-              max={totalPrice}
-            />
-            <p className="mt-2">Total: ${totalPrice}</p>
-            <p className="mt-2">Balance: ${balance}</p>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded mt-3"
-              disabled={balance < 0}
+          {formDisplay === "show form" && (
+            <form
+              onSubmit={handleSubmit}
+              className="mt-5 p-4 bg-gray-100 rounded-lg"
             >
-              Submit Order
-            </button>
-          </form>
+              <h2 className="text-lg font-semibold">Customer Details</h2>
+              <input
+                type="checkbox"
+                checked={isPending}
+                onChange={() => setIsPending(!isPending)}
+                className="mr-2"
+              />{" "}
+              Order Pending
+              <input
+                type="text"
+                placeholder="Customer Name"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                className="w-full border p-2 mt-2"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Phone Number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="w-full border p-2 mt-2"
+                inputMode="numeric"
+                required
+              />
+              <input
+                type="number"
+                placeholder="Amount Paid"
+                value={amountPaid}
+                onChange={handleAmountChange}
+                className="w-full border p-2 mt-2"
+                min="0"
+                max={totalPrice}
+              />
+              <p className="mt-2">Total: ${totalPrice}</p>
+              <p className="mt-2">Balance: ${balance}</p>
+              <button
+                type="submit"
+                className="bg-blue-500 text-white px-4 py-2 rounded mt-3"
+                disabled={balance < 0}
+              >
+                Submit Order
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </>

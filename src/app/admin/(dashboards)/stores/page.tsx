@@ -144,7 +144,7 @@ function StorePage() {
               stateObj[selectedState]?.map((store) => (
                 <Link
                   className=" cursor-auto"
-                  href={`/admin/stores/${store.storeId}`}
+                  href={`/admin/stores/${store.storeId}/report`}
                   key={store.storeId}
                 >
                   <div className="bg-gradient-to-t from-gray-100 to-gray-300 shadow-2xl rounded-lg p-5">

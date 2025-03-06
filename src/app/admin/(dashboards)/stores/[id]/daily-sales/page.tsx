@@ -166,7 +166,6 @@ function Page() {
             width="w-1/4"
             overlayColor="bg-black bg-opacity-50"
             drawerStyle="bg-white"
-            form="show form"
           />
         </div>
 

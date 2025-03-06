@@ -18,14 +18,14 @@ export async function loginAction(
     const data = await response.json();
 
     if (response.ok) {
-      const { token, storeId, role } = data.data;
-      console.log(storeId);
+      const { storeId, role } = data.data;
+      const { token } = data;
 
       if (role === "staff" && !storeId) {
         return { error: "You are not assigned to any store." };
       }
 
-      // Set cookies
+      // Set cookies with JSON.stringify for objects
       const cookieStore = cookies();
       (await cookieStore).set("token", token, {
         httpOnly: true,
@@ -41,9 +41,19 @@ export async function loginAction(
         expires: new Date(Date.now() + 12 * 60 * 60 * 1000),
       });
 
+      (await cookieStore).set("storeData", JSON.stringify(data), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 12 * 60 * 60 * 1000),
+      });
+
+      if (role === "admin") {
+        return { success: true, redirectTo: `admin/report` };
+      }
       return {
         success: true,
-        redirectTo: `/${storeId}/report`,
+        redirectTo: `caldera/${storeId}/report`,
       };
     } else {
       return { error: data.message || "Login failed!" };
@@ -60,11 +70,30 @@ export async function logout() {
   const cookieStore = cookies();
   (await cookieStore).delete("token");
   (await cookieStore).delete("storeId");
+  (await cookieStore).delete("storeData");
 
   return { success: true, redirectTo: "/login" };
 }
 
+// Retrieve storeId
 export async function getStoreId() {
   const cookieStore = cookies();
   return (await cookieStore).get("storeId")?.value || null;
+}
+
+// Retrieve storeData (now properly parsing JSON)
+export async function getStoreData() {
+  const cookieStore = cookies();
+  const storeData = (await cookieStore).get("storeData")?.value;
+
+  if (!storeData) {
+    return null;
+  }
+
+  try {
+    const parsedData = JSON.parse(storeData);
+    return parsedData;
+  } catch (error) {
+    return null;
+  }
 }
