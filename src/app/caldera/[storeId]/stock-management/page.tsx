@@ -1,12 +1,42 @@
 "use client";
+
 import { useStore } from "@/ContextAPI/storeContex";
 import { getStoreId } from "@/app/actions/auth";
 import { fetchProduct, getallpurchaseOrder } from "@/app/actions/fetch";
 import CartSlider from "@/components/store/daily_sales/CartSlider";
+import OrderDetailSlider from "@/components/store/stock_mgt/OrderDetailSlider";
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import { ShoppingBasket } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+
+export interface ProductRequest {
+  prId: string;
+  poId: string;
+  userId: string;
+  userName: string;
+  storeId: string;
+  storeName: string;
+  categoryId: string;
+  categoryName: string;
+  productId: string;
+  productName: string;
+  costPrice: string | null;
+  unitPrice: string | null;
+  requestQuantity: number;
+}
+
+export interface PurchaseOrder {
+  poId: string;
+  userId: string;
+  userName: string;
+  storeId: string;
+  storeName: string;
+  requestDate: string;
+  requestTime: string;
+  status: string;
+  productRequest: ProductRequest[];
+}
 
 type Product = {
   productId: string;
@@ -19,115 +49,131 @@ type Product = {
   categoryName: string;
 };
 
-const apiData = [
-  {
-    id: 1,
-    productName: "iPhone X Screen",
-    cadre: "Lagos 1",
-    quantity: 10,
-    note: "This product...",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    productName: "Samsung Battery",
-    cadre: "Abuja 2",
-    quantity: 5,
-    note: "Urgent replacement needed.",
-    status: "Approved",
-  },
-];
-
-const dailySalesData = [
+const productRecordData = [
   {
     id: "1",
-    date: "Today",
-    revenue: 15000,
-    quantity: 5,
-    payment: "20 Products",
+    productName: "iPhone X Screen",
+    revenue: 5000,
+    date: "2024-01-01",
+    sales: 0,
+    payment: "Out of Stock",
   },
   {
     id: "2",
-    date: "Yesterday",
-    revenue: 12000,
-    quantity: 3,
-    payment: "20 Products",
+    productName: "Samsung Battery",
+    revenue: 3000,
+    date: "2024-01-02",
+    sales: 2,
+    payment: "In Stock",
   },
   {
-    id: " 3",
+    id: "3",
+    productName: "MacBook Charger",
+    revenue: 8000,
     date: "2024-01-03",
-    revenue: 18000,
-    quantity: 7,
-    payment: "20 Products",
+    sales: 5,
+    payment: "In Stock",
   },
 ];
 
-// ==========Table Columns header =======
-const columns = [
-  { key: "id", label: "#" },
-  { key: "productName", label: "Product Name" },
-  { key: "cadre", label: "Cadre" },
-  { key: "quantity", label: "Quantity" },
-  { key: "note", label: "Note" },
-  { key: "status", label: "Status" },
-  {
-    key: "action",
-    label: "Action",
-    render: (row: any) => (
-      <button
-        onClick={() => handleAction(row)}
-        className={`${
-          row.status === "Pending"
-            ? "bg-gray-400 w-full"
-            : "bg-blue-500 w-full hover:bg-blue-300"
-        }  rounded-sm px-2 py-1  text-white font-semibold`}
-      >
-        {row.status === "Pending" ? "Pending" : "View"}
-      </button>
-    ),
-  },
-];
-
-const productsTable = [
-  { key: "id", label: "#" },
-  { key: "productName", label: "Product Name" },
-  { key: "categoryName", label: "Category" },
-  { key: "userName", label: "Append By" },
-  {
-    key: "action",
-    label: "",
-    render: (row: any) => (
-      <button
-        onClick={() => handleAction(row)}
-        className={`text-button w-fullbg-blue-500 text-center w-full hover:text-blue-300  rounded-sm px-2 py-1 font-semibold`}
-      >
-        Add
-      </button>
-    ),
-  },
-];
-
-// Function to Handle Button Clicks
-const handleAction = (row: any) => {
-  console.log("Perform action on:", row);
-  alert(`Action performed on ${row.productName}`);
-};
-
-function page() {
+function Page() {
   const { storeData } = useStore();
   const storeId = storeData?.data.storeId;
   const [openCart, setOpenCart] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [poData, setPoData] = useState<any>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [loadingProducts, setLoadingProducts] = useState(true); // Separate loading for products
+  const [poData, setPoData] = useState<PurchaseOrder[]>([]);
+  const [loadingPo, setLoadingPo] = useState(true); // Separate loading for purchase orders
+  const [openDetail, setOpenDetail] = useState(false);
+  const [currentPoData, setCurrentPoData] = useState<PurchaseOrder | null>(
+    null
+  ); // To hold the current PO data
 
+  const [error, setError] = useState<string | null>(null);
   const [salesToggle, setSalesToggle] = useState<"purchase order" | "product">(
     "purchase order"
   );
+
+  const handleAction = (row: PurchaseOrder) => {
+    const poId = row.poId;
+    const productRequest = row.productRequest || [];
+
+    console.log(poData);
+
+    setCurrentPoData({
+      poId,
+      productRequest,
+      userId: row.userId || "",
+      userName: row.userName || "",
+      storeId: row.storeId || "",
+      storeName: row.storeName || "",
+      requestDate: row.requestDate || "",
+      requestTime: row.requestTime || "",
+      status: row.status || "",
+    });
+    setOpenDetail(true);
+  };
+
+  const productsTable = [
+    { key: "id", label: "#" },
+    { key: "productName", label: "Product Name" },
+    { key: "categoryName", label: "Category" },
+    { key: "userName", label: "Append By" },
+    {
+      key: "action",
+      label: "",
+      render: (row: Product) => (
+        <button
+          onClick={() =>
+            handleAction({
+              poId: "",
+              userId: "",
+              userName: "",
+              storeId: "",
+              storeName: "",
+              requestDate: "",
+              requestTime: "",
+              status: "",
+              productRequest: [],
+            })
+          }
+          className="w-full bg-blue-500 text-center text-white hover:bg-blue-300 rounded-sm px-2 py-1 font-semibold"
+        >
+          Add
+        </button>
+      ),
+    },
+  ];
+
+  const orderTable = [
+    { key: "id", label: "#" },
+    { key: "poId", label: "Order ID" },
+    { key: "requestDate", label: " Date" },
+    { key: "productRequestCount", label: "No of Product" },
+    { key: "status", label: "Status" },
+    {
+      key: "action",
+      label: "Action",
+      render: (row: PurchaseOrder) => (
+        <div>
+          <button
+            onClick={() => handleAction(row)}
+            className={`${
+              row.status === "Pending"
+                ? "bg-gray-400 w-full hover:bg-gray-300"
+                : "bg-blue-500 w-full hover:bg-blue-300"
+            } rounded-sm px-2 py-1 text-white font-semibold`}
+          >
+            {row.status === "Pending" ? "Pending" : "View"}
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   useEffect(() => {
     const getProducts = async () => {
-      setLoading(true);
+      setLoadingProducts(true);
       const data = await fetchProduct();
       if (data && Array.isArray(data)) {
         const allProducts = data
@@ -140,8 +186,9 @@ function page() {
             }))
           );
         setProducts(allProducts);
+        console.log("producrs: ", allProducts);
       }
-      setLoading(false);
+      setLoadingProducts(false);
     };
 
     getProducts();
@@ -151,13 +198,15 @@ function page() {
     if (!storeId) return;
 
     const fetchPoData = async () => {
+      setLoadingPo(true); // Set loading state before fetching purchase orders
       const result = await getallpurchaseOrder("9033519996");
       if (!result.status) {
         setError(result.error || "Unknown error");
       } else {
-        setPoData(result);
-        console.log(result.data);
+        setPoData(result.data);
+        console.log("podata: ", result.data);
       }
+      setLoadingPo(false); // Stop loading after fetching is complete
     };
 
     fetchPoData();
@@ -166,16 +215,23 @@ function page() {
   const handleOnDelete = () => {
     console.log("Hi");
   };
+
+  // Loading spinner component
+  const LoadingIndicator = () => (
+    <div className="flex justify-center items-center w-full h-full">
+      <div className=" text-2xl font-bold">Loding...</div>
+    </div>
+  );
+
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
-      {/* Header */}
       <div className="flex flex-col">
         <div className="flex flex-row justify-between">
-          <h1 className="text-2xl font-medium">Stock Managment</h1>
+          <h1 className="text-2xl font-medium">Stock Management</h1>
 
           <button onClick={() => setOpenCart(true)} className="relative">
             <h1 className="flex text-xs -top-2 right-0 absolute w-5 h-5 items-center justify-center bg-red-400 text-white rounded-full">
-              {}
+              {1}
             </h1>
             <div className="bg-gray-200 rounded-full p-1">
               <ShoppingBasket />
@@ -185,7 +241,7 @@ function page() {
             onDelete={handleOnDelete}
             isOpen={openCart}
             onClose={() => setOpenCart(false)}
-            data={dailySalesData}
+            data={[]}
             width="w-1/4"
             overlayColor="bg-black bg-opacity-50"
             drawerStyle="bg-white"
@@ -217,7 +273,6 @@ function page() {
           </div>
           {salesToggle === "purchase order" ? (
             <div className="flex gap-2 py-2 flex-row">
-              {" "}
               <Link
                 href={`/caldera/${storeId}/stock-management/purchase-order`}
                 className="bg-button text-white p-2 px-4 rounded-full"
@@ -227,10 +282,9 @@ function page() {
             </div>
           ) : (
             <div className="flex gap-2 py-2 flex-row">
-              {" "}
               <Link
                 href={`/caldera/${storeId}/stock-management/new-product`}
-                className="bg-button text-white  p-2 px-4 rounded-full"
+                className="bg-button text-white p-2 px-4 rounded-full"
               >
                 Create new Product
               </Link>
@@ -238,26 +292,39 @@ function page() {
           )}
         </div>
 
-        {salesToggle === "purchase order" ? (
-          <div className="">
-            <PurchaseOrderTable
-              columns={columns}
-              data={apiData}
-              onActionClick={handleAction}
-            />
-          </div>
+        {/* Show loading indicator while products or PO data are being loaded */}
+        {loadingProducts || loadingPo ? (
+          <LoadingIndicator />
         ) : (
           <div>
-            <PurchaseOrderTable
-              columns={productsTable}
-              data={products}
-              onActionClick={handleAction}
-            />
+            {salesToggle === "purchase order" ? (
+              <PurchaseOrderTable
+                columns={orderTable}
+                data={poData}
+                onActionClick={(row: PurchaseOrder) => handleAction(row)}
+              />
+            ) : (
+              <PurchaseOrderTable
+                columns={productsTable}
+                data={products}
+                onActionClick={handleAction}
+              />
+            )}
           </div>
         )}
       </div>
+
+      {/* OrderDetailSlider - Pass currentPoData here */}
+      <OrderDetailSlider
+        isOpen={openDetail}
+        onClose={() => setOpenDetail(false)}
+        data={currentPoData?.productRequest || []}
+        width="w-1/4"
+        overlayColor="bg-black bg-opacity-50"
+        drawerStyle="bg-white"
+      />
     </div>
   );
 }
 
-export default page;
+export default Page;

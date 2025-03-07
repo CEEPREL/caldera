@@ -211,12 +211,10 @@ export async function getallpurchaseOrder(storeId: string) {
               storeName,
               userName,
               productRequest: [],
-              statuses: new Set(),
+              status: res.value.status,
+              productRequestCount: 0,
             };
           }
-
-          // Add the status
-          mergedData[poId].statuses.add(res.value.status);
 
           // Merge product requests (ensure array format)
           if (Array.isArray(productRequest)) {
@@ -227,15 +225,16 @@ export async function getallpurchaseOrder(storeId: string) {
               productRequest
             );
           }
+
+          // Update productRequestCount with the number of items in productRequest
+          mergedData[poId].productRequestCount =
+            mergedData[poId].productRequest.length;
         });
       }
     });
 
-    // Convert statuses Set to an array
-    let finalData = Object.values(mergedData).map((po: any) => ({
-      ...po,
-      statuses: Array.from(po.statuses),
-    }));
+    // Convert merged data to an array
+    let finalData = Object.values(mergedData);
 
     // Debug merged data
     console.log("Merged Data Before Sorting:", finalData);

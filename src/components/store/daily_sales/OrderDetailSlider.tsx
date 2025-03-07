@@ -36,7 +36,7 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
           isOpen ? "opacity-100 visible" : "opacity-0 invisible",
           overlayColor
         )}
-        onClick={onClose} // Clicking overlay closes drawer
+        onClick={onClose}
       />
 
       <div

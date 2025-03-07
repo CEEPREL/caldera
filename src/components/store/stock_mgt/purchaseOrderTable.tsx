@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 
 interface Column {
   key: string;
@@ -11,7 +10,7 @@ interface Column {
 
 interface PurchaseOrderTableProps {
   columns: Column[];
-  data: { [key: string]: string | number }[];
+  data: any;
   onActionClick?: (row: any) => void;
 }
 
@@ -33,7 +32,7 @@ function PurchaseOrderTable({
           </tr>
         </thead>
         <tbody>
-          {data.map((row, rowIndex) => (
+          {data.map((row: any, rowIndex: number) => (
             <tr key={rowIndex} className="border-b">
               {columns.map((column) => (
                 <td key={column.key} className="p-2">
