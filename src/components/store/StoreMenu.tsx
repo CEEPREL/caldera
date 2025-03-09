@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useParams } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 // Function to generate menu items dynamically
 const getMenuItems = (basePath: string, storeId: string) => [
