@@ -198,7 +198,7 @@ function Page() {
     if (!storeId) return;
 
     const fetchPoData = async () => {
-      setLoadingPo(true); // Set loading state before fetching purchase orders
+      setLoadingPo(true);
       const result = await getallpurchaseOrder("9033519996");
       if (!result.status) {
         setError(result.error || "Unknown error");
@@ -206,7 +206,7 @@ function Page() {
         setPoData(result.data);
         console.log("podata: ", result.data);
       }
-      setLoadingPo(false); // Stop loading after fetching is complete
+      setLoadingPo(false);
     };
 
     fetchPoData();
@@ -314,7 +314,7 @@ function Page() {
         )}
       </div>
 
-      {/* OrderDetailSlider - Pass currentPoData here */}
+      {/* OrderDetailSlider for viewing products in product order*/}
       <OrderDetailSlider
         isOpen={openDetail}
         onClose={() => setOpenDetail(false)}

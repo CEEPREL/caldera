@@ -1,8 +1,9 @@
+"use client";
 import { createContext, useContext, useEffect, useState } from "react";
 
 // Define the product type
 export interface Product {
-  id: string;
+  //   id: string;
   name: string;
   category: string;
   price: number;
@@ -39,10 +40,14 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   // Add product to cart
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
-      const existingProduct = prevCart.find((p) => p.id === product.id);
+      const existingProduct = prevCart.find(
+        (p) => p.productId === product.productId
+      );
       if (existingProduct) {
         return prevCart.map((p) =>
-          p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p
+          p.productId === product.productId
+            ? { ...p, quantity: p.quantity + 1 }
+            : p
         );
       }
       return [...prevCart, { ...product, quantity: 1 }];
@@ -51,13 +56,15 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Remove product from cart
   const removeFromCart = (id: string) => {
-    setCart((prevCart) => prevCart.filter((product) => product.id !== id));
+    setCart((prevCart) =>
+      prevCart.filter((product) => product.productId !== id)
+    );
   };
 
   // Update product quantity in cart
   const updateQuantity = (id: string, quantity: number) => {
     setCart((prevCart) =>
-      prevCart.map((p) => (p.id === id ? { ...p, quantity } : p))
+      prevCart.map((p) => (p.productId === id ? { ...p, quantity } : p))
     );
   };
 
