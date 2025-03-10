@@ -1,16 +1,6 @@
-"use client";
-
 import React, { useState } from "react";
 import clsx from "clsx";
 import { Trash2 } from "lucide-react";
-
-interface Data {
-  id: string;
-  date: string;
-  payment: string;
-  revenue: number;
-  quantity: number;
-}
 
 interface Product {
   categoryId: string;
@@ -20,7 +10,7 @@ interface Product {
   requestQuantity: number;
 }
 
-interface UserProfile {
+interface CartSliderProps {
   data: Product[];
   isOpen: boolean;
   onClose: () => void;
@@ -31,7 +21,7 @@ interface UserProfile {
   form?: string;
 }
 
-const CartSlider: React.FC<UserProfile> = ({
+const CartSlider: React.FC<CartSliderProps> = ({
   data,
   isOpen,
   onClose,
@@ -46,46 +36,26 @@ const CartSlider: React.FC<UserProfile> = ({
     )
   );
 
-  // const totalPrice = data.reduce(
-  //   (sum, item) => sum + item.revenue * quantities[item.id],
-  //   0
-  // );
-  // const balance = totalPrice - amountPaid;
-
   const handleChange = (id: string, value: number) => {
-    if (value < 1) return;
+    if (value < 1) return; // Prevent negative or zero quantities
     setQuantities((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleIncrease = (id: string) => {
-    const newQuantity = (quantities[id] || 1) + 1;
-
-    setQuantities((prev) => ({ ...prev, [id]: newQuantity }));
+    setQuantities((prev) => ({
+      ...prev,
+      [id]: (prev[id] || 1) + 1,
+    }));
   };
 
   const handleDecrease = (id: string) => {
-    if (quantities[id] > 1) {
-      setQuantities((prev) => ({ ...prev, [id]: prev[id] - 1 }));
-    }
-  };
-
-  // const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = parseFloat(e.target.value) || 0;
-  //   if (value <= totalPrice) {
-  //     setAmountPaid(value);
-  //   }
-  // };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // console.log({
-    //   customerName,
-    //   phoneNumber,
-    //   amountPaid,
-    //   isPending,
-    //   totalPrice,
-    //   balance,
-    // });
+    setQuantities((prev) => {
+      const currentQuantity = prev[id] || 1;
+      return {
+        ...prev,
+        [id]: currentQuantity > 1 ? currentQuantity - 1 : 1,
+      };
+    });
   };
 
   return (
@@ -98,7 +68,6 @@ const CartSlider: React.FC<UserProfile> = ({
         )}
         onClick={onClose}
       />
-
       <div
         className={clsx(
           "fixed top-0 overflow-y-scroll w-[70%] lg:w-[35%] text-black right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
@@ -114,55 +83,59 @@ const CartSlider: React.FC<UserProfile> = ({
           >
             ✕
           </button>
-
-          {data.map((item) => (
-            <div
-              key={item.productId}
-              className="flex w-full items-center justify-center flex-col gap-4"
-            >
-              <div className="flex flex-row py-5 w-full gap-4">
-                <div className="flex w-full flex-col gap-1">
-                  <div className="flex flex-row justify-between w-full">
-                    <p className="text-gray-500">${item.categoryName}</p>
-                    {/* <p className="text-gray-500">{item.payment}</p> */}
-                  </div>
-                  <div className="flex flex-row justify-between w-full items-center">
-                    <div className="flex items-center gap-2">
+          <p className=" text-3xl font-bold">Product order</p>
+          {data.length === 0 ? (
+            <p>No order to display</p>
+          ) : (
+            data.map((item) => (
+              <div
+                key={item.productId}
+                className="flex w-full mt-4 items-center justify-center flex-col gap-4"
+              >
+                <div className="flex flex-row py-5 w-full gap-4">
+                  <div className="flex w-full flex-col gap-1">
+                    <div className="flex flex-row justify-between w-full">
+                      <p className="text-gray-500">{item.categoryName}</p>
+                      <p className="text-gray-500">{item.productName}</p>
+                    </div>
+                    <div className="flex flex-row justify-between w-full items-center">
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
+                          onClick={() => handleDecrease(item.productId)}
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          className="border-gray-500 w-12 text-center border"
+                          value={quantities[item.productId]}
+                          onChange={(e) =>
+                            handleChange(
+                              item.productId,
+                              parseInt(e.target.value) || 1 // Handle non-numeric inputs
+                            )
+                          }
+                        />
+                        <button
+                          className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
+                          onClick={() => handleIncrease(item.productId)}
+                        >
+                          +
+                        </button>
+                      </div>
                       <button
-                        className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
-                        onClick={() => handleDecrease(item.productId)}
+                        className="text-red-500"
+                        onClick={() => onDelete(item.productId)}
                       >
-                        -
-                      </button>
-                      <input
-                        type="number"
-                        className="border-gray-500 w-12 text-center border"
-                        value={quantities[item.productId]}
-                        onChange={(e) =>
-                          handleChange(
-                            item.productId,
-                            parseInt(e.target.value) || 1
-                          )
-                        }
-                      />
-                      <button
-                        className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
-                        onClick={() => handleIncrease(item.productId)}
-                      >
-                        +
+                        <Trash2 />
                       </button>
                     </div>
-                    <button
-                      className="text-red-500"
-                      onClick={() => onDelete(item.productId)}
-                    >
-                      <Trash2 />
-                    </button>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </>

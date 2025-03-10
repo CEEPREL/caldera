@@ -2,14 +2,21 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 // Define the product type
-export interface Product {
-  //   id: string;
-  name: string;
-  category: string;
+interface Product {
+  categoryId: string;
+  categoryName: string;
+  productId: string;
+  productName: string;
   price: number;
   quantity: number;
+}
+
+export interface ProductOrder {
   categoryId: string;
+  categoryName: string;
   productId: string;
+  productName: string;
+  requestQuantity: number;
 }
 
 interface CartContextType {
@@ -28,7 +35,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<Product[]>([]);
   const [totalAmount, setTotalAmount] = useState(0);
 
-  // Function to update the total amount whenever cart is updated
   const calculateTotalAmount = () => {
     const total = cart.reduce(
       (acc, product) => acc + product.price * product.quantity,
@@ -68,6 +74,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     );
   };
 
+  // Send cart to database
   const sendCartToDB = async () => {
     try {
       await fetch("/api/cart", {
@@ -81,12 +88,13 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // Send product order request
   const addProductOrder = async () => {
-    const orderPayload = cart.map((product) => ({
+    const orderPayload: ProductOrder[] = cart.map((product) => ({
       categoryId: product.categoryId,
-      categoryName: product.category,
+      categoryName: product.categoryName,
       productId: product.productId,
-      productName: product.name,
+      productName: product.productName,
       requestQuantity: product.quantity,
     }));
 
@@ -97,6 +105,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         body: JSON.stringify({ order: orderPayload }),
       });
       console.log("Products added to purchase order successfully");
+
+      // Optionally, clear the cart after order is placed
+      setCart([]);
     } catch (error) {
       console.error("Error sending product to purchase order:", error);
     }

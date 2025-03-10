@@ -1,9 +1,9 @@
 "use client";
 
+import { useCart } from "@/ContextAPI/cartContext";
 import { useStore } from "@/ContextAPI/storeContex";
-import { getStoreId } from "@/app/actions/auth";
 import { fetchProduct, getallpurchaseOrder } from "@/app/actions/fetch";
-import CartSlider from "@/components/store/daily_sales/CartSlider";
+import CartSlider from "@/components/store/stock_mgt/CartSlider";
 import OrderDetailSlider from "@/components/store/stock_mgt/OrderDetailSlider";
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import { ShoppingBasket } from "lucide-react";
@@ -49,51 +49,45 @@ type Product = {
   categoryName: string;
 };
 
-const productRecordData = [
-  {
-    id: "1",
-    productName: "iPhone X Screen",
-    revenue: 5000,
-    date: "2024-01-01",
-    sales: 0,
-    payment: "Out of Stock",
-  },
-  {
-    id: "2",
-    productName: "Samsung Battery",
-    revenue: 3000,
-    date: "2024-01-02",
-    sales: 2,
-    payment: "In Stock",
-  },
-  {
-    id: "3",
-    productName: "MacBook Charger",
-    revenue: 8000,
-    date: "2024-01-03",
-    sales: 5,
-    payment: "In Stock",
-  },
-];
-
 function Page() {
   const { storeData } = useStore();
   const storeId = storeData?.data.storeId;
   const [openCart, setOpenCart] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
-  const [loadingProducts, setLoadingProducts] = useState(true); // Separate loading for products
+  const [loadingProducts, setLoadingProducts] = useState(true);
   const [poData, setPoData] = useState<PurchaseOrder[]>([]);
-  const [loadingPo, setLoadingPo] = useState(true); // Separate loading for purchase orders
+  const [loadingPo, setLoadingPo] = useState(true);
   const [openDetail, setOpenDetail] = useState(false);
   const [currentPoData, setCurrentPoData] = useState<PurchaseOrder | null>(
     null
-  ); // To hold the current PO data
-
+  );
   const [error, setError] = useState<string | null>(null);
   const [salesToggle, setSalesToggle] = useState<"purchase order" | "product">(
     "purchase order"
   );
 
+  const { cart, removeFromCart, addToCart } = useCart();
+
+  const productOrders = cart.map(
+    ({ categoryId, categoryName, productId, productName, quantity }) => ({
+      categoryId,
+      categoryName,
+      productId,
+      productName,
+      requestQuantity: quantity,
+    })
+  );
+  const handleAddToCart = (product: Product) => {
+    const { productId, productName, categoryId, categoryName } = product;
+    addToCart({
+      productId,
+      productName,
+      categoryId,
+      categoryName,
+      quantity: 1,
+      price: 0,
+    });
+  };
   const handleAction = (row: PurchaseOrder) => {
     const poId = row.poId;
     const productRequest = row.productRequest || [];
@@ -124,19 +118,7 @@ function Page() {
       label: "",
       render: (row: Product) => (
         <button
-          onClick={() =>
-            handleAction({
-              poId: "",
-              userId: "",
-              userName: "",
-              storeId: "",
-              storeName: "",
-              requestDate: "",
-              requestTime: "",
-              status: "",
-              productRequest: [],
-            })
-          }
+          onClick={() => handleAddToCart(row)}
           className="w-full bg-blue-500 text-center text-white hover:bg-blue-300 rounded-sm px-2 py-1 font-semibold"
         >
           Add
@@ -212,7 +194,10 @@ function Page() {
     fetchPoData();
   }, [storeId]);
 
-  const handleOnDelete = () => {
+  const handleOnDelete = (id: string) => {
+    removeFromCart(id);
+  };
+  const addProductToOder = () => {
     console.log("Hi");
   };
 
