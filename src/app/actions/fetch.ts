@@ -279,7 +279,7 @@ export async function getInventoies(storeId: string) {
   }
 
   try {
-    const response = await fetch(`${apiUrl}/stock/9033519996'`, {
+    const response = await fetch(`${apiUrl}/stock/${storeId}`, {
       method: "GET",
       headers: {
         Authorization: `${token}`,
