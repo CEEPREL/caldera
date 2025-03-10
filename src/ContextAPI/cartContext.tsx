@@ -1,7 +1,15 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-// Define the product type
+export type SetState<T> = Dispatch<SetStateAction<T>>;
+
 interface Product {
   categoryId: string;
   categoryName: string;
@@ -21,6 +29,7 @@ export interface ProductOrder {
 
 interface CartContextType {
   cart: Product[];
+  setCart: SetState<Product[]>;
   totalAmount: number;
   addToCart: (product: Product) => void;
   removeFromCart: (id: string) => void;
@@ -122,6 +131,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     <CartContext.Provider
       value={{
         cart,
+        setCart,
         totalAmount,
         addToCart,
         removeFromCart,

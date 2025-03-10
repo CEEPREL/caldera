@@ -18,6 +18,7 @@ interface CartSliderProps {
   overlayColor?: string;
   drawerStyle?: string;
   onDelete: (id: string) => void;
+  onSubmit: (quantities: { [key: string]: number }) => void;
   form?: string;
 }
 
@@ -29,6 +30,7 @@ const CartSlider: React.FC<CartSliderProps> = ({
   overlayColor = "bg-black bg-opacity-50",
   drawerStyle = "bg-white p-5 rounded-r-2xl shadow-lg",
   onDelete,
+  onSubmit,
 }) => {
   const [quantities, setQuantities] = useState<{ [key: string]: number }>(
     Object.fromEntries(
@@ -46,6 +48,11 @@ const CartSlider: React.FC<CartSliderProps> = ({
       ...prev,
       [id]: (prev[id] || 1) + 1,
     }));
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    onSubmit(quantities); // Pass quantities to parent component
   };
 
   const handleDecrease = (id: string) => {
@@ -84,58 +91,68 @@ const CartSlider: React.FC<CartSliderProps> = ({
             ✕
           </button>
           <p className=" text-3xl font-bold">Product order</p>
-          {data.length === 0 ? (
-            <p>No order to display</p>
-          ) : (
-            data.map((item) => (
-              <div
-                key={item.productId}
-                className="flex w-full mt-4 items-center justify-center flex-col gap-4"
-              >
-                <div className="flex flex-row py-5 w-full gap-4">
-                  <div className="flex w-full flex-col gap-1">
-                    <div className="flex flex-row justify-between w-full">
-                      <p className="text-gray-500">{item.categoryName}</p>
-                      <p className="text-gray-500">{item.productName}</p>
-                    </div>
-                    <div className="flex flex-row justify-between w-full items-center">
-                      <div className="flex items-center gap-2">
+          <form onSubmit={handleSubmit} className="mt-4">
+            {data.length === 0 ? (
+              <p>No order to display</p>
+            ) : (
+              data.map((item) => (
+                <div
+                  key={item.productId}
+                  className="flex w-full items-center justify-center flex-col gap-4"
+                >
+                  <div className="flex flex-row py-5 w-full gap-4">
+                    <div className="flex w-full flex-col gap-1">
+                      <div className="flex flex-row justify-between w-full">
+                        <p className="text-gray-500">{item.categoryName}</p>
+                        <p className="text-gray-500">{item.productName}</p>
+                      </div>
+                      <div className="flex flex-row justify-between w-full items-center">
+                        <div className="flex items-center gap-2">
+                          <button
+                            className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
+                            onClick={() => handleDecrease(item.productId)}
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            className="border-gray-500 w-12 text-center border"
+                            value={Number(quantities[item.productId])} // Ensure the value is always a number
+                            onChange={(e) =>
+                              handleChange(
+                                item.productId,
+                                Number(e.target.value) || 1
+                              )
+                            }
+                          />
+                          <button
+                            className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
+                            onClick={() => handleIncrease(item.productId)}
+                          >
+                            +
+                          </button>
+                        </div>
                         <button
-                          className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
-                          onClick={() => handleDecrease(item.productId)}
+                          className="text-red-500"
+                          onClick={() => onDelete(item.productId)}
                         >
-                          -
-                        </button>
-                        <input
-                          type="number"
-                          className="border-gray-500 w-12 text-center border"
-                          value={quantities[item.productId]}
-                          onChange={(e) =>
-                            handleChange(
-                              item.productId,
-                              parseInt(e.target.value) || 1 // Handle non-numeric inputs
-                            )
-                          }
-                        />
-                        <button
-                          className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
-                          onClick={() => handleIncrease(item.productId)}
-                        >
-                          +
+                          <Trash2 />
                         </button>
                       </div>
-                      <button
-                        className="text-red-500"
-                        onClick={() => onDelete(item.productId)}
-                      >
-                        <Trash2 />
-                      </button>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              ))
+            )}
+            {data.length > 0 && (
+              <button
+                type="submit"
+                className="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transition w-full"
+              >
+                Submit Order
+              </button>
+            )}
+          </form>
         </div>
       </div>
     </>

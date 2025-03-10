@@ -18,6 +18,33 @@ interface Cart {
   cartItems: Product[];
 }
 
+const apiData = [
+  {
+    id: 1,
+    productName: "iPhone X Screen",
+    Purchased: 5000,
+    price: 10,
+    stock: 0,
+    status: "out of stock",
+  },
+  {
+    id: 2,
+    productName: "Samsung Battery",
+    Purchased: 3000,
+    price: 5,
+    stock: 2,
+    status: "In Stock",
+  },
+  {
+    id: 2,
+    productName: "MacBook Charger",
+    Purchased: 3000,
+    price: 5,
+    stock: 2,
+    status: "In Stock",
+  },
+];
+
 const dailySalesData = [
   {
     id: "1",
@@ -69,13 +96,7 @@ const productRecordData = [
   },
 ];
 
-const productList = [
-  "Screen",
-  "Downboard",
-  "Battery",
-  "Back Glass",
-  "Touch Pad",
-];
+const productList = ["10-03-2025"];
 
 function Page() {
   const [openCart, setOpenCart] = useState(false);
@@ -105,8 +126,8 @@ function Page() {
       label: "",
       render: (row: any) => (
         <div>
-          <button onClick={() => setOpenDetail(true)} className={``}>
-            <ChevronRight />
+          <button className="w-full bg-blue-500 text-center text-white hover:bg-blue-300 rounded-sm px-2 py-1 font-semibold">
+            Add
           </button>
 
           <OrderDetailSlider
@@ -152,7 +173,7 @@ function Page() {
 
           <button onClick={() => setOpenCart(true)} className="relative">
             <h1 className="flex text-xs -top-2 right-0 absolute w-5 h-5 items-center justify-center bg-red-400 text-white rounded-full">
-              hi
+              3
             </h1>
             <div className="bg-gray-200 rounded-full p-1">
               <ShoppingBasket />
@@ -236,7 +257,7 @@ function Page() {
               </div>
               <DailySalesRec
                 columns={columns}
-                data={dailySalesData}
+                data={apiData}
                 onActionClick={handleAction}
               />
             </div>

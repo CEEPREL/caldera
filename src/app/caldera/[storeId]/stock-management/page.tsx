@@ -3,6 +3,7 @@
 import { useCart } from "@/ContextAPI/cartContext";
 import { useStore } from "@/ContextAPI/storeContex";
 import { fetchProduct, getallpurchaseOrder } from "@/app/actions/fetch";
+import { createPurchaseOrder } from "@/app/actions/post";
 import CartSlider from "@/components/store/stock_mgt/CartSlider";
 import OrderDetailSlider from "@/components/store/stock_mgt/OrderDetailSlider";
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
@@ -66,7 +67,7 @@ function Page() {
     "purchase order"
   );
 
-  const { cart, removeFromCart, addToCart } = useCart();
+  const { cart, setCart, removeFromCart, addToCart } = useCart();
 
   const productOrders = cart.map(
     ({ categoryId, categoryName, productId, productName, quantity }) => ({
@@ -77,6 +78,7 @@ function Page() {
       requestQuantity: quantity,
     })
   );
+  const cartLength = cart.length;
   const handleAddToCart = (product: Product) => {
     const { productId, productName, categoryId, categoryName } = product;
     addToCart({
@@ -197,8 +199,36 @@ function Page() {
   const handleOnDelete = (id: string) => {
     removeFromCart(id);
   };
-  const addProductToOder = () => {
-    console.log("Hi");
+  const handleOnSubmit = async (quantities: { [key: string]: number }) => {
+    try {
+      console.log("Submitted Quantities:", quantities);
+
+      const productOrders = cart.map((item) => ({
+        categoryId: item.categoryId,
+        categoryName: item.categoryName,
+        productId: item.productId,
+        productName: item.productName,
+        requestQuantity: quantities[item.productId] || 1, // Use provided quantity or default to 1
+      }));
+
+      console.log("Submitting Order:", productOrders);
+
+      const response = await createPurchaseOrder(productOrders);
+
+      // Handle the response
+      if (response?.status) {
+        console.log("Order created successfully!", response.data);
+        // Optionally, clear the cart after successful submission
+        setCart([]);
+      } else {
+        console.error(
+          "Error creating order:",
+          response?.error || "Unknown error"
+        );
+      }
+    } catch (error) {
+      console.error("Submission failed:", error);
+    }
   };
 
   // Loading spinner component
@@ -215,8 +245,12 @@ function Page() {
           <h1 className="text-2xl font-medium">Stock Management</h1>
 
           <button onClick={() => setOpenCart(true)} className="relative">
-            <h1 className="flex text-xs -top-2 right-0 absolute w-5 h-5 items-center justify-center bg-red-400 text-white rounded-full">
-              {1}
+            <h1
+              className={`flex text-xs -top-2 right-0 absolute w-5 h-5 items-center justify-center ${
+                cartLength > 0 ? "bg-red-400" : ""
+              }  text-white rounded-full`}
+            >
+              {cartLength > 0 && cartLength}
             </h1>
             <div className="bg-gray-200 rounded-full p-1">
               <ShoppingBasket />
@@ -226,10 +260,11 @@ function Page() {
             onDelete={handleOnDelete}
             isOpen={openCart}
             onClose={() => setOpenCart(false)}
-            data={[]}
+            data={productOrders}
             width="w-1/4"
             overlayColor="bg-black bg-opacity-50"
             drawerStyle="bg-white"
+            onSubmit={handleOnSubmit}
           />
         </div>
 
