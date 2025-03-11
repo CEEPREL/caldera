@@ -51,11 +51,9 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
   tittle = "Add Team Member",
   formData,
   loading,
-  errorMessage,
   onChange,
   onSubmit,
   resetPass,
-  options,
   optionslocation,
 }) => {
   const [hasOpened, setHasOpened] = useState(false);
@@ -100,7 +98,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
       } as React.ChangeEvent<HTMLInputElement>);
     }
     setHasOpened(true);
-  }, [isOpen, onChange, hasOpened]);
+  }, [isOpen, onChange, hasOpened, resetPass]);
   return (
     <>
       {/* Overlay (blocks interaction with background) */}

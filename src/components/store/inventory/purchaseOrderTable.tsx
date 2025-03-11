@@ -18,8 +18,8 @@ interface PurchaseOrderTableProps {
 function PurchaseOrderTable({
   columns,
   data,
-  onActionClick,
-}: PurchaseOrderTableProps) {
+}: // onActionClick,
+PurchaseOrderTableProps) {
   return (
     <div>
       <table className="w-full border-collapse shadow-md">

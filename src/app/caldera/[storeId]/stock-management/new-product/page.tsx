@@ -2,7 +2,6 @@
 import Dropdown from "@/components/Dropdown";
 import Image from "next/image";
 import React, { useState } from "react";
-import states from "@/data/states.json";
 import { createProduct } from "@/app/actions/create";
 import { useStore } from "@/ContextAPI/storeContex";
 
@@ -14,7 +13,7 @@ interface newProductProps {
 
 function New() {
   const { products } = useStore();
-  const categories = [...states.states.map((s) => s.name), "Add New"];
+  // const categories = [...states.states.map((s) => s.name), "Add New"];
 
   // State for form data
   const [formData, setFormData] = useState<newProductProps>({

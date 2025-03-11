@@ -62,16 +62,16 @@ const products: Product[] = [
 ];
 
 export default function ProductTable() {
-  const [data, setData] = useState(products);
+  const data = products;
   const [extraRows, setExtraRows] = useState(0);
 
   const handleAddRow = () => {
     setExtraRows(extraRows + 1);
   };
 
-  const handleDeleteRow = (id: number) => {
-    setData(data.filter((product) => product.id !== id));
-  };
+  // const handleDeleteRow = (id: number) => {
+  //   setData(data.filter((product) => product.id !== id));
+  // };
 
   return (
     <div className="">

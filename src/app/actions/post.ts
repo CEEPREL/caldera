@@ -43,7 +43,6 @@ export async function createPurchaseOrder(
     }
 
     const result = await response.json();
-    console.log("Purchase order created successfully:", result);
 
     return { status: true, data: result };
   } catch (error: unknown) {

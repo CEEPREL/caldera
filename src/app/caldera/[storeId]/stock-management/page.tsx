@@ -36,6 +36,7 @@ export interface PurchaseOrder {
   requestDate: string;
   requestTime: string;
   status: string;
+  productRequestCount?: number;
   productRequest: ProductRequest[];
 }
 
@@ -62,7 +63,7 @@ function Page() {
   const [currentPoData, setCurrentPoData] = useState<PurchaseOrder | null>(
     null
   );
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
   const [salesToggle, setSalesToggle] = useState<"purchase order" | "product">(
     "purchase order"
   );
@@ -185,7 +186,7 @@ function Page() {
       setLoadingPo(true);
       const result = await getallpurchaseOrder("9033519996");
       if (!result.status) {
-        setError(result.error || "Unknown error");
+        console.error(result.error || "Unknown error");
       } else {
         setPoData(result.data);
         console.log("podata: ", result.data);

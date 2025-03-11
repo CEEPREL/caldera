@@ -1,9 +1,8 @@
 "use client";
-import { PurchaseOrderButton } from "@/components/admin/PurchaseOrderButton";
 import PurchaseOrderTableAdmin from "@/components/admin/purchaseOrderTableAdmin";
 import MenuComponent from "@/components/store/general_UI/SmallMenuComp";
 
-import React, { useState, useRef, useEffect, RefObject } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 
 interface MenuItem {
   label: string;
@@ -59,26 +58,30 @@ function Page() {
     setOpenDropdownId(null);
   };
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      openDropdownId !== null &&
-      dropdownRefs.current[openDropdownId] &&
-      !dropdownRefs.current[openDropdownId]?.contains(event.target as Node) &&
-      !(event.target as HTMLElement).closest(".dropdown-toggle")
-    ) {
-      setOpenDropdownId(null);
-    }
-  };
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      if (
+        openDropdownId !== null &&
+        dropdownRefs.current[openDropdownId] &&
+        !dropdownRefs.current[openDropdownId]?.contains(event.target as Node) &&
+        !(event.target as HTMLElement).closest(".dropdown-toggle")
+      ) {
+        setOpenDropdownId(null);
+      }
+    },
+    [openDropdownId]
+  );
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     window.addEventListener("blur", handleWindowBlur);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("blur", handleWindowBlur);
     };
-  }, [openDropdownId]);
+  }, [openDropdownId, handleClickOutside]);
 
-  const handleMenuItemClick = (label: string, row: any) => {
+  const handleMenuItemClick = (label: string) => {
     if (label === "Confirm Order") {
     }
     setOpenDropdownId(null);

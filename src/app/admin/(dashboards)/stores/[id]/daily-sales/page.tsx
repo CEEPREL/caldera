@@ -83,11 +83,6 @@ function Page() {
   const [selectedProduct, setSelectedProduct] = useState("Screen");
   const [toggle, setToggle] = useState(false);
   const [cart, setCart] = useState<Cart>({ cartItems: [] });
-  const [products, setProducts] = useState<Product[]>([
-    { id: "1", name: "Product 1", quantity: 1, price: 10.99 },
-    { id: "2", name: "Product 2", quantity: 1, price: 5.99 },
-    { id: "3", name: "Product 3", quantity: 1, price: 7.99 },
-  ]);
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
   const handleToggle = (p: string) => {
     setToggle(!toggle);
@@ -103,7 +98,7 @@ function Page() {
     {
       key: "action",
       label: "",
-      render: (row: any) => (
+      render: () => (
         <div>
           <button onClick={() => setOpenDetail(true)} className={``}>
             <ChevronRight />
@@ -112,7 +107,7 @@ function Page() {
           <OrderDetailSlider
             isOpen={openDetail}
             onClose={() => setOpenDetail(false)}
-            data={productRecordData}
+            data={[]}
             width="w-1/4"
             overlayColor="bg-black bg-opacity-50"
             drawerStyle="bg-white"
@@ -139,11 +134,6 @@ function Page() {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  const hadleCart = async (product: Product) => {
-    const { addToCart } = await import("@/lib/cart");
-    addToCart({ item: product, cart, setCart });
-    product.quantity += 1;
-  };
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
       <div className="flex gap-2 flex-col">

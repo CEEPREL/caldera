@@ -1,13 +1,6 @@
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import React from "react";
 
-interface MenuItem {
-  label: string;
-  icon: string;
-  actionType?: "link" | "button" | "div";
-  href?: string;
-}
-
 const apiData = [
   {
     id: 1,

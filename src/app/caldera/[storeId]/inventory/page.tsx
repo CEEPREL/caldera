@@ -5,12 +5,12 @@ import PurchaseOrderTable from "@/components/store/inventory/purchaseOrderTable"
 // import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import React, { useEffect, useState } from "react";
 
-interface MenuItem {
-  label: string;
-  icon: string;
-  actionType?: "link" | "button" | "div";
-  href?: string;
-}
+// interface MenuItem {
+//   label: string;
+//   icon: string;
+//   actionType?: "link" | "button" | "div";
+//   href?: string;
+// }
 
 export interface InventoryItem {
   userId: string;
@@ -27,12 +27,12 @@ export interface InventoryItem {
   createdTime: string;
 }
 
-function page() {
+function Page() {
   const { storeData } = useStore();
   const storeId = storeData?.data.storeId;
   const [loading, setLoading] = useState(true);
   const [inventoryData, setInventoryData] = useState<InventoryItem[]>([]);
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
 
   const inventoryTable = [
     { key: "", label: "#" },
@@ -69,7 +69,7 @@ function page() {
       const result = await getInventoies("9033519996");
 
       if (!result) {
-        setError("Unknown error fetching data");
+        console.error("Unknown error fetching data");
       } else {
         setInventoryData(result);
       }
@@ -94,4 +94,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

@@ -84,7 +84,7 @@ function Page() {
     {
       key: "action",
       label: "",
-      render: (row: any) => (
+      render: () => (
         <div>
           <button onClick={() => setOpen(true)} className={``}>
             <ChevronRight />

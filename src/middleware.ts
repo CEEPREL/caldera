@@ -5,8 +5,6 @@ import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
 
 export function middleware(req: NextRequest) {
-  console.log("Middleware executed for:", req.nextUrl.pathname);
-
   function redirectToLogin(req: NextRequest) {
     if (req.nextUrl.pathname === "/login") {
       return NextResponse.next(); // Allow access to login page
@@ -17,12 +15,9 @@ export function middleware(req: NextRequest) {
     return response;
   }
 
-  let token = req.cookies.get("token")?.value;
-
-  console.log("Token:", token || "No token found");
+  const token = req.cookies.get("token")?.value;
 
   if (!token || !isValidToken(token)) {
-    console.log("Invalid or expired token, redirecting to login.");
     return redirectToLogin(req);
   }
 

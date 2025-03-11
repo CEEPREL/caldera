@@ -19,14 +19,13 @@ interface DropdownProps<T> {
 }
 
 const Dropdown = <T,>({
-  label,
   options,
   placeholder,
   onSelect,
   className,
   className2,
   className3,
-  showSearch,
+
   getLabel = (option) => String(option),
   getSubLabel = (option) => String(option),
   id,

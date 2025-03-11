@@ -114,6 +114,7 @@ export default function TeamTable({
       const response = await deleteStaff(id);
       alert(response.message);
     } catch (error) {
+      console.error("error: ", error);
     } finally {
       console.error(errorMessage);
     }
@@ -368,14 +369,14 @@ export default function TeamTable({
                     >
                       <div key={index} className="flex flex-col gap-2 p-2">
                         {menuItems.map((item, index) => {
-                          let isDeactivate = item.label === "Deactivate User";
-                          let newLabel =
+                          const isDeactivate = item.label === "Deactivate User";
+                          const newLabel =
                             staff.status === "Active" && isDeactivate
                               ? "Deactivate User"
                               : staff.status === "Deactivated" && isDeactivate
                               ? "Activate User"
                               : item.label;
-                          let newIcon =
+                          const newIcon =
                             staff.status === "Active" && isDeactivate
                               ? "/icons/deactivate.svg"
                               : staff.status === "Deactivated" && isDeactivate
@@ -391,7 +392,8 @@ export default function TeamTable({
                                     <button
                                       className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border-gray-500 transition cursor-pointer"
                                       onClick={(e) => {
-                                        e.stopPropagation(); // Prevents event bubbling issues
+                                        e.stopPropagation();
+                                        handleDelStaff(staff.userId);
                                       }}
                                     >
                                       <Trash2 className="text-red-600" />

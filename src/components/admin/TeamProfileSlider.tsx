@@ -35,12 +35,12 @@ const ProfileSlider: React.FC<UserProfile> = ({
   offlineDays,
 }) => {
   const [formData, setFormData] = useState({
-    name: "",
+    name: name || "", // pre-populate with current name
     email: "",
     state: "",
     location: "",
     manager: "",
-    phone: "",
+    phone: phone || "", // pre-populate with current phone
     cadre: "",
     username: "",
     password: "",
@@ -55,7 +55,7 @@ const ProfileSlider: React.FC<UserProfile> = ({
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
 
-    // Clear Form Fields
+    // Clear Form Fields after submission
     setFormData({
       name: "",
       email: "",
@@ -87,7 +87,7 @@ const ProfileSlider: React.FC<UserProfile> = ({
 
       <div
         className={clsx(
-          "fixed top-0 overflow-y-scroll w-[70%] lg:w-[35%] text-black  right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
+          "fixed top-0 overflow-y-scroll w-[70%] lg:w-[35%] text-black right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
           isOpen ? "-translate-y-0" : "-translate-y-full",
           width,
           drawerStyle
@@ -116,49 +116,63 @@ const ProfileSlider: React.FC<UserProfile> = ({
               />
               <div className="flex w-[65%] flex-col gap-1">
                 <h1 className="text-lg font-bold">{name}</h1>{" "}
-                {/* pass as a prop */}
-                <p className="text-sm text-gray-500">
-                  {phone} {/* pass as a prop */}
-                </p>
+                <p className="text-sm text-gray-500">{phone}</p>
                 <p className="text-lg w-fit bg-yellow-500 rounded-full px-2 py-1">
                   {role}
                 </p>
               </div>
             </div>
 
-            {/* Store Manager Section */}
+            {/* Activity Summary Section */}
             <div className="flex flex-col bg-gray-100 p-5 w-full gap-4">
               <h1 className="text-lg font-bold">Activity Summary</h1>
-              {/* clsx classname style as prop, map through the array and pass as a prop */}
-              {/* <div className="flex overflow-x-scroll flex-row gap-2 w-full">
-                <p className="text-sm cursor-pointer w-full bg-gray-200 rounded-lg px-2 py-1 ">
-                  This Week
-                </p>
-                <p className="text-sm cursor-pointer w-full bg-gray-200 rounded-lg px-2 py-1">
-                  This Month
-                </p>
-                <p className="text-sm cursor-pointer w-full bg-gray-200 rounded-lg px-2 py-1 ">
-                  6 Months
-                </p>
-                <p className="text-sm cursor-pointer w-full bg-gray-200 rounded-lg px-2 py-1 ">
-                  All Time
-                </p>
-              </div> */}
-              {/* map through the array and pass as a prop */}
               <div className="flex text-gray-500 flex-col gap-5">
                 <div className="flex flex-row justify-between gap-3">
-                  <p className="text-lg ">Total sales </p>
+                  <p className="text-lg">Total sales</p>
                   <p className="text-lg">{salesPick}</p>
                 </div>
                 <div className="flex flex-row justify-between gap-1">
-                  <p className="text-lg ">Active days</p>
-                  <p className="text-lg ">{activeDays} days</p>
+                  <p className="text-lg">Active days</p>
+                  <p className="text-lg">{activeDays} days</p>
                 </div>
                 <div className="flex flex-row justify-between gap-1">
-                  <p className="text-lg ">Offline days</p>
-                  <p className="text-lg ">{offlineDays} days</p>
+                  <p className="text-lg">Offline days</p>
+                  <p className="text-lg">{offlineDays} days</p>
                 </div>
               </div>
+            </div>
+
+            {/* Profile Edit Form (If needed in future) */}
+            <div className="flex flex-col gap-4">
+              <form onSubmit={handleSubmit}>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="name">Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="p-2 rounded-md border"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="phone">Phone</label>
+                  <input
+                    type="text"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="p-2 rounded-md border"
+                  />
+                </div>
+                {/* Other form fields like email, location, etc. */}
+                <button
+                  type="submit"
+                  className="mt-4 bg-blue-500 text-white p-2 rounded-full"
+                >
+                  Save Changes
+                </button>
+              </form>
             </div>
           </div>
         </div>

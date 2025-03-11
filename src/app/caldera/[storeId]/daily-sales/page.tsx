@@ -1,21 +1,59 @@
 "use client";
 
-import { ChevronRight, ShoppingBasket } from "lucide-react";
+import { ShoppingBasket } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import DailySalesRec from "@/components/store/daily_sales/DailySalesRec";
 import CartSlider from "@/components/store/daily_sales/CartSlider";
 import OrderDetailSlider from "@/components/store/daily_sales/OrderDetailSlider";
+import { getSalesReport } from "@/app/actions/fetch";
+import { useStore } from "@/ContextAPI/storeContex";
 // import CartSlider from "@/components/store/daily_rec/CartSlider";
 
-interface Product {
-  id: string;
-  name: string;
-  quantity: number;
-  price: number;
+// interface Product {
+//   id: string;
+//   name: string;
+//   quantity: number;
+//   price: number;
+// }
+
+// interface Cart {
+//   cartItems: Product[];
+// }
+
+export interface Order {
+  orderId: string;
+  orderDate: string;
+  orderTime: string;
+  userId: string;
+  userName: string;
+  storeId: string;
+  storeName: string;
+  customerName: string;
+  customerNumber: string;
+  costAmount: number;
+  paidAmount: number;
+  creditAmount: number | null;
+  status: "paid" | "pending";
+  product: Transaction[];
+  paymentHistory: any[];
 }
 
-interface Cart {
-  cartItems: Product[];
+interface Transaction {
+  transactionId: string;
+  transactionDate: string;
+  transactionTime: string;
+  userId: string;
+  userName: string;
+  storeId: string;
+  storeName: string;
+  productId: string;
+  productName: string;
+  price: number;
+  quantity: number;
+  total: number;
+  customerName: string;
+  customerNumber: string;
+  status: string | null;
 }
 
 const apiData = [
@@ -99,16 +137,18 @@ const productRecordData = [
 const productList = ["10-03-2025"];
 
 function Page() {
+  const { storeData } = useStore();
+  const storeId = storeData?.data.storeId;
   const [openCart, setOpenCart] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("Screen");
+  const [salesReportData, setSalesReportData] = useState<Order[]>([]);
   const [toggle, setToggle] = useState(false);
-  const [cart, setCart] = useState<Cart>({ cartItems: [] });
-  const [products, setProducts] = useState<Product[]>([
-    { id: "1", name: "Product 1", quantity: 1, price: 10.99 },
-    { id: "2", name: "Product 2", quantity: 1, price: 5.99 },
-    { id: "3", name: "Product 3", quantity: 1, price: 7.99 },
-  ]);
+  const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState("");
+
+  // const [cart, setCart] = useState<Cart>({ cartItems: [] });
+  // const [order, setOrder] = useState<Order[]>([]);
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
   const handleToggle = (p: string) => {
     setToggle(!toggle);
@@ -116,28 +156,32 @@ function Page() {
   };
 
   const columns = [
-    { key: "id", label: "#" },
-    { key: "productName", label: "Product" },
-    { key: "sales", label: "Number of sales" },
-    { key: "revenue", label: "Total Revenue" },
+    { key: "", label: "#" },
+    { key: "customerName", label: "Customer Name" },
+    { key: "creditAmount", label: "Paid" },
+    { key: "costAmount", label: "Total Cost" },
 
     {
       key: "action",
       label: "",
-      render: (row: any) => (
+      render: () => (
         <div>
           <button className="w-full bg-blue-500 text-center text-white hover:bg-blue-300 rounded-sm px-2 py-1 font-semibold">
-            Add
+            View
           </button>
 
-          <OrderDetailSlider
-            isOpen={openDetail}
-            onClose={() => setOpenDetail(false)}
-            data={productRecordData}
-            width="w-1/4"
-            overlayColor="bg-black bg-opacity-50"
-            drawerStyle="bg-white"
-          />
+          {loading ? (
+            <p>loading</p>
+          ) : (
+            <OrderDetailSlider
+              isOpen={openDetail}
+              onClose={() => setOpenDetail(false)}
+              data={salesReportData}
+              width="w-1/4"
+              overlayColor="bg-black bg-opacity-50"
+              drawerStyle="bg-white"
+            />
+          )}
         </div>
       ),
     },
@@ -152,19 +196,34 @@ function Page() {
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) {
-      setCart(JSON.parse(storedCart));
+      // setCart(JSON.parse(storedCart));
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+    if (!storeId) return;
+    const fetchPoData = async () => {
+      setLoading(true);
+      const result = await getSalesReport("9033519996");
 
-  const hadleCart = async (product: Product) => {
-    const { addToCart } = await import("@/lib/cart");
-    addToCart({ item: product, cart, setCart });
-    product.quantity += 1;
-  };
+      if (!result) {
+        console.error("Unknown error fetching data");
+        console.log("ok no product");
+      } else {
+        setSalesReportData(result);
+        console.log(result);
+      }
+      setLoading(false);
+    };
+
+    fetchPoData();
+  }, [storeId]);
+
+  // const hadleCart = async (product: Product) => {
+  //   const { addToCart } = await import("@/lib/cart");
+  //   addToCart({ item: product, cart, setCart });
+  //   product.quantity += 1;
+  // };
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
       <div className="flex gap-2 flex-col">

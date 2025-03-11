@@ -56,7 +56,7 @@ function StoreMenu() {
 
   // Correcting basePath logic
   let basePath = "";
-  let storeId = params.storeId || "";
+  const storeId = params.storeId || "";
 
   if (pathname.startsWith("/admin/stores/")) {
     basePath = "/admin/stores";

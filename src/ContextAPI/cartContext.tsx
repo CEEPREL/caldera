@@ -44,14 +44,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<Product[]>([]);
   const [totalAmount, setTotalAmount] = useState(0);
 
-  const calculateTotalAmount = () => {
-    const total = cart.reduce(
-      (acc, product) => acc + product.price * product.quantity,
-      0
-    );
-    setTotalAmount(total);
-  };
-
   // Add product to cart
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
@@ -86,12 +78,18 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   // Send cart to database
   const sendCartToDB = async () => {
     try {
-      await fetch("/api/cart", {
+      const response = await fetch("/api/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cart }),
       });
-      console.log("Cart sent to database successfully");
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      console.log("Cart sent to database successfully", responseData);
     } catch (error) {
       console.error("Error sending cart:", error);
     }
@@ -113,7 +111,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ order: orderPayload }),
       });
-      console.log("Products added to purchase order successfully");
 
       // Optionally, clear the cart after order is placed
       setCart([]);
@@ -124,9 +121,16 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Recalculate total amount whenever the cart changes
   useEffect(() => {
+    const calculateTotalAmount = () => {
+      const total = cart.reduce(
+        (acc, product) => acc + product.price * product.quantity,
+        0
+      );
+      setTotalAmount(total);
+    };
+
     calculateTotalAmount();
   }, [cart]);
-
   return (
     <CartContext.Provider
       value={{

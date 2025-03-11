@@ -54,7 +54,7 @@ const handleAction = (row: any) => {
   alert(`Action performed on ${row.productName}`);
 };
 
-function page() {
+function Page() {
   const [salesToggle, setSalesToggle] = useState<"purchase order" | "product">(
     "purchase order"
   );
@@ -133,4 +133,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

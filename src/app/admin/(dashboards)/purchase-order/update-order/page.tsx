@@ -1,13 +1,11 @@
 "use client";
 import Dropdown from "@/components/Dropdown";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import states from "@/data/states.json";
 import { createStore, StoreData } from "@/app/actions/create";
 
 function New() {
-  const router = useRouter();
   const allStates = states.states.map((s) => s.name);
 
   // State for form data

@@ -94,6 +94,6 @@ export async function getStoreData() {
     const parsedData = JSON.parse(storeData);
     return parsedData;
   } catch (error) {
-    return null;
+    return error;
   }
 }

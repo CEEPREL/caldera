@@ -20,7 +20,7 @@ interface Store {
   phoneNumber: string;
 }
 
-type StoreData = {
+interface StoreData {
   status: boolean;
   data: {
     userId: string;
@@ -41,7 +41,7 @@ type StoreData = {
     status: string;
   };
   token: string;
-};
+}
 
 interface Product {
   createdDate: string;
@@ -50,7 +50,7 @@ interface Product {
   productName: string;
   userId: string;
   userName: string;
-  storeData: any;
+  storeData: StoreData;
 }
 
 interface ProductsProps {
@@ -62,9 +62,9 @@ interface ProductsProps {
 // Context type definition
 interface StoreContextType {
   storeId: string | null;
-  stateObj: Record<string, Store[]>; // Grouped stores
-  products: ProductsProps[]; // Raw product data
-  stores: Store[]; // Raw store data
+  stateObj: Record<string, Store[]>;
+  products: ProductsProps[];
+  stores: Store[];
   loading: boolean;
   storeData: StoreData | null;
 }

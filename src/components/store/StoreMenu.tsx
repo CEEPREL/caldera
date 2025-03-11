@@ -54,7 +54,7 @@ function StoreMenu() {
   const pathname = usePathname();
   const params = useParams<{ storeId?: string }>();
 
-  // Ensure `storeId` is correctly extracted
+  // Extract storeId from params or pathname
   let storeId: string | undefined = params.storeId;
 
   if (!storeId) {
@@ -63,22 +63,30 @@ function StoreMenu() {
     storeId = match?.[1];
   }
 
+  // Set the base path for the menu
   const basePath = pathname.startsWith("/admin/stores")
     ? "/admin/stores"
     : "/caldera";
 
-  if (!storeId) {
-    console.error("Store ID is missing:", pathname);
-    return null;
-  }
-
-  // Handle menu click
+  // Initialize the selected item state (always called)
   const [selectedItem, setSelectedItem] = useState(pathname);
 
+  // Handle menu item click
   const handleClick = (href: string) => {
     setSelectedItem(href);
     router.push(href);
   };
+
+  // If no storeId found, show error message
+  if (!storeId) {
+    return (
+      <div className="p-2 bg-white h-full flex flex-col gap-10">
+        <h2 className="text-red-500">
+          Store ID is missing. Please check the URL.
+        </h2>
+      </div>
+    );
+  }
 
   return (
     <div className="p-2 bg-white h-full flex flex-col gap-10">

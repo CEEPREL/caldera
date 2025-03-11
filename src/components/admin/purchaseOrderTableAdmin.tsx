@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 
 interface Column {
   key: string;
@@ -18,8 +17,8 @@ interface PurchaseOrderTableProps {
 function PurchaseOrderTableAdmin({
   columns,
   data,
-  onActionClick,
-}: PurchaseOrderTableProps) {
+}: // onActionClick,
+PurchaseOrderTableProps) {
   return (
     <div>
       <table className="w-full border-collapse shadow-md">

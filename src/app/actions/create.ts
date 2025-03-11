@@ -30,7 +30,6 @@ export async function createStore(formData: StoreData) {
     });
     const data = await response.json();
     if (response.ok) {
-      console.log(data);
       return { success: true };
     } else {
       return { error: data.message || "failed to add team member" };

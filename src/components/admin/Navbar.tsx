@@ -12,9 +12,7 @@ function Navbar() {
   const handleReload = () => {
     window.location.reload();
   };
-  const handleclick = () => {
-    console.log("Hi");
-  };
+
   return (
     <div className="py-5 !bg-[#f1ede5] gap-4 text-black bg-primary  flex items-center  flex-row w-full">
       {/* the search section  */}

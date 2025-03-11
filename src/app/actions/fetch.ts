@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { PurchaseOrder } from "../caldera/[storeId]/stock-management/page";
 //fetch all stores and states
 export const fetchStores = async () => {
   const token = (await cookies()).get("token")?.value;
@@ -152,8 +153,6 @@ export async function getallpurchaseOrder(storeId: string) {
     pending: `${apiUrl}/getpendingpo/${storeId}`,
   };
 
-  console.log("Fetching data from:", urls);
-
   try {
     // Fetch all API responses
     const responses = await Promise.allSettled(
@@ -169,7 +168,6 @@ export async function getallpurchaseOrder(storeId: string) {
           if (!res.ok) throw new Error(`Failed to fetch: ${url}`);
 
           const json = await res.json();
-          console.log(`Response for ${status}:`, json);
 
           if (!json?.data || !Array.isArray(json.data)) {
             console.warn(`Invalid data from ${status}:`, json);
@@ -184,7 +182,7 @@ export async function getallpurchaseOrder(storeId: string) {
       })
     );
 
-    let mergedData: Record<string, any> = {};
+    const mergedData: Record<string, PurchaseOrder> = {};
 
     responses.forEach((res) => {
       if (res.status === "fulfilled" && Array.isArray(res.value.data)) {
@@ -192,6 +190,7 @@ export async function getallpurchaseOrder(storeId: string) {
           const {
             poId,
             requestDate,
+            userId,
             requestTime,
             storeName,
             userName,
@@ -206,6 +205,8 @@ export async function getallpurchaseOrder(storeId: string) {
           if (!mergedData[poId]) {
             mergedData[poId] = {
               poId,
+              userId: userId,
+              storeId,
               requestDate,
               requestTime: requestTime || "00:00:00",
               storeName,
@@ -234,10 +235,7 @@ export async function getallpurchaseOrder(storeId: string) {
     });
 
     // Convert merged data to an array
-    let finalData = Object.values(mergedData);
-
-    // Debug merged data
-    console.log("Merged Data Before Sorting:", finalData);
+    const finalData = Object.values(mergedData);
 
     // Sorting by requestTime
     finalData.sort((a, b) => {
@@ -250,8 +248,6 @@ export async function getallpurchaseOrder(storeId: string) {
       return timeB - timeA;
     });
 
-    console.log("Final Merged Data:", finalData);
-
     return { status: true, data: finalData };
   } catch (error: unknown) {
     console.error("Error in getallpurchaseOrder:", error);
@@ -262,7 +258,8 @@ export async function getallpurchaseOrder(storeId: string) {
     };
   }
 }
-// =======fetch for puurchase reequest ============
+
+// =======fetch for Inventory============
 
 export async function getInventoies(storeId: string) {
   const token = (await cookies()).get("token")?.value;
@@ -297,6 +294,53 @@ export async function getInventoies(storeId: string) {
     const result = await response.json();
 
     return result.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return "error";
+  }
+}
+
+// =======fetch for Inventory============
+
+export async function getSalesReport(storeId: string) {
+  const token = (await cookies()).get("token")?.value;
+
+  if (!token) {
+    console.error("No token found in cookies.");
+    return null;
+  }
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) {
+    console.error("API URL is not defined.");
+    return null;
+  }
+
+  try {
+    const response = await fetch(`${apiUrl}/order/${storeId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error(
+        `Failed to fetch: ${response.statusText} (status: ${response.status})`
+      );
+      return token;
+    }
+    const result = await response.json();
+
+    const ordersWithProductCount = result.data.map((order: any) => {
+      return {
+        ...order,
+        productCount: order.product.length,
+      };
+    });
+    console.log("its mee the new data: ", ordersWithProductCount);
+    return ordersWithProductCount;
   } catch (error) {
     console.error("Error fetching data:", error);
     return "error";

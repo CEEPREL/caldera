@@ -40,7 +40,7 @@ const CartSlider: React.FC<UserProfile> = ({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [amountPaid, setAmountPaid] = useState(0);
   const [isPending, setIsPending] = useState(false);
-  const [formDisplay, setFormDisplay] = useState(form || null);
+  const formDisplay = form || null;
 
   const totalPrice = data.reduce(
     (sum, item) => sum + item.revenue * quantities[item.id],

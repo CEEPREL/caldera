@@ -2,16 +2,10 @@
 
 import React from "react";
 import clsx from "clsx";
-
-interface Data {
-  id: string;
-  date: string;
-  payment: string;
-  revenue: number;
-}
+import { Order } from "@/app/caldera/[storeId]/daily-sales/page";
 
 interface UserProfile {
-  data: Data[];
+  data: Order[];
   isOpen: boolean;
   onClose: () => void;
   width?: string;
@@ -59,16 +53,16 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
           {/* Mapping through Sales Data */}
           {data.map((item) => (
             <div
-              key={item.id}
+              key={item.orderId}
               className="flex w-full items-center justify-center flex-col gap-4"
             >
               {/* Sales Information */}
               <div className="flex flex-row py-5 w-full gap-4">
                 <div className="flex w-full flex-col gap-1">
-                  <h1 className="text-lg text-blue-300">{item.date}</h1>
+                  <h1 className="text-lg text-blue-300">{item.customerName}</h1>
                   <div className="flex flex-row justify-between w-full">
-                    <p className="text-gray-500">{item.revenue}</p>
-                    <p className="text-gray-500">{item.payment}</p>
+                    <p className="text-gray-500">{item.creditAmount}</p>
+                    <p className="text-gray-500">{item.costAmount}</p>
                   </div>
                 </div>
               </div>
