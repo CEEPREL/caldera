@@ -2,7 +2,6 @@
 
 import React from "react";
 import clsx from "clsx";
-import { DateFilter } from "../general_UI/DateFilter";
 
 interface Data {
   id: string;
@@ -56,7 +55,6 @@ const SalesHistorySlider: React.FC<UserProfile> = ({
           >
             ✕
           </button>
-          <DateFilter />
 
           {/* Mapping through Sales Data */}
           {data.map((item) => (
