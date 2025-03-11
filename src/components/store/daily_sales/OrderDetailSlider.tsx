@@ -2,10 +2,11 @@
 
 import React from "react";
 import clsx from "clsx";
-import { Order } from "@/app/caldera/[storeId]/daily-sales/page";
+import { Order, Transaction } from "@/app/caldera/[storeId]/daily-sales/page";
 
 interface UserProfile {
-  data: Order[];
+  // data?: Transaction[];
+  mainOrder?: Order[];
   isOpen: boolean;
   onClose: () => void;
   width?: string;
@@ -14,7 +15,8 @@ interface UserProfile {
 }
 
 const OrderDetailSlider: React.FC<UserProfile> = ({
-  data,
+  // data,
+  mainOrder,
   isOpen,
   onClose,
   width = "w-1/4", // Default: 1/4 of the page
@@ -50,24 +52,64 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
             ✕
           </button>
 
-          {/* Mapping through Sales Data */}
-          {data.map((item) => (
-            <div
-              key={item.orderId}
-              className="flex w-full items-center justify-center flex-col gap-4"
-            >
-              {/* Sales Information */}
-              <div className="flex flex-row py-5 w-full gap-4">
-                <div className="flex w-full flex-col gap-1">
-                  <h1 className="text-lg text-blue-300">{item.customerName}</h1>
-                  <div className="flex flex-row justify-between w-full">
-                    <p className="text-gray-500">{item.creditAmount}</p>
-                    <p className="text-gray-500">{item.costAmount}</p>
-                  </div>
-                </div>
+          {mainOrder && mainOrder.length > 0 ? (
+            mainOrder.map((order) => (
+              <div key={order.orderId}>
+                {/* Mapping through Sales Data */}
+                {order.product.length > 0 ? (
+                  order.product.map((item) => (
+                    <div
+                      key={item.productId}
+                      className="flex w-full items-center justify-center flex-col gap-4"
+                    >
+                      {/* Sales Information */}
+                      <div className="flex flex-row py-5 w-full gap-4">
+                        <div className="flex w-full flex-col gap-1">
+                          <h1 className="text-lg text-blue-300">
+                            Customer Name:{" "}
+                            <span className=" font-bold">
+                              {item.customerName
+                                ? item.customerName.charAt(0).toUpperCase() +
+                                  item.customerName.slice(1).toLowerCase()
+                                : ""}
+                            </span>
+                          </h1>
+                          <div className="flex flex-row justify-between w-full">
+                            <p className="text-gray-500">
+                              Product Price:{" "}
+                              <span className=" font-bold">{item.price}</span>
+                            </p>
+                            <p className="text-gray-500">
+                              Product Name:{" "}
+                              <span className=" font-bold">
+                                {item.productName}
+                              </span>
+                            </p>
+                          </div>
+                          <div className="flex flex-row justify-between w-full">
+                            <p className="text-gray-500">
+                              Total amount:{" "}
+                              <span className=" font-bold">{item.total}</span>
+                            </p>
+                            <p className="text-gray-500">
+                              Quantity:{" "}
+                              <span className=" font-bold">
+                                {item.quantity}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p>No products found for this order.</p>
+                )}
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>No order details available.</p>
+          )}
         </div>
       </div>
     </>

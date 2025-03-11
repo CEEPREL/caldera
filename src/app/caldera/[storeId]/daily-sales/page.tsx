@@ -7,18 +7,6 @@ import CartSlider from "@/components/store/daily_sales/CartSlider";
 import OrderDetailSlider from "@/components/store/daily_sales/OrderDetailSlider";
 import { getSalesReport } from "@/app/actions/fetch";
 import { useStore } from "@/ContextAPI/storeContex";
-// import CartSlider from "@/components/store/daily_rec/CartSlider";
-
-// interface Product {
-//   id: string;
-//   name: string;
-//   quantity: number;
-//   price: number;
-// }
-
-// interface Cart {
-//   cartItems: Product[];
-// }
 
 export interface Order {
   orderId: string;
@@ -38,7 +26,7 @@ export interface Order {
   paymentHistory: any[];
 }
 
-interface Transaction {
+export interface Transaction {
   transactionId: string;
   transactionDate: string;
   transactionTime: string;
@@ -107,34 +95,7 @@ const dailySalesData = [
   },
 ];
 
-const productRecordData = [
-  {
-    id: "1",
-    productName: "iPhone X Screen",
-    revenue: 5000,
-    date: "2024-01-01",
-    sales: 0,
-    payment: "Out of Stock",
-  },
-  {
-    id: "2",
-    productName: "Samsung Battery",
-    revenue: 3000,
-    date: "2024-01-02",
-    sales: 2,
-    payment: "In Stock",
-  },
-  {
-    id: "3",
-    productName: "MacBook Charger",
-    revenue: 8000,
-    date: "2024-01-03",
-    sales: 5,
-    payment: "In Stock",
-  },
-];
-
-const productList = ["10-03-2025"];
+const productList = [""];
 
 function Page() {
   const { storeData } = useStore();
@@ -144,21 +105,43 @@ function Page() {
   const [selectedProduct, setSelectedProduct] = useState("Screen");
   const [salesReportData, setSalesReportData] = useState<Order[]>([]);
   const [toggle, setToggle] = useState(false);
+  const [viewDailyRec, setViewDailyRec] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState("");
 
-  // const [cart, setCart] = useState<Cart>({ cartItems: [] });
-  // const [order, setOrder] = useState<Order[]>([]);
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
   const handleToggle = (p: string) => {
     setToggle(!toggle);
     setSelectedProduct(p);
   };
 
-  const columns = [
+  const dailyRecTable = [
     { key: "", label: "#" },
     { key: "customerName", label: "Customer Name" },
-    { key: "creditAmount", label: "Paid" },
+    { key: "customerNumber", label: "Customer Number" },
+    { key: "productCount", label: "Product Number" },
+    { key: "paidAmount", label: "Paid" },
+    { key: "costAmount", label: "Total Cost" },
+
+    {
+      key: "action",
+      label: "",
+      render: (row: Order) => (
+        <div>
+          <button
+            onClick={() => handleViewMore(row)}
+            className="w-full bg-blue-500 text-center text-white hover:bg-blue-300 rounded-sm px-2 py-1 font-semibold"
+          >
+            View
+          </button>
+        </div>
+      ),
+    },
+  ];
+  const productsTable = [
+    { key: "", label: "#" },
+    { key: "customerName", label: "Customer Name" },
+    { key: "customerNumber", label: "Customer Number" },
+    { key: "paidAmount", label: "Paid" },
     { key: "costAmount", label: "Total Cost" },
 
     {
@@ -166,8 +149,11 @@ function Page() {
       label: "",
       render: () => (
         <div>
-          <button className="w-full bg-blue-500 text-center text-white hover:bg-blue-300 rounded-sm px-2 py-1 font-semibold">
-            View
+          <button
+            onClick={() => handleAction(row)}
+            className="w-full bg-blue-500 text-center text-white hover:bg-blue-300 rounded-sm px-2 py-1 font-semibold"
+          >
+            Add
           </button>
 
           {loading ? (
@@ -190,13 +176,41 @@ function Page() {
     console.log("Perform action on:", row);
     alert(`Action performed on ${row.productName}`);
   };
+  const handleViewMore = (row: Order) => {
+    const orderId = row.orderId;
+    const product = row.product || [];
+
+    console.log(orderId);
+
+    // Wrap the order in an array before passing to setViewDailyRec
+    setViewDailyRec([
+      {
+        orderId,
+        product,
+        userId: row.userId || "",
+        userName: row.userName || "",
+        storeId: row.storeId || "",
+        storeName: row.storeName || "",
+        orderTime: row.orderTime || "",
+        creditAmount: row.creditAmount !== undefined ? row.creditAmount : null,
+        status: row.status || "pending",
+        orderDate: row.orderDate || "",
+        customerName: row.customerName || "",
+        customerNumber: row.customerNumber || "",
+        costAmount: row.costAmount || 0,
+        paidAmount: row.paidAmount || 0,
+        paymentHistory: row.paymentHistory || [],
+      },
+    ]);
+    setOpenDetail(true);
+  };
+
   const handleOnDelete = () => {
     console.log("Hi");
   };
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) {
-      // setCart(JSON.parse(storedCart));
     }
   }, []);
 
@@ -291,8 +305,8 @@ function Page() {
                 ))}
               </div>
               <DailySalesRec
-                columns={columns}
-                data={productRecordData}
+                columns={dailyRecTable}
+                data={salesReportData}
                 onActionClick={handleAction}
               />
             </div>
@@ -315,13 +329,21 @@ function Page() {
                 ))}
               </div>
               <DailySalesRec
-                columns={columns}
+                columns={productsTable}
                 data={apiData}
                 onActionClick={handleAction}
               />
             </div>
           )}
         </div>
+        <OrderDetailSlider
+          isOpen={openDetail}
+          onClose={() => setOpenDetail(false)}
+          mainOrder={viewDailyRec || []}
+          width="w-1/4"
+          overlayColor="bg-black bg-opacity-50"
+          drawerStyle="bg-white"
+        />
       </div>
     </div>
   );
