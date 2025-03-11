@@ -5,7 +5,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import products from "@/data/data.json";
 import Piechart from "@/components/visualizationToola/pieChart";
-import { DateFilter } from "@/components/store/general_UI/DateFilter";
+// import { DateFilter } from "@/components/store/general_UI/DateFilter";
 import PurchasingReport from "@/components/admin/PurchaseReport";
 
 export type PeriodType = "year" | "month" | "week" | "day";
@@ -191,7 +191,7 @@ function Report() {
                     <label className="text-gray-400">Total sales</label>
                     <h1 className="text-2xl font-medium pb-8">₦97,209,080</h1>
                   </div>
-                  <DateFilter />
+                  {/* <DateFilter /> */}
                 </div>
                 <div className="flex flex-row items-center justify-start w-full">
                   <div className=" w-[70%] lg:w-[70%]">
