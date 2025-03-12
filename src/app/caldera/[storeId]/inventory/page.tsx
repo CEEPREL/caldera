@@ -40,7 +40,6 @@ function Page() {
     { key: "price", label: " Price" },
     { key: "quantity", label: "Quantity" },
     { key: "total", label: "Total" },
-    { key: "total", label: "Total" },
     // {
     //   key: "action",
     //   label: "Action",

@@ -216,10 +216,9 @@ function Page() {
 
       const response = await createPurchaseOrder(productOrders);
 
-      // Handle the response
+      // =======Handle the response=======
       if (response?.status) {
         console.log("Order created successfully!", response.data);
-        // Optionally, clear the cart after successful submission
         setCart([]);
       } else {
         console.error(
