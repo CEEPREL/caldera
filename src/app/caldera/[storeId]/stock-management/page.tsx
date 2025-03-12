@@ -209,7 +209,7 @@ function Page() {
         categoryName: item.categoryName,
         productId: item.productId,
         productName: item.productName,
-        requestQuantity: quantities[item.productId] || 1, // Use provided quantity or default to 1
+        requestQuantity: quantities[item.productId] || 1,
       }));
 
       console.log("Submitting Order:", productOrders);

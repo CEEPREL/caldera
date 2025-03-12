@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import { Trash2 } from "lucide-react";
+import { useCart } from "@/ContextAPI/cartContext";
 
 interface Product {
   productId: string;
   categoryName: string;
   productName: string;
   price: number;
+  categoryId: string;
   quantity: number;
+  orderId?: string;
 }
 
 interface CartSliderProps {
@@ -19,12 +22,22 @@ interface CartSliderProps {
   drawerStyle?: string;
   onDelete: (id: string) => void;
   onQuantityChange: (id: string, quantity: number) => void;
-  onSubmit: (formData: {
-    customerName: string;
-    phoneNumber: string;
-    amountPaid: number;
-    paymentStatus: string;
-  }) => void;
+  onSubmit: (
+    formData: {
+      customerName: string;
+      phoneNumber: string;
+      paid: "paid" | "pending";
+      products: {
+        categoryId: string;
+        categoryName: string;
+        productId: string;
+        productName: string;
+        price: number;
+        quantity: number;
+      }[];
+    },
+    formData2?: { amount: number; orderId: string }
+  ) => void;
 }
 
 const CartSlider: React.FC<CartSliderProps> = ({
@@ -38,37 +51,46 @@ const CartSlider: React.FC<CartSliderProps> = ({
   onQuantityChange,
   onSubmit,
 }) => {
+  const { cart } = useCart();
   const [customerName, setCustomerName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [cartLenght, setCartLenght] = useState(1);
-  const [amountPaid, setAmountPaid] = useState(0);
-  const [paymentStatus, setPaymentStatus] = useState<"pending" | "paid">(
-    "paid"
-  ); // Initialize payment status as 'paid'
+  const [amount, setAmount] = useState(0);
+  const [paid, setPaid] = useState<"paid" | "pending">("paid"); // Boolean to track if it's paid or not
 
   // Calculate the total price of items in the cart
   const totalPrice = data.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const balance = totalPrice - amountPaid;
+  const balance = totalPrice - amount;
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
-    setAmountPaid(value);
+    setAmount(value);
 
-    // If an amount is entered, automatically set the payment status to 'paid'
+    // Set paid status based on amount
     if (value > 0) {
-      setPaymentStatus("paid");
-    } else if (value === 0 && paymentStatus === "paid") {
-      // If the amount is cleared, set the status back to 'pending'
-      setPaymentStatus("pending");
+      setPaid("paid");
+    } else if (value === 0) {
+      setPaid("pending");
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ customerName, phoneNumber, amountPaid, paymentStatus });
+
+    const formData = {
+      customerName,
+      phoneNumber,
+      amount,
+      paid,
+      products: data,
+    };
+
+    const formData2 = { amount, orderId: cart.length.toString() }; // You may customize the orderId generation logic here
+
+    // Call the onSubmit function with both formData and formData2
+    onSubmit(formData, formData2);
   };
 
   const handleIncrease = (id: string) => {
@@ -85,14 +107,12 @@ const CartSlider: React.FC<CartSliderProps> = ({
     }
   };
 
-  // Handle checkbox toggle for payment status
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newStatus = e.target.checked ? "pending" : "paid";
-    setPaymentStatus(newStatus);
+    setPaid(newStatus);
 
-    // If checkbox is unchecked, ensure Amount Paid is also cleared
     if (e.target.checked) {
-      setAmountPaid(0); // Clear amount if status is set to 'pending'
+      setAmount(0); // Clear amount if status is set to 'pending'
     }
   };
 
@@ -122,7 +142,6 @@ const CartSlider: React.FC<CartSliderProps> = ({
             ✕
           </button>
 
-          {/* Check if the cart is empty */}
           {data.length === 0 ? (
             <div className="text-center text-gray-500 mt-10">
               <h2>No products available in cart</h2>
@@ -139,7 +158,7 @@ const CartSlider: React.FC<CartSliderProps> = ({
                       {item.productName}
                     </h1>
                     <div className="flex flex-row justify-between w-full">
-                      <p className="text-gray-500">${item.price}</p>
+                      <p className="text-gray-500">₦{item.price}</p>
                       <p className="text-gray-500">{item.categoryName}</p>
                     </div>
                     <div className="flex flex-row justify-between w-full items-center">
@@ -180,7 +199,7 @@ const CartSlider: React.FC<CartSliderProps> = ({
               </div>
             ))
           )}
-          {cartLenght > 0 && (
+          {data.length > 0 && (
             <form
               onSubmit={handleSubmit}
               className="mt-5 p-4 bg-gray-100 rounded-lg"
@@ -189,12 +208,12 @@ const CartSlider: React.FC<CartSliderProps> = ({
                 <input
                   type="checkbox"
                   id="payment-status"
-                  checked={paymentStatus === "pending"} // Checkbox checked if paymentStatus is 'pending'
+                  checked={paid === "pending"}
                   onChange={handleCheckboxChange}
                   className="mr-2"
                 />
                 <label htmlFor="payment-status" className="text-gray-700">
-                  Payment Status: {paymentStatus}
+                  Payment Status: {paid}
                 </label>
               </div>
 
@@ -220,20 +239,18 @@ const CartSlider: React.FC<CartSliderProps> = ({
                 type="text"
                 pattern="[0-9]*"
                 placeholder="Amount Paid"
-                value={amountPaid}
+                value={amount}
                 onChange={handleAmountChange}
                 className="w-full border p-2 mt-2"
                 min="0"
                 max={totalPrice}
               />
-              <p className="mt-2">Total: ${totalPrice}</p>
-              <p className="mt-2">Balance: ${balance}</p>
+              <p className="mt-2">Total: ₦{totalPrice}</p>
+              <p className="mt-2">Balance: ₦{balance}</p>
 
-              {/* Disable the submit button when the form is in 'pending' state and amount is not filled */}
               <button
                 type="submit"
                 className="bg-blue-500 text-white px-4 py-2 rounded mt-3"
-                disabled={paymentStatus === "pending" && amountPaid === 0}
               >
                 Submit Order
               </button>

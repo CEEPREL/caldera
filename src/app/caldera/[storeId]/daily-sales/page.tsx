@@ -9,6 +9,7 @@ import { getInventoies, getSalesReport } from "@/app/actions/fetch";
 import { useStore } from "@/ContextAPI/storeContex";
 import { InventoryItem } from "../inventory/page";
 import { useCart } from "@/ContextAPI/cartContext";
+import { createSalesOrder } from "@/app/actions/post";
 
 export interface Order {
   orderId: string;
@@ -46,35 +47,6 @@ export interface Transaction {
   status: string | null;
 }
 
-const apiData = [
-  {
-    id: 1,
-    productName: "iPhone X Screen",
-    Purchased: 5000,
-    price: 10,
-    stock: 0,
-    status: "out of stock",
-  },
-  {
-    id: 2,
-    productName: "Samsung Battery",
-    Purchased: 3000,
-    price: 5,
-    stock: 2,
-    status: "In Stock",
-  },
-  {
-    id: 3,
-    productName: "MacBook Charger",
-    Purchased: 3000,
-    price: 5,
-    stock: 2,
-    status: "In Stock",
-  },
-];
-
-const productList = [""];
-
 function Page() {
   const { storeData } = useStore();
   const storeId = storeData?.data.storeId;
@@ -105,6 +77,7 @@ function Page() {
       categoryName,
       productName,
       quantity,
+      orderId,
     }) => ({
       categoryId,
       price,
@@ -112,6 +85,7 @@ function Page() {
       productName,
       categoryName,
       quantity,
+      orderId,
     })
   );
 
@@ -168,12 +142,12 @@ function Page() {
   };
 
   const handleAddToCart = (product: InventoryItem) => {
-    const { productId, productName, total, outOfStock } = product;
+    const { productId, productName, categoryId, categoryName } = product;
     addToCart({
       productId,
       productName,
-      total,
-      outOfStock,
+      categoryId,
+      categoryName,
       quantity: 1,
       price: product.price,
     });
@@ -208,31 +182,39 @@ function Page() {
   const handleOnDelete = (id: string) => {
     removeFromCart(id);
   };
-  const handleOnSubmit = async (quantities: { [key: string]: number }) => {
-    // try {
-    //   console.log("Submitted Quantities:", quantities);
-    //   const productOrders = cart.map((item) => ({
-    //     categoryId: item.categoryId,
-    //     categoryName: item.categoryName,
-    //     productId: item.productId,
-    //     productName: item.productName,
-    //     requestQuantity: quantities[item.productId] || 1, // Use provided quantity or default to 1
-    //   }));
-    //   console.log("Submitting Order:", productOrders);
-    //   const response = await createPurchaseOrder(productOrders);
-    //   // =======Handle the response=======
-    //   if (response?.status) {
-    //     console.log("Order created successfully!", response.data);
-    //     setCart([]);
-    //   } else {
-    //     console.error(
-    //       "Error creating order:",
-    //       response?.error || "Unknown error"
-    //     );
-    //   }
-    // } catch (error) {
-    //   console.error("Submission failed:", error);
-    // }
+
+  const handleOnSubmit = async (
+    formData: {
+      customerName: string;
+      phoneNumber: string;
+      paid: "paid" | "pending";
+      products: {
+        categoryId: string;
+        categoryName: string;
+        productId: string;
+        productName: string;
+        price: number;
+        quantity: number;
+      }[];
+    },
+    formData2?: { amount: number; orderId: string }
+  ) => {
+    console.log("hi");
+
+    setLoading(true);
+    try {
+      if (formData2) {
+        await createSalesOrder(formData);
+      } else {
+        await createSalesOrder(formData);
+      }
+      setCart([]);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error creating sales order:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -291,7 +273,7 @@ function Page() {
             data={salesOrders}
             onDelete={removeFromCart}
             onQuantityChange={updateQuantity}
-            onSubmit={() => {}}
+            onSubmit={handleOnSubmit}
           />
         </div>
 
@@ -319,7 +301,9 @@ function Page() {
             </button>
           </div>
 
-          {salesToggle === "daily" ? (
+          {loading ? (
+            <p>Loading...</p>
+          ) : salesToggle === "daily" ? (
             <DailySalesRec
               columns={dailyRecTable}
               data={salesReportData}

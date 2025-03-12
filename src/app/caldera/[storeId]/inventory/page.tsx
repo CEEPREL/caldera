@@ -21,6 +21,8 @@ export interface InventoryItem {
   productName: string;
   price: number;
   quantity: number;
+  categoryId: string;
+  categoryName: string;
   total: number;
   outOfStock: "0" | "1";
   createdDate: string;
