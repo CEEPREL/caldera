@@ -71,7 +71,7 @@ export async function createSalesOrder(order: any) {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ order }),

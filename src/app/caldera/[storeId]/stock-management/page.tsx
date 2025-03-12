@@ -184,7 +184,7 @@ function Page() {
 
     const fetchPoData = async () => {
       setLoadingPo(true);
-      const result = await getallpurchaseOrder("9033519996");
+      const result = await getallpurchaseOrder(`${storeId}`);
       if (!result.status) {
         console.error(result.error || "Unknown error");
       } else {

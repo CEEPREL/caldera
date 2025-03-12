@@ -51,20 +51,13 @@ function Page() {
   const { storeData } = useStore();
   const storeId = storeData?.data.storeId;
   const [cartSalesOpen, setCartSalesOpen] = useState(false);
-  const [openCart, setOpenCart] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState("Screen");
   const [salesReportData, setSalesReportData] = useState<Order[]>([]);
-  const [toggle, setToggle] = useState(false);
   const [viewDailyRec, setViewDailyRec] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [inventoryData, setInventoryData] = useState<InventoryItem[]>([]);
 
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
-  const handleToggle = (p: string) => {
-    setToggle(!toggle);
-    setSelectedProduct(p);
-  };
 
   const { cart, setCart, removeFromCart, addToCart, updateQuantity } =
     useCart();
@@ -199,21 +192,19 @@ function Page() {
     },
     formData2?: { amount: number; orderId: string }
   ) => {
-    console.log("hi");
-
-    setLoading(true);
+    console.log("res.data.message");
     try {
       if (formData2) {
-        await createSalesOrder(formData);
+        const res = await createSalesOrder(formData);
+        console.log(formData);
       } else {
         await createSalesOrder(formData);
       }
       setCart([]);
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.error("Error creating sales order:", error);
     } finally {
-      setLoading(false);
     }
   };
 
@@ -222,7 +213,7 @@ function Page() {
 
     const fetchPoData = async () => {
       setLoading(true);
-      const result = await getInventoies("9033519996");
+      const result = await getInventoies(`${storeId}`);
 
       if (!result) {
         console.error("Unknown error fetching data");
@@ -239,7 +230,7 @@ function Page() {
     if (!storeId) return;
     const fetchPoData = async () => {
       setLoading(true);
-      const result = await getSalesReport("9033519996");
+      const result = await getSalesReport(`${storeId}`);
 
       if (!result) {
         console.error("Unknown error fetching data");

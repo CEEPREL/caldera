@@ -67,7 +67,7 @@ function Page() {
 
     const fetchPoData = async () => {
       setLoading(true);
-      const result = await getInventoies("9033519996");
+      const result = await getInventoies(`${storeId}`);
 
       if (!result) {
         console.error("Unknown error fetching data");
