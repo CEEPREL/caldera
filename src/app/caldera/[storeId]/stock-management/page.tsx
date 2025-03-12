@@ -184,7 +184,7 @@ function Page() {
 
     const fetchPoData = async () => {
       setLoadingPo(true);
-      const result = await getallpurchaseOrder("9033519996");
+      const result = await getallpurchaseOrder(`${storeId}`);
       if (!result.status) {
         console.error(result.error || "Unknown error");
       } else {
@@ -209,17 +209,16 @@ function Page() {
         categoryName: item.categoryName,
         productId: item.productId,
         productName: item.productName,
-        requestQuantity: quantities[item.productId] || 1, // Use provided quantity or default to 1
+        requestQuantity: quantities[item.productId] || 1,
       }));
 
       console.log("Submitting Order:", productOrders);
 
       const response = await createPurchaseOrder(productOrders);
 
-      // Handle the response
+      // =======Handle the response=======
       if (response?.status) {
         console.log("Order created successfully!", response.data);
-        // Optionally, clear the cart after successful submission
         setCart([]);
       } else {
         console.error(

@@ -109,6 +109,7 @@ const CartSlider: React.FC<CartSliderProps> = ({
                       <div className="flex flex-row justify-between w-full items-center">
                         <div className="flex items-center gap-2">
                           <button
+                            type="button"
                             className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
                             onClick={() => handleDecrease(item.productId)}
                           >
@@ -126,6 +127,7 @@ const CartSlider: React.FC<CartSliderProps> = ({
                             }
                           />
                           <button
+                            type="button"
                             className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
                             onClick={() => handleIncrease(item.productId)}
                           >

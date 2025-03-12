@@ -21,6 +21,8 @@ export interface InventoryItem {
   productName: string;
   price: number;
   quantity: number;
+  categoryId: string;
+  categoryName: string;
   total: number;
   outOfStock: "0" | "1";
   createdDate: string;
@@ -39,7 +41,6 @@ function Page() {
     { key: "productName", label: "Product Name" },
     { key: "price", label: " Price" },
     { key: "quantity", label: "Quantity" },
-    { key: "total", label: "Total" },
     { key: "total", label: "Total" },
     // {
     //   key: "action",
@@ -66,7 +67,7 @@ function Page() {
 
     const fetchPoData = async () => {
       setLoading(true);
-      const result = await getInventoies("9033519996");
+      const result = await getInventoies(`${storeId}`);
 
       if (!result) {
         console.error("Unknown error fetching data");

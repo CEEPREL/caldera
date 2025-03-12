@@ -10,7 +10,7 @@ interface Column {
 
 interface PurchaseOrderTableProps {
   columns: Column[];
-  data: { [key: string]: string | number }[];
+  data: any;
   onActionClick?: (row: any) => void;
 }
 
@@ -32,11 +32,16 @@ PurchaseOrderTableProps) {
           </tr>
         </thead>
         <tbody>
-          {data.map((row, rowIndex) => (
+          {data.map((row: any, rowIndex: number) => (
             <tr key={rowIndex} className="border-b">
               {columns.map((column) => (
                 <td key={column.key} className="p-2">
-                  {column.render ? column.render(row) : row[column.key]}
+                  {column.render
+                    ? column.render(row)
+                    : typeof row[column.key] === "string"
+                    ? row[column.key].charAt(0).toUpperCase() +
+                      row[column.key].slice(1).toLowerCase()
+                    : row[column.key]}
                 </td>
               ))}
             </tr>
