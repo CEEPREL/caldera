@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import clsx from "clsx";
-import { Order, Transaction } from "@/app/caldera/[storeId]/daily-sales/page";
+import { Order } from "@/app/caldera/[storeId]/daily-sales/page";
 
 interface UserProfile {
   mainOrder?: Order[];

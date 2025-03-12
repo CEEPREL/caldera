@@ -3,8 +3,8 @@
 import { ChevronRight, ShoppingBasket } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import DailySalesRec from "@/components/store/daily_sales/DailySalesRec";
-import CartSlider from "@/components/store/daily_sales/CartSlider";
-import OrderDetailSlider from "@/components/store/daily_sales/OrderDetailSlider";
+// import CartSlider from "@/components/store/daily_sales/CartSlider";
+// import OrderDetailSlider from "@/components/store/daily_sales/OrderDetailSlider";
 // import CartSlider from "@/components/store/daily_rec/CartSlider";
 
 interface Product {
@@ -78,8 +78,8 @@ const productList = [
 ];
 
 function Page() {
-  const [openCart, setOpenCart] = useState(false);
-  const [openDetail, setOpenDetail] = useState(false);
+  // const [openCart, setOpenCart] = useState(false);
+  // const [openDetail, setOpenDetail] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("Screen");
   const [toggle, setToggle] = useState(false);
   const [cart, setCart] = useState<Cart>({ cartItems: [] });
@@ -100,18 +100,18 @@ function Page() {
       label: "",
       render: () => (
         <div>
-          <button onClick={() => setOpenDetail(true)} className={``}>
+          <button onClick={() => console.log("true")} className={``}>
             <ChevronRight />
           </button>
 
-          <OrderDetailSlider
+          {/* <OrderDetailSlider
             isOpen={openDetail}
             onClose={() => setOpenDetail(false)}
-            data={[]}
+            data={dailySalesData}
             width="w-1/4"
             overlayColor="bg-black bg-opacity-50"
             drawerStyle="bg-white"
-          />
+          /> */}
         </div>
       ),
     },
@@ -120,9 +120,9 @@ function Page() {
     console.log("Perform action on:", row);
     alert(`Action performed on ${row.productName}`);
   };
-  const handleOnDelete = () => {
-    console.log("Hi");
-  };
+  // const handleOnDelete = () => {
+  //   console.log("Hi");
+  // };
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) {
@@ -140,7 +140,7 @@ function Page() {
         <div className="flex flex-row justify-between">
           <h1 className="text-2xl font-medium">Daily Record</h1>
 
-          <button onClick={() => setOpenCart(true)} className="relative">
+          <button onClick={() => console.log("true")} className="relative">
             <h1 className="flex text-xs -top-2 right-0 absolute w-5 h-5 items-center justify-center bg-red-400 text-white rounded-full">
               {}
             </h1>
@@ -148,15 +148,15 @@ function Page() {
               <ShoppingBasket />
             </div>
           </button>
-          <CartSlider
+          {/* <CartSlider
             onDelete={handleOnDelete}
             isOpen={openCart}
             onClose={() => setOpenCart(false)}
-            data={dailySalesData}
+            data={[]}
             width="w-1/4"
             overlayColor="bg-black bg-opacity-50"
             drawerStyle="bg-white"
-          />
+          /> */}
         </div>
 
         <div className="gap-2 flex flex-col">

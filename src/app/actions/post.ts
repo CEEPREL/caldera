@@ -55,6 +55,7 @@ export async function createPurchaseOrder(
     }
   }
 }
+
 export async function createSalesOrder(order: any) {
   const token = (await cookies()).get("token")?.value;
 
@@ -68,20 +69,21 @@ export async function createSalesOrder(order: any) {
   }
 
   try {
+    console.log("ppayload", JSON.stringify({ order: order }));
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order`, {
       method: "POST",
       headers: {
         Authorization: `${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ order }),
+      body: JSON.stringify(order),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
+
       throw new Error(
-        errorData.error ||
-          "Something went wrong while submitting the purchase order"
+        errorData.error || "Something went wrong while submitting the order"
       );
     }
 

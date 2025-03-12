@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import clsx from "clsx";
 import { Trash2 } from "lucide-react";
-import { useCart } from "@/ContextAPI/cartContext";
 
 interface Product {
   productId: string;
@@ -10,7 +9,6 @@ interface Product {
   price: number;
   categoryId: string;
   quantity: number;
-  orderId?: string;
 }
 
 interface CartSliderProps {
@@ -25,9 +23,9 @@ interface CartSliderProps {
   onSubmit: (
     formData: {
       customerName: string;
-      phoneNumber: string;
+      customerNumber: string;
       paid: "paid" | "pending";
-      products: {
+      product: {
         categoryId: string;
         categoryName: string;
         productId: string;
@@ -35,8 +33,8 @@ interface CartSliderProps {
         price: number;
         quantity: number;
       }[];
-    },
-    formData2?: { amount: number; orderId: string }
+    }
+    // formData2?: { amount: number; orderId: string }
   ) => void;
 }
 
@@ -51,9 +49,9 @@ const CartSlider: React.FC<CartSliderProps> = ({
   onQuantityChange,
   onSubmit,
 }) => {
-  const { cart } = useCart();
+  // const { cart } = useCart();
   const [customerName, setCustomerName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [customerNumber, setCustomerNumber] = useState("");
   const [amount, setAmount] = useState(0);
   const [paid, setPaid] = useState<"paid" | "pending">("paid"); // Boolean to track if it's paid or not
 
@@ -81,16 +79,15 @@ const CartSlider: React.FC<CartSliderProps> = ({
 
     const formData = {
       customerName,
-      phoneNumber,
-      amount,
+      customerNumber,
       paid,
-      products: data,
+      product: data,
     };
 
-    const formData2 = { amount, orderId: cart.length.toString() }; // You may customize the orderId generation logic here
+    // const formData2 = { amount, orderId: cart.length.toString() }; // You may customize the orderId generation logic here
 
     // Call the onSubmit function with both formData and formData2
-    onSubmit(formData, formData2);
+    onSubmit(formData);
   };
 
   const handleIncrease = (id: string) => {
@@ -229,8 +226,8 @@ const CartSlider: React.FC<CartSliderProps> = ({
               <input
                 type="text"
                 placeholder="Phone Number"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                value={customerNumber}
+                onChange={(e) => setCustomerNumber(e.target.value)}
                 className="w-full border p-2 mt-2"
                 inputMode="numeric"
                 required

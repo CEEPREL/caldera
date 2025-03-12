@@ -70,15 +70,13 @@ function Page() {
       categoryName,
       productName,
       quantity,
-      orderId,
     }) => ({
       categoryId,
-      price,
+      categoryName,
       productId,
       productName,
-      categoryName,
+      price,
       quantity,
-      orderId,
     })
   );
 
@@ -179,9 +177,9 @@ function Page() {
   const handleOnSubmit = async (
     formData: {
       customerName: string;
-      phoneNumber: string;
+      customerNumber: string;
       paid: "paid" | "pending";
-      products: {
+      product: {
         categoryId: string;
         categoryName: string;
         productId: string;
@@ -189,17 +187,14 @@ function Page() {
         price: number;
         quantity: number;
       }[];
-    },
-    formData2?: { amount: number; orderId: string }
+    }
+    // formData2?: { amount: number; orderId: string }
   ) => {
     console.log("res.data.message");
     try {
-      if (formData2) {
-        const res = await createSalesOrder(formData);
-        console.log(formData);
-      } else {
-        await createSalesOrder(formData);
-      }
+      const res = await createSalesOrder(formData);
+      console.log(res, formData, `---${storeId}`);
+
       setCart([]);
       // window.location.reload();
     } catch (error) {
