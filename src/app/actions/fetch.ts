@@ -317,7 +317,7 @@ export async function getSalesReport(storeId: string) {
   }
 
   try {
-    const response = await fetch(`${apiUrl}/order/${storeId}`, {
+    const response = await fetch(`${apiUrl}/filtertodayorder/${storeId}`, {
       method: "GET",
       headers: {
         Authorization: `${token}`,

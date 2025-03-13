@@ -16,7 +16,7 @@ interface UserProfile {
     transactionId: string,
     quantities: { [key: string]: number },
     amountPaid: number
-  ) => void; // Include amountPaid in the submission
+  ) => void;
   form?: string;
 }
 
@@ -25,7 +25,7 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
   isOpen,
   onSubmit,
   onClose,
-  width = "w-1/4", // Default: 1/4 of the page
+  width = "w-1/4",
   overlayColor = "bg-black bg-opacity-50",
   drawerStyle = "bg-white p-5 rounded-r-2xl shadow-lg",
 }) => {
@@ -39,10 +39,10 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
       )
     )
   );
-  const [amountPaid, setAmountPaid] = useState<number>(0); // State for amountPaid
+  const [amountPaid, setAmountPaid] = useState<number>();
 
   const handleChange = (id: string, value: number) => {
-    if (value < 1) return; // Prevent negative or zero quantities
+    if (value < 1) return;
     setQuantities((prev) => ({ ...prev, [id]: value }));
   };
 
@@ -55,7 +55,7 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
 
   const handleSubmit = (event: React.FormEvent, transactionId: string) => {
     event.preventDefault();
-    onSubmit(transactionId, quantities, amountPaid); // Submit quantities and amountPaid to parent component
+    onSubmit(transactionId, quantities, amountPaid || 0); // Submit quantities and amountPaid to parent component
   };
 
   const handleDecrease = (id: string) => {

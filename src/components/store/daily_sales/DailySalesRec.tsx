@@ -32,20 +32,21 @@ PurchaseOrderTableProps) {
           </tr>
         </thead>
         <tbody>
-          {data.map((row: any, rowIndex: number) => (
-            <tr key={rowIndex} className="border-b">
-              {columns.map((column) => (
-                <td key={column.key} className="p-2">
-                  {column.render
-                    ? column.render(row)
-                    : typeof row[column.key] === "string"
-                    ? row[column.key].charAt(0).toUpperCase() +
-                      row[column.key].slice(1).toLowerCase()
-                    : row[column.key]}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {data.length > 0 &&
+            data.map((row: any, rowIndex: number) => (
+              <tr key={rowIndex} className="border-b">
+                {columns.map((column) => (
+                  <td key={column.key} className="p-2">
+                    {column.render
+                      ? column.render(row)
+                      : typeof row[column.key] === "string"
+                      ? row[column.key].charAt(0).toUpperCase() +
+                        row[column.key].slice(1).toLowerCase()
+                      : row[column.key]}
+                  </td>
+                ))}
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>
