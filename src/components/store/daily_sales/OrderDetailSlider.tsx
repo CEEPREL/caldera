@@ -198,34 +198,6 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
                                   </button>
                                 </div>
                               )}
-
-                              {/* Amount Paid Input */}
-                              <div className="mt-4">
-                                <label
-                                  htmlFor="amountPaid"
-                                  className="block text-sm font-medium"
-                                >
-                                  Payment
-                                </label>
-                                <input
-                                  id="amountPaid"
-                                  type="number"
-                                  placeholder="Amount Paid"
-                                  value={amountPaid}
-                                  onChange={handleAmountChange}
-                                  className="w-full border p-2 mt-2"
-                                  min={order.paidAmount}
-                                  max={order.costAmount}
-                                />
-                              </div>
-
-                              {/* Submit button only visible if costPrice > paidPrice */}
-                              <button
-                                type="submit"
-                                className="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transition w-full"
-                              >
-                                Submit Order
-                              </button>
                             </form>
                           </div>
                         )}
@@ -235,6 +207,34 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
                 ) : (
                   <p>No products found for this order.</p>
                 )}
+                {/* Amount Paid Input */}
+                <div className="mt-4">
+                  <label
+                    htmlFor="amountPaid"
+                    className="block text-sm font-medium"
+                  >
+                    Payment
+                  </label>
+                  <input
+                    id="amountPaid"
+                    type="text"
+                    placeholder="Amount Paid"
+                    value={amountPaid}
+                    onChange={handleAmountChange}
+                    className="w-full border p-2 mt-2"
+                    min={order.paidAmount}
+                    max={order.costAmount}
+                    inputMode="decimal"
+                  />
+                </div>
+
+                {/* Submit button only visible if costPrice > paidPrice */}
+                <button
+                  type="submit"
+                  className="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transition w-full"
+                >
+                  Submit Order
+                </button>
               </div>
             ))
           ) : (
