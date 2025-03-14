@@ -4,41 +4,40 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { getFilteredSalesReport } from "@/app/actions/fetch";
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import SalesHistorySlider from "@/components/store/sales_rec/SalesHistorySlider";
+import { useStore } from "@/ContextAPI/storeContex";
+import { Order } from "../daily-sales/page";
 
-const dailySalesData = [
-  {
-    id: "1",
-    date: "Today",
-    totalSales: 15000,
-    totalOrders: 5,
-    status: "20 Products",
-  },
-  {
-    id: "2",
-    date: "Yesterday",
-    totalSales: 12000,
-    totalOrders: 3,
-    status: "20 Products",
-  },
-  {
-    id: " 3",
-    date: "2024-01-03",
-    totalSales: 18000,
-    totalOrders: 7,
-    status: "20 Products",
-  },
-];
+// interface Order {
+//   id: string;
+//   orderDate: string;
+//   productName: string;
+//   revenue: number;
+//   sales: number;
+//   payment: string;
+// }
+
+export interface GroupedOrders {
+  [date: string]: Order[];
+}
+
+interface SalesRecordData {
+  id: string;
+  date: string;
+  totalSales: number;
+  totalOrders: number;
+  status: string;
+}
 
 const productRecordData = [
   {
     id: "1",
     productName: "iPhone X Screen",
     revenue: 5000,
-    date: "2024-01-01",
+    orderDate: "2024-01-01",
     sales: 0,
     payment: "Out of Stock",
   },
@@ -46,7 +45,7 @@ const productRecordData = [
     id: "2",
     productName: "Samsung Battery",
     revenue: 3000,
-    date: "2024-01-02",
+    orderDate: "2024-01-02",
     sales: 2,
     payment: "In Stock",
   },
@@ -54,7 +53,7 @@ const productRecordData = [
     id: "3",
     productName: "MacBook Charger",
     revenue: 8000,
-    date: "2024-01-03",
+    orderDate: "2024-01-03",
     sales: 5,
     payment: "In Stock",
   },
@@ -73,15 +72,49 @@ function Page() {
   const [open, setOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("Screen");
   const [toggle, setToggle] = useState(false);
-  const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [startDateStr, setStartDateStr] = useState("");
-  const [endDateStr, setEndDateStr] = useState("");
-  const [storeId, setStoreId] = useState("");
+  const [startDateStr, setStartDateStr] = useState<string>("");
+  const [endDateStr, setEndDateStr] = useState<string>("");
+  const [storeId, setStoreId] = useState<string>("");
+  const [oldSalesRecData, setOldSalesRecData] = useState<Order[]>([]);
 
+  const { salesRecData, setSalesRecData } = useStore();
   const today = moment();
-  const pathname = usePathname();
   const params = useParams<{ storeId?: string }>();
+  const router = useRouter();
+
+  const groupedOrders: GroupedOrders = oldSalesRecData.reduce((acc, order) => {
+    const orderDate = new Date(order.orderDate);
+    const formattedDate = getFormattedDate(orderDate);
+
+    if (!acc[formattedDate]) {
+      acc[formattedDate] = [];
+    }
+
+    acc[formattedDate].push(order);
+    return acc;
+  }, {} as GroupedOrders);
+
+  function getFormattedDate(date: Date): string {
+    const today = new Date();
+    const yesterday = new Date(today.setDate(today.getDate() - 1));
+
+    if (isSameDate(date, today)) {
+      return date.toISOString().split("T")[0];
+    } else if (isSameDate(date, yesterday)) {
+      return date.toISOString().split("T")[0];
+    } else {
+      return date.toISOString().split("T")[0];
+    }
+  }
+
+  function isSameDate(date1: Date, date2: Date): boolean {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }
 
   useEffect(() => {
     const startDate = today.clone().subtract(5, "days").format("YYYY-MM-DD");
@@ -98,22 +131,33 @@ function Page() {
 
     setLoading(true);
     const fetchSalesData = async () => {
-      const res = await getFilteredSalesReport(
-        storeId,
-        startDateStr,
-        endDateStr
-      );
-      if (res && res !== "error") {
-        setResponses(res);
-        console.log(res);
+      try {
+        const res = await getFilteredSalesReport(
+          storeId,
+          startDateStr,
+          endDateStr
+        );
+        if (res && res !== "error") {
+          setOldSalesRecData(res);
+          console.log(res);
+        }
+      } catch (error) {
+        console.error("Error fetching sales data:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchSalesData();
     console.log(startDateStr, "/", endDateStr); // Check the date range in the console
   }, [storeId, startDateStr, endDateStr]);
 
+  const handleRecStore = (date: string) => {
+    setSalesRecData(groupedOrders[date]);
+    console.log(date);
+    router.push(`/caldera/${storeId}/sales-record/${date}`);
+    console.log(groupedOrders[date]);
+  };
   const handleToggle = (p: string) => {
     setToggle(!toggle);
     setSelectedProduct(p);
@@ -134,22 +178,22 @@ function Page() {
             <ChevronRight />
           </button>
 
-          <SalesHistorySlider
+          {/* <SalesHistorySlider
             isOpen={open}
             onClose={() => setOpen(false)}
             data={productRecordData} // Pass the entire array
             width="w-1/4"
             overlayColor="bg-black bg-opacity-50"
             drawerStyle="bg-white"
-          />
+          /> */}
         </div>
       ),
     },
   ];
 
-  const handleAction = (row: any) => {
+  const handleAction = (row: Order) => {
     console.log("Perform action on:", row);
-    alert(`Action performed on ${row.productName}`);
+    alert(`Action performed on ${row.customerNumber}`);
   };
 
   return (
@@ -181,24 +225,29 @@ function Page() {
 
         {salesToggle === "daily" ? (
           <div className="pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {dailySalesData.map((sale) => (
-              <Link
-                key={sale.id}
-                href={`/caldera/${storeId}/sales-record/${sale.id}`}
-              >
-                <div className="bg-gradient-to-t from-gray-100 to-gray-300 shadow-2xl rounded-lg p-5">
-                  <div className="flex justify-between items-center">
-                    <div className="flex w-full flex-col gap-8">
-                      <p className="text-sm text-gray-500">{sale.date}</p>
-                      <div className="flex flex-row justify-between w-full">
-                        <p className="text-sm text-black">{sale.status}</p>
-                        <ChevronRight />
+            {Object.entries(groupedOrders)
+              .reverse()
+              .map(([date, orders]) => (
+                <div
+                  onClick={() => handleRecStore(date)}
+                  key={date}
+                  // href={`/caldera/${storeId}/sales-record/${date}`}
+                >
+                  <div className="bg-gradient-to-t from-gray-100 to-gray-300 shadow-2xl rounded-lg p-5">
+                    <div className="flex justify-between items-center">
+                      <div className="flex w-full flex-col gap-8">
+                        <p className="text-sm text-gray-500">{date}</p>
+                        <div className="flex flex-row justify-between w-full">
+                          <p className="text-sm text-black">
+                            {orders.length} Orders
+                          </p>
+                          <ChevronRight />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </Link>
-            ))}
+              ))}
           </div>
         ) : (
           <div className="gap-2 flex flex-col">
