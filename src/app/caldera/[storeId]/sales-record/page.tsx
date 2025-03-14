@@ -1,8 +1,11 @@
 "use client";
+
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
-// import SalesHistorySlider from "@/components/user/SalesHistorySlider";
+import React, { useEffect, useState } from "react";
+import moment from "moment";
+import { useParams, usePathname } from "next/navigation";
+import { getFilteredSalesReport } from "@/app/actions/fetch";
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import SalesHistorySlider from "@/components/store/sales_rec/SalesHistorySlider";
 
@@ -70,6 +73,47 @@ function Page() {
   const [open, setOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("Screen");
   const [toggle, setToggle] = useState(false);
+  const [responses, setResponses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [startDateStr, setStartDateStr] = useState("");
+  const [endDateStr, setEndDateStr] = useState("");
+  const [storeId, setStoreId] = useState("");
+
+  const today = moment();
+  const pathname = usePathname();
+  const params = useParams<{ storeId?: string }>();
+
+  useEffect(() => {
+    const startDate = today.clone().subtract(5, "days").format("YYYY-MM-DD");
+    const endDate = today.format("YYYY-MM-DD");
+    setStartDateStr(startDate);
+    setEndDateStr(endDate);
+
+    const storeId = params.storeId || "";
+    setStoreId(storeId);
+  }, [params.storeId, today]);
+
+  useEffect(() => {
+    if (!startDateStr || !endDateStr || !storeId) return;
+
+    setLoading(true);
+    const fetchSalesData = async () => {
+      const res = await getFilteredSalesReport(
+        storeId,
+        startDateStr,
+        endDateStr
+      );
+      if (res && res !== "error") {
+        setResponses(res);
+        console.log(res);
+      }
+      setLoading(false);
+    };
+
+    fetchSalesData();
+    console.log(startDateStr, "/", endDateStr); // Check the date range in the console
+  }, [storeId, startDateStr, endDateStr]);
+
   const handleToggle = (p: string) => {
     setToggle(!toggle);
     setSelectedProduct(p);
@@ -102,10 +146,12 @@ function Page() {
       ),
     },
   ];
+
   const handleAction = (row: any) => {
     console.log("Perform action on:", row);
     alert(`Action performed on ${row.productName}`);
   };
+
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
       <div className="flex gap-2 flex-col">
@@ -136,7 +182,10 @@ function Page() {
         {salesToggle === "daily" ? (
           <div className="pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {dailySalesData.map((sale) => (
-              <Link key={sale.id} href={`/sales-record/${sale.id}`}>
+              <Link
+                key={sale.id}
+                href={`/caldera/${storeId}/sales-record/${sale.id}`}
+              >
                 <div className="bg-gradient-to-t from-gray-100 to-gray-300 shadow-2xl rounded-lg p-5">
                   <div className="flex justify-between items-center">
                     <div className="flex w-full flex-col gap-8">

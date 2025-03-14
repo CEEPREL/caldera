@@ -300,7 +300,7 @@ export async function getInventoies(storeId: string) {
   }
 }
 
-// =======fetch for Inventory============
+// =======fetch for Daily============
 
 export async function getSalesReport(storeId: string) {
   const token = (await cookies()).get("token")?.value;
@@ -324,6 +324,59 @@ export async function getSalesReport(storeId: string) {
         "Content-Type": "application/json",
       },
     });
+
+    if (!response.ok) {
+      console.error(
+        `Failed to fetch: ${response.statusText} (status: ${response.status})`
+      );
+      return token;
+    }
+    const result = await response.json();
+
+    const ordersWithProductCount = result.data.map((order: any) => {
+      return {
+        ...order,
+        productCount: order.product.length,
+      };
+    });
+    console.log("its mee the new data: ", ordersWithProductCount);
+    return ordersWithProductCount;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return "error";
+  }
+}
+
+// =======fetch for filtered sales============
+export async function getFilteredSalesReport(
+  storeId: string,
+  start: string,
+  end: string
+) {
+  const token = (await cookies()).get("token")?.value;
+
+  if (!token) {
+    console.error("No token found in cookies.");
+    return null;
+  }
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) {
+    console.error("API URL is not defined.");
+    return null;
+  }
+
+  try {
+    const response = await fetch(
+      `${apiUrl}/filterorderbydate/${storeId}/${start}/${end}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       console.error(

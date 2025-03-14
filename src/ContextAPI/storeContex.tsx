@@ -10,6 +10,7 @@ import {
 import { usePathname } from "next/navigation";
 import { fetchProduct, fetchStores } from "@/app/actions/fetch";
 import { getStoreData } from "@/app/actions/auth";
+import { Order } from "@/app/caldera/[storeId]/daily-sales/page";
 
 // Store type definition
 interface Store {
@@ -81,6 +82,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [storeData, setStoreData] = useState<StoreData | null>(null);
+  const [responses, setResponses] = useState<Order[]>([]);
 
   // Function to group stores by state
   const groupStores = (stores: Store[]): Record<string, Store[]> => {
