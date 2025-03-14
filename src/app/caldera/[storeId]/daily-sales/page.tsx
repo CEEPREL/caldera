@@ -9,7 +9,7 @@ import { getInventoies, getSalesReport } from "@/app/actions/fetch";
 import { useStore } from "@/ContextAPI/storeContex";
 import { InventoryItem } from "../inventory/page";
 import { useCart } from "@/ContextAPI/cartContext";
-import { createSalesOrder } from "@/app/actions/post";
+import { createSalesOrder, createSalesPayment } from "@/app/actions/post";
 
 export interface Order {
   orderId: string;
@@ -55,6 +55,7 @@ function Page() {
   const [salesReportData, setSalesReportData] = useState<Order[]>([]);
   const [viewDailyRec, setViewDailyRec] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [orderId, setOrderId] = useState(true);
   const [inventoryData, setInventoryData] = useState<InventoryItem[]>([]);
 
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
@@ -187,19 +188,34 @@ function Page() {
         price: number;
         quantity: number;
       }[];
-    }
-    // formData2?: { amount: number; orderId: string }
+    },
+    amount: number
   ) => {
-    console.log("res.data.message");
     try {
+      // Step 1: Create the sales order with the full data (customer, products, etc.)
       const res = await createSalesOrder(formData);
-      console.log(res, formData, `---${storeId}`);
 
-      setCart([]);
-      // window.location.reload();
+      if (res && res.data && res.data.data) {
+        const orderId = res.data.data.orderId;
+
+        // Step 2: After creating the order, create the payment using the orderId and amount
+        const payment = { orderId, amount };
+        const paymentResponse = await createSalesPayment(payment);
+        console.log(payment);
+
+        // Log the response from payment API
+        console.log("Payment Response:", paymentResponse);
+
+        // After successful payment, you can clear the cart or update the UI as needed
+        setCart([]);
+        alert("Order and Payment successfully processed!");
+      }
     } catch (error) {
-      console.error("Error creating sales order:", error);
+      console.error("Error during order creation or payment:", error);
+      alert("There was an error processing the order or payment.");
     } finally {
+      // Optionally reload or update the UI after submission
+      window.location.reload();
     }
   };
 
@@ -259,7 +275,7 @@ function Page() {
             data={salesOrders}
             onDelete={removeFromCart}
             onQuantityChange={updateQuantity}
-            onSubmit={handleOnSubmit}
+            onSubmit={() => handleOnSubmit}
           />
         </div>
 
@@ -313,6 +329,17 @@ function Page() {
           drawerStyle="bg-white"
           onDelete={handleOnDelete}
           onSubmit={() => handleOnSubmit}
+          onPayment={(amount) =>
+            handleOnSubmit(
+              {
+                customerName: "", // Example, replace with actual data
+                customerNumber: "",
+                paid: "pending",
+                product: salesOrders,
+              },
+              amount
+            )
+          }
         />
       </div>
     </div>

@@ -95,6 +95,10 @@ function Page() {
     return acc;
   }, {} as GroupedOrders);
 
+  const todayStr = new Date().toISOString().split("T")[0];
+  const yesterdayStr = new Date(new Date().setDate(new Date().getDate() - 1))
+    .toISOString()
+    .split("T")[0];
   function getFormattedDate(date: Date): string {
     const today = new Date();
     const yesterday = new Date(today.setDate(today.getDate() - 1));
@@ -236,10 +240,17 @@ function Page() {
                   <div className="bg-gradient-to-t from-gray-100 to-gray-300 shadow-2xl rounded-lg p-5">
                     <div className="flex justify-between items-center">
                       <div className="flex w-full flex-col gap-8">
-                        <p className="text-sm text-gray-500">{date}</p>
+                        <p className="text-sm text-gray-500">
+                          {date === todayStr
+                            ? "Today"
+                            : date === yesterdayStr
+                            ? "Yesterday"
+                            : date}
+                        </p>
                         <div className="flex flex-row justify-between w-full">
                           <p className="text-sm text-black">
-                            {orders.length} Orders
+                            {orders.length}{" "}
+                            {orders.length > 1 ? "Orders" : "Order"}
                           </p>
                           <ChevronRight />
                         </div>

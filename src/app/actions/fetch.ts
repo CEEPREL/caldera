@@ -392,7 +392,6 @@ export async function getFilteredSalesReport(
         productCount: order.product.length,
       };
     });
-    console.log("its mee the new data: ", ordersWithProductCount);
     return ordersWithProductCount;
   } catch (error) {
     console.error("Error fetching data:", error);

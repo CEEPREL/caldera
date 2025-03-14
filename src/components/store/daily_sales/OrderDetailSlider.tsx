@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import clsx from "clsx";
 import { Order } from "@/app/caldera/[storeId]/daily-sales/page";
@@ -12,10 +10,11 @@ interface UserProfile {
   overlayColor?: string;
   drawerStyle?: string;
   onDelete: (id: string) => void;
+  onPayment: (amount: number) => void;
   onSubmit: (
     transactionId: string,
     quantities: { [key: string]: number },
-    amountPaid: number
+    amount: number
   ) => void;
   form?: string;
 }
@@ -24,6 +23,7 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
   mainOrder,
   isOpen,
   onSubmit,
+  onPayment,
   onClose,
   width = "w-1/4",
   overlayColor = "bg-black bg-opacity-50",
@@ -39,7 +39,7 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
       )
     )
   );
-  const [amountPaid, setAmountPaid] = useState<number>();
+  const [amount, setAmount] = useState<number>(0); // Defaulting amount to 0
 
   const handleChange = (id: string, value: number) => {
     if (value < 1) return;
@@ -55,7 +55,12 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
 
   const handleSubmit = (event: React.FormEvent, transactionId: string) => {
     event.preventDefault();
-    onSubmit(transactionId, quantities, amountPaid || 0); // Submit quantities and amountPaid to parent component
+    onSubmit(transactionId, quantities, amount); // Ensure proper data submission
+  };
+
+  const handlePayment = (event: React.FormEvent) => {
+    event.preventDefault();
+    onPayment(amount || 0);
   };
 
   const handleDecrease = (id: string) => {
@@ -71,7 +76,7 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     if (value >= 0) {
-      setAmountPaid(value);
+      setAmount(value);
     }
   };
 
@@ -132,6 +137,7 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
                     </span>
                   </p>
                 </div>
+
                 {/* Mapping through Sales Data */}
                 {order.product.length > 0 ? (
                   order.product.map((item) => (
@@ -207,28 +213,30 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
                 ) : (
                   <p>No products found for this order.</p>
                 )}
-                {/* Amount Paid Input */}
-                <div className="mt-4">
-                  <label
-                    htmlFor="amountPaid"
-                    className="block text-sm font-medium"
-                  >
-                    Payment
-                  </label>
-                  <input
-                    id="amountPaid"
-                    type="text"
-                    placeholder="Amount Paid"
-                    value={amountPaid}
-                    onChange={handleAmountChange}
-                    className="w-full border p-2 mt-2"
-                    min={order.paidAmount}
-                    max={order.costAmount}
-                    inputMode="decimal"
-                  />
-                </div>
 
-                {/* Submit button only visible if costPrice > paidPrice */}
+                {/* Amount Paid Input */}
+                <form onSubmit={handlePayment} className="mt-4 flex flex-col">
+                  <div className="mt-4">
+                    <label
+                      htmlFor="amountPaid"
+                      className="block text-sm font-medium"
+                    >
+                      Payment
+                    </label>
+                    <input
+                      id="amountPaid"
+                      type="text"
+                      placeholder="Amount Paid"
+                      value={amount}
+                      onChange={handleAmountChange}
+                      className="w-full border p-2 mt-2"
+                      min={order.paidAmount}
+                      max={order.costAmount}
+                      inputMode="decimal"
+                    />
+                  </div>
+                </form>
+                {/* Submit button inside form */}
                 <button
                   type="submit"
                   className="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transition w-full"
