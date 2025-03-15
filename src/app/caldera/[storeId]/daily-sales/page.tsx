@@ -3,13 +3,19 @@
 import { ShoppingBasket } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import DailySalesRec from "@/components/store/daily_sales/DailySalesRec";
-import CartSlider from "@/components/store/daily_sales/CartSlider";
+import CartSlider, {
+  FormData,
+} from "@/components/store/daily_sales/CartSlider";
 import OrderDetailSlider from "@/components/store/daily_sales/OrderDetailSlider";
 import { getInventoies, getSalesReport } from "@/app/actions/fetch";
 import { useStore } from "@/ContextAPI/storeContex";
 import { InventoryItem } from "../inventory/page";
 import { useCart } from "@/ContextAPI/cartContext";
-import { createSalesOrder, createSalesPayment } from "@/app/actions/post";
+import {
+  createSalesOrder,
+  createSalesPayment,
+  createSalesRefund,
+} from "@/app/actions/post";
 
 export interface Order {
   orderId: string;
@@ -57,6 +63,13 @@ function Page() {
   const [loading, setLoading] = useState(true);
   const [orderId, setOrderId] = useState(true);
   const [inventoryData, setInventoryData] = useState<InventoryItem[]>([]);
+  const [formData, setFormData] = useState<FormData>({
+    customerName: "",
+    customerNumber: "",
+    paid: "pending",
+    product: [],
+  });
+  const [amount, setAmount] = useState(0);
 
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
 
@@ -80,6 +93,27 @@ function Page() {
       quantity,
     })
   );
+
+  const handleFormDataChange = (newFormData: FormData) => {
+    setFormData(newFormData);
+    console.log("New form data received:", newFormData);
+  };
+  const handleAddProductToForm = (product: InventoryItem) => {
+    setFormData((prev) => ({
+      ...prev,
+      product: [
+        ...prev.product,
+        {
+          categoryId: product.categoryId,
+          categoryName: product.categoryName,
+          productId: product.productId,
+          productName: product.productName,
+          price: product.price,
+          quantity: 1,
+        },
+      ],
+    }));
+  };
 
   const dailyRecTable = [
     { key: "", label: "#" },
@@ -134,15 +168,40 @@ function Page() {
   };
 
   const handleAddToCart = (product: InventoryItem) => {
-    const { productId, productName, categoryId, categoryName } = product;
+    const {
+      productId,
+      productName,
+      categoryId,
+      categoryName,
+      price,
+      quantity,
+    } = product;
+
+    // Add to cart
     addToCart({
       productId,
       productName,
       categoryId,
       categoryName,
-      quantity: 1,
-      price: product.price,
+      quantity,
+      price,
     });
+
+    // Update formData.product
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      product: [
+        ...prevFormData.product,
+        {
+          productId: productId,
+          productName: productName,
+          categoryId: categoryId,
+          categoryName: categoryName,
+          price: price,
+          quantity: product.quantity,
+        },
+      ],
+    }));
   };
 
   const handleViewMore = (row: Order) => {
@@ -175,47 +234,61 @@ function Page() {
     removeFromCart(id);
   };
 
-  const handleOnSubmit = async (
-    formData: {
-      customerName: string;
-      customerNumber: string;
-      paid: "paid" | "pending";
-      product: {
-        categoryId: string;
-        categoryName: string;
-        productId: string;
-        productName: string;
-        price: number;
-        quantity: number;
-      }[];
-    },
-    amount: number
-  ) => {
+  const handleOnSubmit = async () => {
     try {
-      // Step 1: Create the sales order with the full data (customer, products, etc.)
+      setLoading(true);
+
       const res = await createSalesOrder(formData);
-
-      if (res && res.data && res.data.data) {
-        const orderId = res.data.data.orderId;
-
-        // Step 2: After creating the order, create the payment using the orderId and amount
-        const payment = { orderId, amount };
-        const paymentResponse = await createSalesPayment(payment);
-        console.log(payment);
-
-        // Log the response from payment API
-        console.log("Payment Response:", paymentResponse);
-
-        // After successful payment, you can clear the cart or update the UI as needed
-        setCart([]);
-        alert("Order and Payment successfully processed!");
-      }
+      await createSalesPayment({
+        amount: amount,
+        orderId: res.data.data.orderId,
+      });
+      console.log(formData, { amount });
+      alert("Order processed!");
+      // window.location.reload();
     } catch (error) {
       console.error("Error during order creation or payment:", error);
       alert("There was an error processing the order or payment.");
     } finally {
-      // Optionally reload or update the UI after submission
-      window.location.reload();
+      setLoading(false);
+    }
+  };
+
+  const refundAndPayment = async (
+    orderData: { transactionId: string; quantity: number }[],
+    amount: number,
+    orderId: string
+  ) => {
+    try {
+      setLoading(true);
+
+      const refundData = orderData.map((item) => ({
+        transactionId: item.transactionId,
+        quantity: item.quantity,
+      }));
+
+      const res = await createSalesRefund(refundData);
+      console.log("refundData:", refundData, "res:", res);
+
+      const paymentResponse = await createSalesPayment({
+        amount: amount,
+        orderId: orderId,
+      });
+      console.log(
+        "rres:",
+        paymentResponse,
+        "paymentResponse:",
+        amount,
+        orderId
+      );
+
+      console.log("Payment response:", paymentResponse);
+      alert("Order processed successfully!");
+    } catch (error) {
+      console.error("Error in processing refund or payment:", error);
+      alert("There was an error processing the order.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -270,12 +343,14 @@ function Page() {
           </button>
 
           <CartSlider
-            isOpen={cartSalesOpen}
-            onClose={() => setCartSalesOpen(false)}
-            data={salesOrders}
-            onDelete={removeFromCart}
-            onQuantityChange={updateQuantity}
-            onSubmit={() => handleOnSubmit}
+            data={cart} // Pass the cart data
+            isOpen={cartSalesOpen} // Toggle cart visibility based on state
+            onClose={() => setCartSalesOpen(false)} // Close slider on button click
+            onDelete={removeFromCart} // Handle removal of items from cart
+            onQuantityChange={updateQuantity} // Handle quantity update
+            onSubmit={handleOnSubmit} // Submit the form data and order
+            formData={formData} // Pass the form data
+            onFormDataChange={handleFormDataChange} // Update form data on change
           />
         </div>
 
@@ -321,25 +396,11 @@ function Page() {
         </div>
 
         <OrderDetailSlider
+          mainOrder={viewDailyRec}
           isOpen={openDetail}
           onClose={() => setOpenDetail(false)}
-          mainOrder={viewDailyRec || []}
-          width="w-1/4"
-          overlayColor="bg-black bg-opacity-50"
-          drawerStyle="bg-white"
+          onSubmit={refundAndPayment}
           onDelete={handleOnDelete}
-          onSubmit={() => handleOnSubmit}
-          onPayment={(amount) =>
-            handleOnSubmit(
-              {
-                customerName: "", // Example, replace with actual data
-                customerNumber: "",
-                paid: "pending",
-                product: salesOrders,
-              },
-              amount
-            )
-          }
         />
       </div>
     </div>

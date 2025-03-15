@@ -74,6 +74,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setCart((prevCart) =>
       prevCart.map((p) => (p.productId === id ? { ...p, quantity } : p))
     );
+    console.log(quantity);
   };
 
   // Send cart to database

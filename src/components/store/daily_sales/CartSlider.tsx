@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import { Trash2 } from "lucide-react";
 
@@ -9,6 +9,20 @@ interface Product {
   price: number;
   categoryId: string;
   quantity: number;
+}
+
+export interface FormData {
+  customerName: string;
+  customerNumber: string;
+  paid: "paid" | "pending";
+  product: {
+    categoryId: string;
+    categoryName: string;
+    productId: string;
+    productName: string;
+    price: number;
+    quantity: number;
+  }[];
 }
 
 interface CartSliderProps {
@@ -33,9 +47,11 @@ interface CartSliderProps {
         price: number;
         quantity: number;
       }[];
-    }
-    // formData2?: { amount: number; orderId: string }
+    },
+    amount: number
   ) => void;
+  formData: FormData;
+  onFormDataChange: (newFormData: FormData) => void;
 }
 
 const CartSlider: React.FC<CartSliderProps> = ({
@@ -48,69 +64,49 @@ const CartSlider: React.FC<CartSliderProps> = ({
   onDelete,
   onQuantityChange,
   onSubmit,
+  formData,
+  onFormDataChange,
 }) => {
-  // const { cart } = useCart();
-  const [customerName, setCustomerName] = useState("");
-  const [customerNumber, setCustomerNumber] = useState("");
   const [amount, setAmount] = useState(0);
-  const [paid, setPaid] = useState<"paid" | "pending">("paid"); // Boolean to track if it's paid or not
+  const [paid, setPaid] = useState<"paid" | "pending">(formData.paid); // Sync with parent
 
-  // Calculate the total price of items in the cart
+  // Calculate total price and balance
   const totalPrice = data.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
   const balance = totalPrice - amount;
 
+  useEffect(() => {
+    setPaid(formData.paid); // Sync the paid status from parent
+  }, [formData.paid]);
+
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
     setAmount(value);
+  };
 
-    // Set paid status based on amount
-    if (value > 0) {
-      setPaid("paid");
-    } else if (value === 0) {
-      setPaid("pending");
-    }
+  const handleCustomerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onFormDataChange({ ...formData, customerName: e.target.value });
+  };
+
+  const handleCustomerNumberChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    onFormDataChange({ ...formData, customerNumber: e.target.value });
+  };
+
+  const handlePaymentStatusChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newStatus = e.target.checked ? "pending" : "paid";
+    onFormDataChange({ ...formData, paid: newStatus });
+    setPaid(newStatus);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const formData = {
-      customerName,
-      customerNumber,
-      paid,
-      product: data,
-    };
-
-    // const formData2 = { amount, orderId: cart.length.toString() }; // You may customize the orderId generation logic here
-
-    // Call the onSubmit function with both formData and formData2
-    onSubmit(formData);
-  };
-
-  const handleIncrease = (id: string) => {
-    const product = data.find((item) => item.productId === id);
-    if (product) {
-      onQuantityChange(id, product.quantity + 1);
-    }
-  };
-
-  const handleDecrease = (id: string) => {
-    const product = data.find((item) => item.productId === id);
-    if (product && product.quantity > 1) {
-      onQuantityChange(id, product.quantity - 1);
-    }
-  };
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newStatus = e.target.checked ? "pending" : "paid";
-    setPaid(newStatus);
-
-    if (e.target.checked) {
-      setAmount(0); // Clear amount if status is set to 'pending'
-    }
+    onSubmit(formData, amount);
   };
 
   return (
@@ -159,31 +155,33 @@ const CartSlider: React.FC<CartSliderProps> = ({
                       <p className="text-gray-500">{item.categoryName}</p>
                     </div>
                     <div className="flex flex-row justify-between w-full items-center">
-                      <div className="flex items-center gap-2">
-                        <button
-                          className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
-                          onClick={() => handleDecrease(item.productId)}
-                        >
-                          -
-                        </button>
-                        <input
-                          type="number"
-                          className="border-gray-500 w-12 text-center border"
-                          value={item.quantity}
-                          onChange={(e) =>
-                            onQuantityChange(
-                              item.productId,
-                              parseInt(e.target.value) || 1
-                            )
-                          }
-                        />
-                        <button
-                          className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
-                          onClick={() => handleIncrease(item.productId)}
-                        >
-                          +
-                        </button>
-                      </div>
+                      <button
+                        className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
+                        onClick={() =>
+                          onQuantityChange(item.productId, item.quantity - 1)
+                        }
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        className="border-gray-500 w-12 text-center border"
+                        value={item.quantity}
+                        onChange={(e) =>
+                          onQuantityChange(
+                            item.productId,
+                            parseInt(e.target.value) || 1
+                          )
+                        }
+                      />
+                      <button
+                        className="bg-gray-500 text-white w-6 h-6 flex items-center justify-center rounded"
+                        onClick={() =>
+                          onQuantityChange(item.productId, item.quantity + 1)
+                        }
+                      >
+                        +
+                      </button>
                       <button
                         className="text-red-500"
                         onClick={() => onDelete(item.productId)}
@@ -196,63 +194,62 @@ const CartSlider: React.FC<CartSliderProps> = ({
               </div>
             ))
           )}
-          {data.length > 0 && (
-            <form
-              onSubmit={handleSubmit}
-              className="mt-5 p-4 bg-gray-100 rounded-lg"
+
+          <form
+            onSubmit={handleSubmit}
+            className="mt-5 p-4 bg-gray-100 rounded-lg"
+          >
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="payment-status"
+                checked={paid === "pending"}
+                onChange={handlePaymentStatusChange}
+                className="mr-2"
+              />
+              <label htmlFor="payment-status" className="text-gray-700">
+                Payment Status: {paid}
+              </label>
+            </div>
+
+            <h2 className="text-lg font-semibold">Customer Details</h2>
+            <input
+              type="text"
+              placeholder="Customer Name"
+              value={formData.customerName}
+              onChange={handleCustomerNameChange}
+              className="w-full border p-2 mt-2"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Phone Number"
+              value={formData.customerNumber}
+              onChange={handleCustomerNumberChange}
+              className="w-full border p-2 mt-2"
+              inputMode="numeric"
+              required
+            />
+            <input
+              type="text"
+              pattern="[0-9]*"
+              placeholder="Amount Paid"
+              value={amount}
+              onChange={handleAmountChange}
+              className="w-full border p-2 mt-2"
+              min="0"
+              max={totalPrice}
+            />
+            <p className="mt-2">Total: ₦{totalPrice}</p>
+            <p className="mt-2">Balance: ₦{balance}</p>
+
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded mt-3"
             >
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="payment-status"
-                  checked={paid === "pending"}
-                  onChange={handleCheckboxChange}
-                  className="mr-2"
-                />
-                <label htmlFor="payment-status" className="text-gray-700">
-                  Payment Status: {paid}
-                </label>
-              </div>
-
-              <h2 className="text-lg font-semibold">Customer Details</h2>
-              <input
-                type="text"
-                placeholder="Customer Name"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full border p-2 mt-2"
-                required
-              />
-              <input
-                type="text"
-                placeholder="Phone Number"
-                value={customerNumber}
-                onChange={(e) => setCustomerNumber(e.target.value)}
-                className="w-full border p-2 mt-2"
-                inputMode="numeric"
-                required
-              />
-              <input
-                type="text"
-                pattern="[0-9]*"
-                placeholder="Amount Paid"
-                value={amount}
-                onChange={handleAmountChange}
-                className="w-full border p-2 mt-2"
-                min="0"
-                max={totalPrice}
-              />
-              <p className="mt-2">Total: ₦{totalPrice}</p>
-              <p className="mt-2">Balance: ₦{balance}</p>
-
-              <button
-                type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded mt-3"
-              >
-                Submit Order
-              </button>
-            </form>
-          )}
+              Submit Order
+            </button>
+          </form>
         </div>
       </div>
     </>
