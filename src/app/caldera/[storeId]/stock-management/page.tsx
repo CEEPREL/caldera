@@ -40,7 +40,7 @@ export interface PurchaseOrder {
   productRequest: ProductRequest[];
 }
 
-type Product = {
+export type Product = {
   productId: string;
   userId: string;
   userName: string;

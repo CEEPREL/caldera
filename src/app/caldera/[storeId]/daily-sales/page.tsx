@@ -69,6 +69,7 @@ function Page() {
     paid: "pending",
     product: [],
   });
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [amount, setAmount] = useState(0);
 
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
@@ -76,44 +77,62 @@ function Page() {
   const { cart, setCart, removeFromCart, addToCart, updateQuantity } =
     useCart();
 
-  const salesOrders = cart.map(
-    ({
-      categoryId,
-      price,
-      productId,
-      categoryName,
-      productName,
-      quantity,
-    }) => ({
-      categoryId,
-      categoryName,
-      productId,
-      productName,
-      price,
-      quantity,
-    })
-  );
+  // const salesOrders = cart.map(
+  //   ({
+  //     categoryId,
+  //     price,
+  //     productId,
+  //     categoryName,
+  //     productName,
+  //     quantity,
+  //   }) => ({
+  //     categoryId,
+  //     categoryName,
+  //     productId,
+  //     productName,
+  //     price,
+  //     quantity,
+  //   })
+  // );
 
   const handleFormDataChange = (newFormData: FormData) => {
     setFormData(newFormData);
     console.log("New form data received:", newFormData);
   };
-  const handleAddProductToForm = (product: InventoryItem) => {
-    setFormData((prev) => ({
-      ...prev,
-      product: [
-        ...prev.product,
-        {
-          categoryId: product.categoryId,
-          categoryName: product.categoryName,
-          productId: product.productId,
-          productName: product.productName,
-          price: product.price,
-          quantity: 1,
-        },
-      ],
+
+  const handleQuantityChange = (productId: string, quantity: number) => {
+    // Ensure the quantity is always greater than 0
+    if (quantity < 1) return;
+
+    // Update the cart with new quantity
+    updateQuantity(productId, quantity);
+
+    // Update the product quantity in the formData
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      product: prevFormData.product.map((product) =>
+        product.productId === productId
+          ? { ...product, quantity: quantity }
+          : product
+      ),
     }));
   };
+  // const handleAddProductToForm = (product: InventoryItem) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     product: [
+  //       ...prev.product,
+  //       {
+  //         categoryId: product.categoryId,
+  //         categoryName: product.categoryName,
+  //         productId: product.productId,
+  //         productName: product.productName,
+  //         price: product.price,
+  //         quantity: 1,
+  //       },
+  //     ],
+  //   }));
+  // };
 
   const dailyRecTable = [
     { key: "", label: "#" },
@@ -174,20 +193,31 @@ function Page() {
       categoryId,
       categoryName,
       price,
-      quantity,
+      quantity: availableQuantity,
     } = product;
 
-    // Add to cart
+    // Get the quantity from the quantities state or default to 1
+    const userQuantity = quantities[productId] || 1;
+
+    // Ensure the user is not adding more than the available stock
+    if (userQuantity > availableQuantity) {
+      alert(
+        `Cannot add more than ${availableQuantity} items. Available stock: ${availableQuantity}`
+      );
+      return;
+    }
+
+    // Add to cart with the correct quantity
     addToCart({
       productId,
       productName,
       categoryId,
       categoryName,
-      quantity,
+      quantity: userQuantity,
       price,
     });
 
-    // Update formData.product
+    // Update formData.product with the added product and its quantity
     setFormData((prevFormData) => ({
       ...prevFormData,
       product: [
@@ -198,7 +228,7 @@ function Page() {
           categoryId: categoryId,
           categoryName: categoryName,
           price: price,
-          quantity: product.quantity,
+          quantity: userQuantity, // Set the correct quantity based on user input
         },
       ],
     }));
@@ -315,6 +345,7 @@ function Page() {
     const fetchPoData = async () => {
       setLoading(true);
       const result = await getSalesReport(`${storeId}`);
+      console.log(storeId);
 
       if (!result) {
         console.error("Unknown error fetching data");
@@ -343,14 +374,14 @@ function Page() {
           </button>
 
           <CartSlider
-            data={cart} // Pass the cart data
-            isOpen={cartSalesOpen} // Toggle cart visibility based on state
-            onClose={() => setCartSalesOpen(false)} // Close slider on button click
-            onDelete={removeFromCart} // Handle removal of items from cart
-            onQuantityChange={updateQuantity} // Handle quantity update
-            onSubmit={handleOnSubmit} // Submit the form data and order
-            formData={formData} // Pass the form data
-            onFormDataChange={handleFormDataChange} // Update form data on change
+            data={cart}
+            isOpen={cartSalesOpen}
+            onClose={() => setCartSalesOpen(false)}
+            onDelete={removeFromCart}
+            onQuantityChange={handleQuantityChange}
+            onSubmit={handleOnSubmit}
+            formData={formData}
+            onFormDataChange={handleFormDataChange}
           />
         </div>
 

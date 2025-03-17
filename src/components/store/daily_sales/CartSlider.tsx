@@ -70,7 +70,7 @@ const CartSlider: React.FC<CartSliderProps> = ({
   const [amount, setAmount] = useState(0);
   const [paid, setPaid] = useState<"paid" | "pending">(formData.paid); // Sync with parent
 
-  // Calculate total price and balance
+  // Calculate total price and balance dynamically
   const totalPrice = data.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0

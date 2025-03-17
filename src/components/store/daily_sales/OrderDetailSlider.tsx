@@ -32,7 +32,6 @@ const OrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
   overlayColor = "bg-black bg-opacity-50",
   drawerStyle = "bg-white p-5 rounded-r-2xl shadow-lg",
 }) => {
-  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [amount, setAmount] = useState<number>(0); // Amount to be paid
   const [orderId, setOrderId] = useState<string>(""); // The current orderId
   const [groupedProducts, setGroupedProducts] = useState<{
@@ -54,17 +53,8 @@ const OrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
         });
       });
 
-      // Store quantities for each productId
+      // Store grouped products
       setGroupedProducts(grouped);
-
-      // Set initial quantities for the input fields
-      const initialQuantities = Object.fromEntries(
-        Object.entries(grouped).map(([productId, { quantity }]) => [
-          productId,
-          quantity,
-        ])
-      );
-      setQuantities(initialQuantities);
 
       // Set orderId
       const currentOrderId = mainOrder[0]?.orderId || "";
@@ -77,25 +67,25 @@ const OrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
     }
   }, [mainOrder]);
 
-  const handleChange = (productId: string, value: number) => {
-    if (value < 1) return; // Ensure quantity is at least 1
-    setQuantities((prev) => ({ ...prev, [productId]: value }));
-  };
-
   const handleIncrease = (productId: string) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [productId]: (prev[productId] || 0) + 1,
-    }));
+    setGroupedProducts((prev) => {
+      const updatedGrouped = { ...prev };
+      const product = updatedGrouped[productId]?.product;
+      if (product) {
+        product.quantity += 1; // Increase product's quantity
+      }
+      return updatedGrouped;
+    });
   };
 
   const handleDecrease = (productId: string) => {
-    setQuantities((prev) => {
-      const currentQuantity = prev[productId] || 0;
-      return {
-        ...prev,
-        [productId]: currentQuantity > 1 ? currentQuantity - 1 : 1,
-      };
+    setGroupedProducts((prev) => {
+      const updatedGrouped = { ...prev };
+      const product = updatedGrouped[productId]?.product;
+      if (product && product.quantity > 1) {
+        product.quantity -= 1; // Decrease product's quantity, ensuring it's never below 1
+      }
+      return updatedGrouped;
     });
   };
 
@@ -109,7 +99,7 @@ const OrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
     // Collect the transactionId and quantities for each product based on productId
     const orderData = Object.values(groupedProducts).map(({ product }) => ({
       transactionId: product.transactionId, // Grab the transactionId
-      quantity: quantities[product.productId] || 1, // Use the aggregated quantity from the state
+      quantity: product.quantity, // Use product.quantity directly
     }));
 
     if (orderData) {
@@ -154,47 +144,40 @@ const OrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
                 <h1>{order.customerNumber}</h1>
 
                 {order.product.length > 0 ? (
-                  Object.values(groupedProducts).map(
-                    ({ product, quantity }) => (
-                      <div key={product.productId} className="mt-4">
-                        <div className="flex justify-between">
-                          <p>
-                            {product.productName} -{" "}
-                            {quantities[product.productId]} x ₦{product.price}
-                          </p>
-                          <p>
-                            ₦{quantities[product.productId] * product.price}
-                          </p>
-                        </div>
-
-                        <div className="flex mt-2 gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleDecrease(product.productId)}
-                          >
-                            -
-                          </button>
-                          <input
-                            type="number"
-                            value={quantities[product.productId]}
-                            onChange={(e) =>
-                              handleChange(
-                                product.productId,
-                                Number(e.target.value)
-                              )
-                            }
-                            className="w-16 text-center"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleIncrease(product.productId)}
-                          >
-                            +
-                          </button>
-                        </div>
+                  Object.values(groupedProducts).map(({ product }) => (
+                    <div key={product.productId} className="mt-4">
+                      <div className="flex justify-between">
+                        <p>
+                          {product.productName} - {product.quantity} x ₦
+                          {product.price}
+                        </p>
+                        <p>₦{product.quantity * product.price}</p>
                       </div>
-                    )
-                  )
+
+                      <div className="flex mt-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleDecrease(product.productId)}
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          value={product.quantity}
+                          onChange={
+                            (e) => handleIncrease(product.productId) // Allow manual editing of quantity
+                          }
+                          className="w-16 text-center"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleIncrease(product.productId)}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  ))
                 ) : (
                   <p>No products found for this order.</p>
                 )}
