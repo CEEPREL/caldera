@@ -5,20 +5,33 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { getFilteredSalesReport } from "@/app/actions/fetch";
+import {
+  getCategories,
+  getFilteredSalesReport,
+  getSalesByCategory,
+} from "@/app/actions/fetch";
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import SalesHistorySlider from "@/components/store/sales_rec/SalesHistorySlider";
 import { useStore } from "@/ContextAPI/storeContex";
 import { Order } from "../daily-sales/page";
 
-// interface Order {
-//   id: string;
-//   orderDate: string;
-//   productName: string;
-//   revenue: number;
-//   sales: number;
-//   payment: string;
-// }
+interface DataByCategory {
+  transactionId: string;
+  orderId: string;
+  transactionDate: string;
+  transactionTime: string;
+  userId: string;
+  userName: string;
+  storeId: string;
+  storeName: string;
+  productId: string;
+  productName: string;
+  price: number;
+  quantity: number;
+  total: number;
+  customerName: string;
+  customerNumber: string;
+}
 
 export interface GroupedOrders {
   [date: string]: Order[];
@@ -30,6 +43,13 @@ interface SalesRecordData {
   totalSales: number;
   totalOrders: number;
   status: string;
+}
+
+interface Category {
+  categoryId: string;
+  categoryName: string;
+  createdDate: string;
+  createdTime: string;
 }
 
 const productRecordData = [
@@ -74,10 +94,14 @@ function Page() {
   const [toggle, setToggle] = useState(false);
   const [loading, setLoading] = useState(false);
   const [startDateStr, setStartDateStr] = useState<string>("");
+  const [dateByCat, setDateByCat] = useState<DataByCategory[]>([]);
   const [endDateStr, setEndDateStr] = useState<string>("");
   const [storeId, setStoreId] = useState<string>("");
   const [oldSalesRecData, setOldSalesRecData] = useState<Order[]>([]);
-
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    null
+  );
+  const [categoryData, setCategoryData] = useState<Category[]>();
   const { salesRecData, setSalesRecData } = useStore();
   const today = moment();
   const params = useParams<{ storeId?: string }>();
@@ -129,6 +153,31 @@ function Page() {
     const storeId = params.storeId || "";
     setStoreId(storeId);
   }, [params.storeId, today]);
+  useEffect(() => {
+    setLoading(true);
+    const fetchCategories = async () => {
+      try {
+        const res = await getCategories();
+        setCategoryData(res.data);
+      } catch (error) {
+        console.error("Error fetching sales data:", error);
+      }
+    };
+    fetchCategories();
+
+    if (selectedCategoryId) {
+      setLoading(true);
+      const fetchCategories = async () => {
+        try {
+          const res = await getSalesByCategory(storeId, selectedCategoryId);
+          setDateByCat(res.data);
+        } catch (error) {
+          console.error("Error fetching sales data:", error);
+        }
+      };
+      fetchCategories();
+    }
+  }, [selectedCategoryId]);
 
   useEffect(() => {
     if (!startDateStr || !endDateStr || !storeId) return;
@@ -164,35 +213,37 @@ function Page() {
   };
   const handleToggle = (p: string) => {
     setToggle(!toggle);
-    setSelectedProduct(p);
+    setSelectedCategoryId(p);
   };
 
   const columns = [
     { key: "id", label: "#" },
     { key: "productName", label: "Product" },
-    { key: "sales", label: "Number of sales" },
-    { key: "revenue", label: "Total Revenue" },
+    { key: "price", label: "Price" },
+    { key: "quantity", label: "Number of sales" },
+    { key: "total", label: "Total Revenue" },
+    { key: "userName", label: "Sold by" },
 
-    {
-      key: "action",
-      label: "",
-      render: () => (
-        <div>
-          <button onClick={() => setOpen(true)} className={``}>
-            <ChevronRight />
-          </button>
+    // {
+    //   key: "action",
+    //   label: "",
+    //   render: () => (
+    //     <div>
+    //       <button onClick={() => setOpen(true)} className={``}>
+    //         <ChevronRight />
+    //       </button>
 
-          {/* <SalesHistorySlider
-            isOpen={open}
-            onClose={() => setOpen(false)}
-            data={productRecordData} // Pass the entire array
-            width="w-1/4"
-            overlayColor="bg-black bg-opacity-50"
-            drawerStyle="bg-white"
-          /> */}
-        </div>
-      ),
-    },
+    //       {/* <SalesHistorySlider
+    //         isOpen={open}
+    //         onClose={() => setOpen(false)}
+    //         data={productRecordData} // Pass the entire array
+    //         width="w-1/4"
+    //         overlayColor="bg-black bg-opacity-50"
+    //         drawerStyle="bg-white"
+    //       /> */}
+    //     </div>
+    //   ),
+    // },
   ];
 
   const handleAction = (row: Order) => {
@@ -263,25 +314,29 @@ function Page() {
         ) : (
           <div className="gap-2 flex flex-col">
             <div className="flex gap-6">
-              {productList.map((p, index) => (
+              {categoryData?.map((p, index) => (
                 <button
                   key={index}
-                  onClick={() => handleToggle(p)}
+                  onClick={() => handleToggle(p.categoryId)}
                   className={`${
-                    selectedProduct === p
+                    selectedCategoryId === p.categoryId
                       ? "border-b-4 border-blue-400 font-semibold"
                       : ""
                   } p-2`}
                 >
-                  {p}
+                  {p.categoryName}
                 </button>
               ))}
             </div>
-            <PurchaseOrderTable
-              columns={columns}
-              data={productRecordData}
-              onActionClick={handleAction}
-            />
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              <PurchaseOrderTable
+                columns={columns}
+                data={dateByCat}
+                onActionClick={handleAction}
+              />
+            )}
           </div>
         )}
       </div>

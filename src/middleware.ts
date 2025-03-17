@@ -63,5 +63,5 @@ function isValidToken(token: string | undefined): boolean {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/report/:path*"], // Middleware won't run on /login
+  matcher: ["/admin/:path*", "/caldera/:path*"], // Middleware won't run on /login
 };

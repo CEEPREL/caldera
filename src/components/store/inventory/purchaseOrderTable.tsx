@@ -15,11 +15,25 @@ interface PurchaseOrderTableProps {
   onActionClick?: (row: any) => void;
 }
 
-function PurchaseOrderTable({
-  columns,
-  data,
-}: // onActionClick,
-PurchaseOrderTableProps) {
+function PurchaseOrderTable({ columns, data }: PurchaseOrderTableProps) {
+  if (!Array.isArray(data)) {
+    console.error("Invalid data: Expected an array but got", typeof data);
+    return <div> No data found</div>;
+  }
+
+  if (!Array.isArray(columns)) {
+    console.error("Invalid columns: Expected an array but got", typeof columns);
+    return <div> No data found</div>;
+  }
+
+  if (
+    columns.some(
+      (col) => typeof col.key !== "string" || typeof col.label !== "string"
+    )
+  ) {
+    console.error("Invalid column structure");
+    return <div> Columns structure is incorrect!</div>;
+  }
   return (
     <div>
       <table className="w-full border-collapse shadow-md">

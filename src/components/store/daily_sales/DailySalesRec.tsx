@@ -16,15 +16,14 @@ interface PurchaseOrderTableProps {
 }
 
 function DailySalesRec({ columns, data }: PurchaseOrderTableProps) {
-  // Error handling for empty or invalid data
   if (!Array.isArray(data)) {
     console.error("Invalid data: Expected an array but got", typeof data);
-    return <div> Error fetching data</div>;
+    return <div> No data found</div>;
   }
 
   if (!Array.isArray(columns)) {
     console.error("Invalid columns: Expected an array but got", typeof columns);
-    return <div> Error fetching data</div>;
+    return <div> No data found</div>;
   }
 
   if (
