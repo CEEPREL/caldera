@@ -10,6 +10,8 @@ import {
 import { usePathname } from "next/navigation";
 import { fetchProduct, fetchStores } from "@/app/actions/fetch";
 import { getStoreData } from "@/app/actions/auth";
+import { Order } from "@/app/caldera/[storeId]/daily-sales/page";
+import { SetState } from "./cartContext";
 
 // Store type definition
 interface Store {
@@ -65,6 +67,8 @@ interface StoreContextType {
   stateObj: Record<string, Store[]>;
   products: ProductsProps[];
   stores: Store[];
+  salesRecData: Order[];
+  setSalesRecData: SetState<Order[]>;
   loading: boolean;
   storeData: StoreData | null;
 }
@@ -81,6 +85,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [storeData, setStoreData] = useState<StoreData | null>(null);
+  const [salesRecData, setSalesRecData] = useState<Order[]>([]);
 
   // Function to group stores by state
   const groupStores = (stores: Store[]): Record<string, Store[]> => {
@@ -148,7 +153,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   return (
     <StoreContext.Provider
-      value={{ storeId, stateObj, products, stores, loading, storeData }}
+      value={{
+        storeId,
+        stateObj,
+        products,
+        stores,
+        loading,
+        storeData,
+        salesRecData,
+        setSalesRecData,
+      }}
     >
       {children}
     </StoreContext.Provider>

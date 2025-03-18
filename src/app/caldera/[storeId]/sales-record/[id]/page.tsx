@@ -1,68 +1,178 @@
 "use client";
-import ProductTable from "@/components/store/general_UI/ProductTable";
-import Image from "next/image";
-import { useState } from "react";
 
-const productList = [
-  "Screen",
-  "Downboard",
-  "Battery",
-  "Back Glass",
-  "Touch Pad",
-];
+import { ArrowLeft } from "lucide-react";
+import React, { useState } from "react";
+import { useStore } from "@/ContextAPI/storeContex";
+import { useCart } from "@/ContextAPI/cartContext";
+import { createSalesOrder } from "@/app/actions/post";
+import DailySalesRec from "@/components/store/sales_rec/DailySalesRec";
+import OrderDetailSlider from "@/components/store/sales_rec/OrderDetailSlider";
 
-export default function StorePage() {
-  const [selectedProduct, setSelectedProduct] = useState("Screen");
-  const [toggle, setToggle] = useState(false);
-  const handleToggle = (p: string) => {
-    setToggle(!toggle);
-    setSelectedProduct(p);
-  };
-  return (
-    <div className="w-full h-[88%] bg-white overflow-y-scroll rounded-3xl ">
-      <div className="w-full p-5 relative text-black  bg-white">
-        <div className="flex w-full flex-row justify-between items-center">
+export interface Order {
+  orderId: string;
+  orderDate: string;
+  orderTime: string;
+  userId: string;
+  userName: string;
+  storeId: string;
+  storeName: string;
+  customerName: string;
+  customerNumber: string;
+  costAmount: number;
+  paidAmount: number;
+  creditAmount: number | null;
+  status: "paid" | "pending";
+  product: Transaction[];
+  paymentHistory: any[];
+}
+
+export interface Transaction {
+  transactionId: string;
+  transactionDate: string;
+  transactionTime: string;
+  userId: string;
+  userName: string;
+  storeId: string;
+  storeName: string;
+  productId: string;
+  productName: string;
+  price: number;
+  quantity: number;
+  total: number;
+  customerName: string;
+  customerNumber: string;
+  status: string | null;
+}
+
+function Page() {
+  const { storeData } = useStore();
+  const storeId = storeData?.data.storeId;
+  const [openDetail, setOpenDetail] = useState(false);
+  const [viewDailyRec, setViewDailyRec] = useState<Order[]>([]);
+  const { salesRecData } = useStore();
+
+  const { setCart, removeFromCart } = useCart();
+
+  const dailyRecTable = [
+    { key: "", label: "#" },
+    { key: "customerName", label: "Customer Name" },
+    { key: "customerNumber", label: "Customer Number" },
+    { key: "productCount", label: "Product Number" },
+    { key: "paidAmount", label: "Paid" },
+    { key: "costAmount", label: "Total Cost" },
+
+    {
+      key: "action",
+      label: "",
+      render: (row: Order) => (
+        <div>
           <button
-            onClick={() => window.history.back()}
-            className="flex sticky top-0 items-center flex-row"
+            onClick={() => handleViewMore(row)}
+            className="w-full bg-blue-500 text-center text-white hover:bg-blue-300 rounded-sm px-2 py-1 font-semibold"
           >
-            <div className="flex justify-center items-center w-8 h-8 m-4 rounded-full bg-gray-300">
-              <Image
-                className="top-3 left-1"
-                width={20}
-                height={20}
-                alt="No Data"
-                src={"/icons/arrow_left.svg"}
-              />
-            </div>
-            <h1 className="text-black">Create New Store</h1>
+            View
           </button>
-          <input
-            className="w-1/4 h-10 rounded-2xl border border-gray-300 p-2"
-            type="text"
-            placeholder="Search here..."
+        </div>
+      ),
+    },
+  ];
+
+  const handleAction = (row: any) => {
+    console.log("Perform action on:", row);
+    alert(`Action performed on ${row.productName}`);
+  };
+
+  const handleViewMore = (row: Order) => {
+    const orderId = row.orderId;
+    const product = row.product || [];
+
+    setViewDailyRec([
+      {
+        orderId,
+        product,
+        userId: row.userId || "",
+        userName: row.userName || "",
+        storeId: row.storeId || "",
+        storeName: row.storeName || "",
+        orderTime: row.orderTime || "",
+        creditAmount: row.creditAmount !== undefined ? row.creditAmount : null,
+        status: row.status || "pending",
+        orderDate: row.orderDate || "",
+        customerName: row.customerName || "",
+        customerNumber: row.customerNumber || "",
+        costAmount: row.costAmount || 0,
+        paidAmount: row.paidAmount || 0,
+        paymentHistory: row.paymentHistory || [],
+      },
+    ]);
+    setOpenDetail(true);
+  };
+
+  const handleOnDelete = (id: string) => {
+    removeFromCart(id);
+  };
+
+  const handleOnSubmit = async (
+    formData: {
+      customerName: string;
+      customerNumber: string;
+      paid: "paid" | "pending";
+      product: {
+        categoryId: string;
+        categoryName: string;
+        productId: string;
+        productName: string;
+        price: number;
+        quantity: number;
+      }[];
+    }
+    // set this upp for refund
+  ) => {
+    try {
+      const res = await createSalesOrder(formData);
+      console.log(res, formData, `---${storeId}`);
+
+      setCart([]);
+      // window.location.reload();
+    } catch (error) {
+      console.error("Error creating sales order:", error);
+    } finally {
+    }
+  };
+
+  return (
+    <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
+      <div className="flex gap-2 flex-col">
+        <div className="gap-2 flex flex-col">
+          <div className="flex gap-2 flex-row">
+            <button
+              className={`flex p-2 px-4 rounded-full `}
+              onClick={() => window.history.back()}
+            >
+              <ArrowLeft /> Back
+            </button>
+          </div>
+
+          <DailySalesRec
+            columns={dailyRecTable}
+            data={salesRecData}
+            onActionClick={handleAction}
           />
         </div>
-        <div className="flex gap-6">
-          {productList.map((p, index) => (
-            <button
-              key={index}
-              onClick={() => handleToggle(p)}
-              className={`${
-                selectedProduct === p
-                  ? "border-b-4 border-blue-400 font-semibold"
-                  : ""
-              } p-2`}
-            >
-              {p}
-            </button>
-          ))}
-        </div>
 
-        <div className="w-full pt-5 h-full">
-          <ProductTable />
-        </div>
+        <OrderDetailSlider
+          isOpen={openDetail}
+          onClose={() => setOpenDetail(false)}
+          mainOrder={viewDailyRec || []}
+          width="w-1/4"
+          overlayColor="bg-black bg-opacity-50"
+          drawerStyle="bg-white"
+          onDelete={handleOnDelete}
+          onSubmit={() => handleOnSubmit}
+        />
       </div>
     </div>
   );
 }
+
+export default Page;

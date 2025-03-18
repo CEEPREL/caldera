@@ -3,13 +3,19 @@
 import { ShoppingBasket } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import DailySalesRec from "@/components/store/daily_sales/DailySalesRec";
-import CartSlider from "@/components/store/daily_sales/CartSlider";
+import CartSlider, {
+  FormData,
+} from "@/components/store/daily_sales/CartSlider";
 import OrderDetailSlider from "@/components/store/daily_sales/OrderDetailSlider";
 import { getInventoies, getSalesReport } from "@/app/actions/fetch";
 import { useStore } from "@/ContextAPI/storeContex";
 import { InventoryItem } from "../inventory/page";
 import { useCart } from "@/ContextAPI/cartContext";
-import { createSalesOrder } from "@/app/actions/post";
+import {
+  createSalesOrder,
+  createSalesPayment,
+  createSalesRefund,
+} from "@/app/actions/post";
 
 export interface Order {
   orderId: string;
@@ -56,29 +62,46 @@ function Page() {
   const [viewDailyRec, setViewDailyRec] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [inventoryData, setInventoryData] = useState<InventoryItem[]>([]);
+  const [formData, setFormData] = useState<FormData>({
+    customerName: "",
+    customerNumber: "",
+    paid: "pending",
+    product: [],
+  });
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
 
-  const { cart, setCart, removeFromCart, addToCart, updateQuantity } =
-    useCart();
+  const { cart, removeFromCart, addToCart, updateQuantity } = useCart();
 
-  const salesOrders = cart.map(
-    ({
-      categoryId,
-      price,
-      productId,
-      categoryName,
-      productName,
-      quantity,
-    }) => ({
-      categoryId,
-      categoryName,
-      productId,
-      productName,
-      price,
-      quantity,
-    })
-  );
+  const handleFormDataChange = (newFormData: FormData) => {
+    setFormData(newFormData);
+    console.log("New form data received:", newFormData);
+  };
+
+  const handleQuantityChange = (productId: string, quantity: number) => {
+    // Ensure the quantity is always greater than 0
+    if (quantity < 1) return;
+
+    // Update the cart with the new quantity
+    updateQuantity(productId, quantity);
+
+    // Update the quantities state
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [productId]: quantity,
+    }));
+
+    // Update the product quantity in formData
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      product: prevFormData.product.map((product) =>
+        product.productId === productId
+          ? { ...product, quantity: quantity }
+          : product
+      ),
+    }));
+  };
 
   const dailyRecTable = [
     { key: "", label: "#" },
@@ -133,15 +156,57 @@ function Page() {
   };
 
   const handleAddToCart = (product: InventoryItem) => {
-    const { productId, productName, categoryId, categoryName } = product;
+    const {
+      productId,
+      productName,
+      categoryId,
+      categoryName,
+      price,
+      quantity: availableQuantity,
+    } = product;
+
+    // Get the quantity from the quantities state or default to 1
+    const userQuantity = quantities[productId] || 1;
+
+    // Ensure the user is not adding more than the available stock
+    if (userQuantity > availableQuantity) {
+      alert(
+        `Cannot add more than ${availableQuantity} items. Available stock: ${availableQuantity}`
+      );
+      return;
+    }
+
+    // Add to cart with the correct quantity
     addToCart({
       productId,
       productName,
       categoryId,
       categoryName,
-      quantity: 1,
-      price: product.price,
+      quantity: userQuantity,
+      price,
     });
+
+    // Update formData.product with the added product and its quantity
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      product: [
+        ...prevFormData.product,
+        {
+          productId: productId,
+          productName: productName,
+          categoryId: categoryId,
+          categoryName: categoryName,
+          price: price,
+          quantity: userQuantity, // Set the correct quantity based on user input
+        },
+      ],
+    }));
+
+    // Optionally, update the quantities state again here if needed
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [productId]: userQuantity,
+    }));
   };
 
   const handleViewMore = (row: Order) => {
@@ -174,32 +239,68 @@ function Page() {
     removeFromCart(id);
   };
 
-  const handleOnSubmit = async (
-    formData: {
-      customerName: string;
-      customerNumber: string;
-      paid: "paid" | "pending";
-      product: {
-        categoryId: string;
-        categoryName: string;
-        productId: string;
-        productName: string;
-        price: number;
-        quantity: number;
-      }[];
-    }
-    // formData2?: { amount: number; orderId: string }
-  ) => {
-    console.log("res.data.message");
+  const handleOnSubmit = async (formData: FormData, amount: number) => {
     try {
-      const res = await createSalesOrder(formData);
-      console.log(res, formData, `---${storeId}`);
+      setLoading(true);
 
-      setCart([]);
+      const res = await createSalesOrder(formData);
+      const res2 = await createSalesPayment({
+        amount: amount,
+        orderId: res.data.data.orderId,
+      });
+      console.log(
+        "Just wanna know what  is sent",
+        {
+          amount: amount,
+          orderId: res.data.data.orderId,
+        },
+        res2
+      );
+      alert("Order processed!");
       // window.location.reload();
     } catch (error) {
-      console.error("Error creating sales order:", error);
+      console.error("Error during order creation or payment:", error);
+      alert("There was an error processing the order or payment.");
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const refundAndPayment = async (
+    orderData: { transactionId: string; quantity: number }[],
+    amount: number,
+    orderId: string
+  ) => {
+    try {
+      setLoading(true);
+
+      const refundData = orderData.map((item) => ({
+        transactionId: item.transactionId,
+        quantity: item.quantity,
+      }));
+
+      const res = await createSalesRefund(refundData);
+      console.log("refundData:", refundData, "res:", res);
+
+      const paymentResponse = await createSalesPayment({
+        amount: amount,
+        orderId: orderId,
+      });
+      console.log(
+        "rres:",
+        paymentResponse,
+        "paymentResponse:",
+        amount,
+        orderId
+      );
+
+      console.log("Payment response:", paymentResponse);
+      alert("Order processed successfully!");
+    } catch (error) {
+      console.error("Error in processing refund or payment:", error);
+      alert("There was an error processing the order.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -226,6 +327,7 @@ function Page() {
     const fetchPoData = async () => {
       setLoading(true);
       const result = await getSalesReport(`${storeId}`);
+      console.log(storeId);
 
       if (!result) {
         console.error("Unknown error fetching data");
@@ -254,12 +356,14 @@ function Page() {
           </button>
 
           <CartSlider
+            data={cart}
             isOpen={cartSalesOpen}
             onClose={() => setCartSalesOpen(false)}
-            data={salesOrders}
             onDelete={removeFromCart}
-            onQuantityChange={updateQuantity}
+            onQuantityChange={handleQuantityChange}
             onSubmit={handleOnSubmit}
+            formData={formData}
+            onFormDataChange={handleFormDataChange}
           />
         </div>
 
@@ -305,14 +409,11 @@ function Page() {
         </div>
 
         <OrderDetailSlider
+          mainOrder={viewDailyRec}
           isOpen={openDetail}
           onClose={() => setOpenDetail(false)}
-          mainOrder={viewDailyRec || []}
-          width="w-1/4"
-          overlayColor="bg-black bg-opacity-50"
-          drawerStyle="bg-white"
+          onSubmit={refundAndPayment}
           onDelete={handleOnDelete}
-          onSubmit={() => handleOnSubmit}
         />
       </div>
     </div>

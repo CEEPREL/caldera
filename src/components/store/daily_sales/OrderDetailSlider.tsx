@@ -1,83 +1,114 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import { Order } from "@/app/caldera/[storeId]/daily-sales/page";
 
-interface UserProfile {
-  mainOrder?: Order[];
+interface OrderDetailSliderProps {
+  mainOrder: Order[] | null;
   isOpen: boolean;
   onClose: () => void;
+  onSubmit: (
+    orderData: { transactionId: string; quantity: number }[],
+    amount: number,
+    orderId: string
+  ) => void;
+  onDelete: (id: string) => void;
   width?: string;
   overlayColor?: string;
   drawerStyle?: string;
-  onDelete: (id: string) => void;
-  onSubmit: (
-    transactionId: string,
-    quantities: { [key: string]: number },
-    amountPaid: number
-  ) => void; // Include amountPaid in the submission
-  form?: string;
 }
 
-const OrderDetailSlider: React.FC<UserProfile> = ({
+// Define the type for the product structure
+interface GroupedProduct {
+  quantity: number;
+  product: any; // You can further define the product type if you have it
+}
+
+const OrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
   mainOrder,
   isOpen,
   onSubmit,
   onClose,
-  width = "w-1/4", // Default: 1/4 of the page
+  width = "w-1/4",
   overlayColor = "bg-black bg-opacity-50",
   drawerStyle = "bg-white p-5 rounded-r-2xl shadow-lg",
 }) => {
-  const [quantities, setQuantities] = useState<{ [key: string]: number }>(
-    Object.fromEntries(
-      (mainOrder ?? []).flatMap((order) =>
-        (order.product ?? []).map((item) => [
-          item.productId,
-          item.quantity || 1,
-        ])
-      )
-    )
-  );
-  const [amountPaid, setAmountPaid] = useState<number>(0); // State for amountPaid
+  const [amount, setAmount] = useState<number>(0); // Amount to be paid
+  const [orderId, setOrderId] = useState<string>(""); // The current orderId
+  const [groupedProducts, setGroupedProducts] = useState<{
+    [key: string]: GroupedProduct;
+  }>({});
 
-  const handleChange = (id: string, value: number) => {
-    if (value < 1) return; // Prevent negative or zero quantities
-    setQuantities((prev) => ({ ...prev, [id]: value }));
+  useEffect(() => {
+    if (mainOrder && mainOrder.length > 0) {
+      // Group products by productId and calculate total quantity
+      const grouped: { [key: string]: GroupedProduct } = {};
+
+      mainOrder.forEach((order) => {
+        order.product.forEach((item) => {
+          if (grouped[item.productId]) {
+            grouped[item.productId].quantity += 1; // Increase quantity for existing product
+          } else {
+            grouped[item.productId] = { quantity: 1, product: item };
+          }
+        });
+      });
+
+      // Store grouped products
+      setGroupedProducts(grouped);
+
+      // Set orderId
+      const currentOrderId = mainOrder[0]?.orderId || "";
+      setOrderId(currentOrderId);
+
+      // Calculate total amount
+      const totalAmount =
+        mainOrder[0]?.product.reduce((acc, item) => acc + item.total, 0) || 0;
+      setAmount(totalAmount);
+    }
+  }, [mainOrder]);
+
+  const handleIncrease = (productId: string) => {
+    setGroupedProducts((prev) => {
+      const updatedGrouped = { ...prev };
+      const product = updatedGrouped[productId]?.product;
+      if (product) {
+        product.quantity += 1; // Increase product's quantity
+      }
+      return updatedGrouped;
+    });
   };
 
-  const handleIncrease = (id: string) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [id]: (prev[id] || 1) + 1,
-    }));
-  };
-
-  const handleSubmit = (event: React.FormEvent, transactionId: string) => {
-    event.preventDefault();
-    onSubmit(transactionId, quantities, amountPaid); // Submit quantities and amountPaid to parent component
-  };
-
-  const handleDecrease = (id: string) => {
-    setQuantities((prev) => {
-      const currentQuantity = prev[id] || 1;
-      return {
-        ...prev,
-        [id]: currentQuantity > 1 ? currentQuantity - 1 : 1,
-      };
+  const handleDecrease = (productId: string) => {
+    setGroupedProducts((prev) => {
+      const updatedGrouped = { ...prev };
+      const product = updatedGrouped[productId]?.product;
+      if (product && product.quantity > 1) {
+        product.quantity -= 1; // Decrease product's quantity, ensuring it's never below 1
+      }
+      return updatedGrouped;
     });
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    if (value >= 0) {
-      setAmountPaid(value);
+    setAmount(Number(e.target.value));
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    // Collect the transactionId and quantities for each product based on productId
+    const orderData = Object.values(groupedProducts).map(({ product }) => ({
+      transactionId: product.transactionId, // Grab the transactionId
+      quantity: product.quantity, // Use product.quantity directly
+    }));
+
+    if (orderData) {
+      onSubmit(orderData, amount, orderId); // Pass orderData, amount, and orderId to parent
     }
   };
 
   return (
     <>
-      {/* Overlay (blocks interaction with background) */}
       <div
         className={clsx(
           "fixed z-10 inset-0 transition-opacity duration-300",
@@ -95,7 +126,6 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
           drawerStyle
         )}
       >
-        {/* Drawer Content - Sales Data */}
         <div className="mt-2 p-5 w-full">
           <button
             className="absolute top-5 right-5 text-black w-10 h-10 flex items-center justify-center bg-red-300 rounded-full shadow-lg hover:bg-gray-300 transition"
@@ -106,140 +136,77 @@ const OrderDetailSlider: React.FC<UserProfile> = ({
 
           {mainOrder && mainOrder.length > 0 ? (
             mainOrder.map((order) => (
-              <div className="mt-8" key={order.orderId}>
-                <div className="flex flex-row justify-between w-full">
-                  <h1 className="text-lg text-blue-300">
-                    Customer Name:{" "}
-                    <span className=" font-bold">
-                      {order.customerName
-                        ? order.customerName.charAt(0).toUpperCase() +
-                          order.customerName.slice(1).toLowerCase()
-                        : ""}
-                    </span>
-                  </h1>
-                  <h1>{order.customerNumber}</h1>
-                </div>
-                <div className="flex flex-row justify-between w-full">
-                  <p className="text-gray-500">
-                    Paid:{" "}
-                    <span className=" font-bold">₦{order.paidAmount} </span> out
-                    of <span className=" font-bold">₦{order.costAmount}</span>
-                  </p>
-                  <p className="text-gray-500">
-                    Credit:{" "}
-                    <span className=" font-bold">
-                      {order.creditAmount || 0}
-                    </span>
-                  </p>
-                </div>
-                {/* Mapping through Sales Data */}
+              <div key={order.orderId} className="mt-8">
+                <h1 className="text-lg text-blue-300">
+                  Customer Name:{" "}
+                  <span className=" font-bold">{order.customerName || ""}</span>
+                </h1>
+                <h1>{order.customerNumber}</h1>
+
                 {order.product.length > 0 ? (
-                  order.product.map((item) => (
-                    <div
-                      key={item.productId}
-                      className="flex w-full border-t border-gray-400 items-center justify-center flex-col gap-4"
-                    >
-                      {/* Sales Information */}
-                      <div className="flex flex-row w-full gap-4">
-                        <div className="flex w-full flex-col gap-1">
-                          <div className="flex flex-row justify-between w-full">
-                            <p className="text-gray-500">
-                              {item.quantity}, {item.productName}
-                              <span className=" font-bold"> ₦{item.price}</span>
-                            </p>
-                            <p className="text-gray-500">
-                              Total:
-                              <span className=" font-bold"> ₦{item.total}</span>
-                            </p>
-                          </div>
-                        </div>
+                  Object.values(groupedProducts).map(({ product }) => (
+                    <div key={product.productId} className="mt-4">
+                      <div className="flex justify-between">
+                        <p>
+                          {product.productName} - {product.quantity} x ₦
+                          {product.price}
+                        </p>
+                        <p>₦{product.quantity * product.price}</p>
                       </div>
 
-                      <div className="w-full">
-                        {/* Only show inputs if costPrice > paidAmount */}
-                        {order.costAmount > order.paidAmount && (
-                          <div className="flex gap-2">
-                            <form
-                              onSubmit={(e) =>
-                                handleSubmit(e, item.transactionId)
-                              }
-                              className="mt-4 flex flex-col"
-                            >
-                              {order.status === "pending" && (
-                                <div className="flex">
-                                  <button
-                                    type="button"
-                                    className="bg-gray-500 text-white w-10 h-6 flex items-center justify-center rounded"
-                                    onClick={() =>
-                                      handleDecrease(item.productId)
-                                    }
-                                  >
-                                    -
-                                  </button>
-                                  <input
-                                    type="number"
-                                    className="border-gray-500 h-6 w-16 text-center border"
-                                    value={Number(quantities[item.productId])}
-                                    onChange={(e) =>
-                                      handleChange(
-                                        item.productId,
-                                        Number(e.target.value) || 1
-                                      )
-                                    }
-                                  />
-                                  <button
-                                    type="button"
-                                    className="bg-gray-500 text-white w-10 h-6 flex items-center justify-center rounded"
-                                    onClick={() =>
-                                      handleIncrease(item.productId)
-                                    }
-                                  >
-                                    +
-                                  </button>
-                                </div>
-                              )}
-                            </form>
-                          </div>
-                        )}
+                      <div className="flex mt-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleDecrease(product.productId)}
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          value={product.quantity}
+                          onChange={() => handleIncrease(product.productId)}
+                          className="w-16 text-center"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleIncrease(product.productId)}
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                   ))
                 ) : (
                   <p>No products found for this order.</p>
                 )}
-                {/* Amount Paid Input */}
-                <div className="mt-4">
-                  <label
-                    htmlFor="amountPaid"
-                    className="block text-sm font-medium"
-                  >
-                    Payment
-                  </label>
-                  <input
-                    id="amountPaid"
-                    type="text"
-                    placeholder="Amount Paid"
-                    value={amountPaid}
-                    onChange={handleAmountChange}
-                    className="w-full border p-2 mt-2"
-                    min={order.paidAmount}
-                    max={order.costAmount}
-                    inputMode="decimal"
-                  />
-                </div>
-
-                {/* Submit button only visible if costPrice > paidPrice */}
-                <button
-                  type="submit"
-                  className="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transition w-full"
-                >
-                  Submit Order
-                </button>
               </div>
             ))
           ) : (
             <p>No order details available.</p>
           )}
+
+          {/* Amount input field */}
+          <div className="mt-4">
+            <label htmlFor="amount" className="block text-gray-700">
+              Amount to Pay:
+            </label>
+            <input
+              id="amount"
+              type="number"
+              value={amount}
+              onChange={handleAmountChange}
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            <button
+              type="submit"
+              className="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg"
+            >
+              Submit Order
+            </button>
+          </form>
         </div>
       </div>
     </>

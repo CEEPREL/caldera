@@ -40,7 +40,7 @@ export interface PurchaseOrder {
   productRequest: ProductRequest[];
 }
 
-type Product = {
+export type Product = {
   productId: string;
   userId: string;
   userName: string;
@@ -234,7 +234,7 @@ function Page() {
   // Loading spinner component
   const LoadingIndicator = () => (
     <div className="flex justify-center items-center w-full h-full">
-      <div className=" text-2xl font-bold">Loding...</div>
+      <div className=" text-2xl font-bold">Loading...</div>
     </div>
   );
 

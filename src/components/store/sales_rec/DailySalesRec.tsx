@@ -2,7 +2,6 @@
 
 import React from "react";
 
-// Define types for columns and props
 interface Column {
   key: string;
   label: string;
@@ -11,30 +10,15 @@ interface Column {
 
 interface PurchaseOrderTableProps {
   columns: Column[];
-  data: any[];
+  data: any;
   onActionClick?: (row: any) => void;
 }
 
-function DailySalesRec({ columns, data }: PurchaseOrderTableProps) {
-  if (!Array.isArray(data)) {
-    console.error("Invalid data: Expected an array but got", typeof data);
-    return <div> No data found</div>;
-  }
-
-  if (!Array.isArray(columns)) {
-    console.error("Invalid columns: Expected an array but got", typeof columns);
-    return <div> No data found</div>;
-  }
-
-  if (
-    columns.some(
-      (col) => typeof col.key !== "string" || typeof col.label !== "string"
-    )
-  ) {
-    console.error("Invalid column structure");
-    return <div> Columns structure is incorrect!</div>;
-  }
-
+function DailySalesRec({
+  columns,
+  data,
+}: // onActionClick,
+PurchaseOrderTableProps) {
   return (
     <div>
       <table className="w-full border-collapse shadow-md">
@@ -48,7 +32,7 @@ function DailySalesRec({ columns, data }: PurchaseOrderTableProps) {
           </tr>
         </thead>
         <tbody>
-          {data.length > 0 ? (
+          {data.length > 0 &&
             data.map((row: any, rowIndex: number) => (
               <tr key={rowIndex} className="border-b">
                 {columns.map((column) => (
@@ -62,14 +46,7 @@ function DailySalesRec({ columns, data }: PurchaseOrderTableProps) {
                   </td>
                 ))}
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={columns.length} className="p-2 text-center">
-                No data available
-              </td>
-            </tr>
-          )}
+            ))}
         </tbody>
       </table>
     </div>

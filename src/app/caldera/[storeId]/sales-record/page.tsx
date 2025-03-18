@@ -1,111 +1,186 @@
 "use client";
+
 import { ChevronRight } from "lucide-react";
-import Link from "next/link";
-import React, { useState } from "react";
-// import SalesHistorySlider from "@/components/user/SalesHistorySlider";
+import React, { useEffect, useState } from "react";
+import moment from "moment";
+import { useParams, useRouter } from "next/navigation";
+import {
+  getCategories,
+  getFilteredSalesReport,
+  getSalesByCategory,
+} from "@/app/actions/fetch";
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
-import SalesHistorySlider from "@/components/store/sales_rec/SalesHistorySlider";
+import { Order } from "../daily-sales/page";
 
-const dailySalesData = [
-  {
-    id: "1",
-    date: "Today",
-    totalSales: 15000,
-    totalOrders: 5,
-    status: "20 Products",
-  },
-  {
-    id: "2",
-    date: "Yesterday",
-    totalSales: 12000,
-    totalOrders: 3,
-    status: "20 Products",
-  },
-  {
-    id: " 3",
-    date: "2024-01-03",
-    totalSales: 18000,
-    totalOrders: 7,
-    status: "20 Products",
-  },
-];
+interface DataByCategory {
+  transactionId: string;
+  orderId: string;
+  transactionDate: string;
+  transactionTime: string;
+  userId: string;
+  userName: string;
+  storeId: string;
+  storeName: string;
+  productId: string;
+  productName: string;
+  price: number;
+  quantity: number;
+  total: number;
+  customerName: string;
+  customerNumber: string;
+}
 
-const productRecordData = [
-  {
-    id: "1",
-    productName: "iPhone X Screen",
-    revenue: 5000,
-    date: "2024-01-01",
-    sales: 0,
-    payment: "Out of Stock",
-  },
-  {
-    id: "2",
-    productName: "Samsung Battery",
-    revenue: 3000,
-    date: "2024-01-02",
-    sales: 2,
-    payment: "In Stock",
-  },
-  {
-    id: "3",
-    productName: "MacBook Charger",
-    revenue: 8000,
-    date: "2024-01-03",
-    sales: 5,
-    payment: "In Stock",
-  },
-];
+export interface GroupedOrders {
+  [date: string]: Order[];
+}
 
-const productList = [
-  "Screen",
-  "Downboard",
-  "Battery",
-  "Back Glass",
-  "Touch Pad",
-];
+interface Category {
+  categoryId: string;
+  categoryName: string;
+  createdDate: string;
+  createdTime: string;
+}
 
 function Page() {
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
-  const [open, setOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState("Screen");
   const [toggle, setToggle] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [startDateStr, setStartDateStr] = useState<string>("");
+  const [dateByCat, setDateByCat] = useState<DataByCategory[]>([]);
+  const [endDateStr, setEndDateStr] = useState<string>("");
+  const [storeId, setStoreId] = useState<string>("");
+  const [oldSalesRecData, setOldSalesRecData] = useState<Order[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    null
+  );
+  const [categoryData, setCategoryData] = useState<Category[]>();
+  // const { salesRecData, setSalesRecData } = useStore();
+  const today = moment();
+  const params = useParams<{ storeId?: string }>();
+  const router = useRouter();
+
+  const groupedOrders: GroupedOrders = oldSalesRecData.reduce((acc, order) => {
+    const orderDate = new Date(order.orderDate);
+    const formattedDate = getFormattedDate(orderDate);
+
+    if (!acc[formattedDate]) {
+      acc[formattedDate] = [];
+    }
+
+    acc[formattedDate].push(order);
+    return acc;
+  }, {} as GroupedOrders);
+
+  const todayStr = new Date().toISOString().split("T")[0];
+  const yesterdayStr = new Date(new Date().setDate(new Date().getDate() - 1))
+    .toISOString()
+    .split("T")[0];
+  function getFormattedDate(date: Date): string {
+    const today = new Date();
+    const yesterday = new Date(today.setDate(today.getDate() - 1));
+
+    if (isSameDate(date, today)) {
+      return date.toISOString().split("T")[0];
+    } else if (isSameDate(date, yesterday)) {
+      return date.toISOString().split("T")[0];
+    } else {
+      return date.toISOString().split("T")[0];
+    }
+  }
+
+  function isSameDate(date1: Date, date2: Date): boolean {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }
+
+  useEffect(() => {
+    const startDate = today.clone().subtract(5, "days").format("YYYY-MM-DD");
+    const endDate = today.format("YYYY-MM-DD");
+    setStartDateStr(startDate);
+    setEndDateStr(endDate);
+
+    const storeId = params.storeId || "";
+    setStoreId(storeId);
+  }, [params.storeId, today]);
+  useEffect(() => {
+    setLoading(true);
+    const fetchCategories = async () => {
+      try {
+        const res = await getCategories();
+        setCategoryData(res.data);
+      } catch (error) {
+        console.error("Error fetching sales data:", error);
+      }
+    };
+    fetchCategories();
+
+    if (selectedCategoryId) {
+      setLoading(true);
+      const fetchCategories = async () => {
+        try {
+          const res = await getSalesByCategory(storeId, selectedCategoryId);
+          setDateByCat(res.data);
+        } catch (error) {
+          console.error("Error fetching sales data:", error);
+        }
+      };
+      fetchCategories();
+    }
+  }, [selectedCategoryId, storeId]);
+
+  useEffect(() => {
+    if (!startDateStr || !endDateStr || !storeId) return;
+
+    setLoading(true);
+    const fetchSalesData = async () => {
+      try {
+        const res = await getFilteredSalesReport(
+          storeId,
+          startDateStr,
+          endDateStr
+        );
+        if (res && res !== "error") {
+          setOldSalesRecData(res);
+          console.log(res);
+        }
+      } catch (error) {
+        console.error("Error fetching sales data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSalesData();
+    console.log(startDateStr, "/", endDateStr);
+  }, [storeId, startDateStr, endDateStr]);
+
+  const handleRecStore = (date: string) => {
+    console.log(date);
+    router.push(`/caldera/${storeId}/sales-record/${date}`);
+    console.log(groupedOrders[date]);
+  };
   const handleToggle = (p: string) => {
     setToggle(!toggle);
-    setSelectedProduct(p);
+    setSelectedCategoryId(p);
   };
 
   const columns = [
     { key: "id", label: "#" },
     { key: "productName", label: "Product" },
-    { key: "sales", label: "Number of sales" },
-    { key: "revenue", label: "Total Revenue" },
-
-    {
-      key: "action",
-      label: "",
-      render: () => (
-        <div>
-          <button onClick={() => setOpen(true)} className={``}>
-            <ChevronRight />
-          </button>
-
-          <SalesHistorySlider
-            isOpen={open}
-            onClose={() => setOpen(false)}
-            data={productRecordData} // Pass the entire array
-            width="w-1/4"
-            overlayColor="bg-black bg-opacity-50"
-            drawerStyle="bg-white"
-          />
-        </div>
-      ),
-    },
+    { key: "price", label: "Price" },
+    { key: "quantity", label: "Number of sales" },
+    { key: "total", label: "Total Revenue" },
+    { key: "userName", label: "Sold by" },
   ];
-  const handleAction = (row: any) => {
+
+  const handleAction = (row: Order) => {
     console.log("Perform action on:", row);
-    alert(`Action performed on ${row.productName}`);
+    alert(`Action performed on ${row.customerNumber}`);
   };
+
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
       <div className="flex gap-2 flex-col">
@@ -135,44 +210,63 @@ function Page() {
 
         {salesToggle === "daily" ? (
           <div className="pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {dailySalesData.map((sale) => (
-              <Link key={sale.id} href={`/sales-record/${sale.id}`}>
-                <div className="bg-gradient-to-t from-gray-100 to-gray-300 shadow-2xl rounded-lg p-5">
-                  <div className="flex justify-between items-center">
-                    <div className="flex w-full flex-col gap-8">
-                      <p className="text-sm text-gray-500">{sale.date}</p>
-                      <div className="flex flex-row justify-between w-full">
-                        <p className="text-sm text-black">{sale.status}</p>
-                        <ChevronRight />
+            {Object.entries(groupedOrders)
+              .reverse()
+              .map(([date, orders]) => (
+                <div
+                  onClick={() => handleRecStore(date)}
+                  key={date}
+                  // href={`/caldera/${storeId}/sales-record/${date}`}
+                >
+                  <div className="bg-gradient-to-t from-gray-100 to-gray-300 shadow-2xl rounded-lg p-5">
+                    <div className="flex justify-between items-center">
+                      <div className="flex w-full flex-col gap-8">
+                        <p className="text-sm text-gray-500">
+                          {date === todayStr
+                            ? "Today"
+                            : date === yesterdayStr
+                            ? "Yesterday"
+                            : date}
+                        </p>
+                        <div className="flex flex-row justify-between w-full">
+                          <p className="text-sm text-black">
+                            {orders.length}{" "}
+                            {orders.length > 1 ? "Orders" : "Order"}
+                          </p>
+                          <ChevronRight />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </Link>
-            ))}
+              ))}
           </div>
         ) : (
           <div className="gap-2 flex flex-col">
             <div className="flex gap-6">
-              {productList.map((p, index) => (
+              {categoryData?.map((p, index) => (
                 <button
                   key={index}
-                  onClick={() => handleToggle(p)}
+                  onClick={() => handleToggle(p.categoryId)}
                   className={`${
-                    selectedProduct === p
+                    selectedCategoryId === p.categoryId
                       ? "border-b-4 border-blue-400 font-semibold"
                       : ""
                   } p-2`}
                 >
-                  {p}
+                  {p.categoryName}
                 </button>
               ))}
             </div>
-            <PurchaseOrderTable
-              columns={columns}
-              data={productRecordData}
-              onActionClick={handleAction}
-            />
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              <PurchaseOrderTable
+                columns={columns}
+                data={dateByCat}
+                onActionClick={handleAction}
+              />
+            )}
           </div>
         )}
       </div>
