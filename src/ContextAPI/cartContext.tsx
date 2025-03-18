@@ -16,6 +16,7 @@ interface Product {
   productId: string;
   productName: string;
   price: number;
+  costPrice?: number;
   quantity: number;
   orderId?: string;
 }

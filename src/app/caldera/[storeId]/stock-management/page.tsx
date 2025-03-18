@@ -22,8 +22,8 @@ export interface ProductRequest {
   categoryName: string;
   productId: string;
   productName: string;
-  costPrice: string | null;
-  unitPrice: string | null;
+  costPrice: number | null;
+  unitPrice: number | null;
   requestQuantity: number;
 }
 
