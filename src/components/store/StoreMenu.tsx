@@ -28,7 +28,7 @@ const getMenuItems = (basePath: string, storeId: string) => [
     href: `${basePath}/${storeId}/debt-management`,
   },
   {
-    icon: "/icons/inventory.svg",
+    icon: "/icons/Inventory.svg",
     label: "Inventory",
     href: `${basePath}/${storeId}/inventory`,
   },
