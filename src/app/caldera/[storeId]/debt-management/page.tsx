@@ -1,6 +1,6 @@
 "use client";
 import { useStore } from "@/ContextAPI/storeContex";
-import { getDebtorsList, getOutOfStockList } from "@/app/actions/fetch";
+import { getDebtorsList } from "@/app/actions/fetch";
 import PurchaseOrderTable from "@/components/store/inventory/purchaseOrderTable";
 // import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import React, { useEffect, useState } from "react";

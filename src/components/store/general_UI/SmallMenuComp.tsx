@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 
 interface MenuItem {
   label: string;
@@ -24,14 +23,14 @@ const MenuComponent: React.FC<MenuComponentProps> = ({
       {menuItems.map((item, index) => {
         if (item.actionType === "link" && item.href) {
           return (
-            <Link
+            <div
               key={index}
-              href={item.href || "#"}
+              // href={item.href || "#"}
               className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border hover:border-gray-500 transition cursor-pointer"
             >
               <Image src={item.icon} alt={item.label} width={20} height={20} />
               <span className="text-sm text-gray-700">{item.label}</span>
-            </Link>
+            </div>
           );
         } else if (item.actionType === "button") {
           return (

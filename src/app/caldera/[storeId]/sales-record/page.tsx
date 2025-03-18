@@ -1,18 +1,15 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   getCategories,
   getFilteredSalesReport,
   getSalesByCategory,
 } from "@/app/actions/fetch";
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
-import SalesHistorySlider from "@/components/store/sales_rec/SalesHistorySlider";
-import { useStore } from "@/ContextAPI/storeContex";
 import { Order } from "../daily-sales/page";
 
 interface DataByCategory {
@@ -37,14 +34,6 @@ export interface GroupedOrders {
   [date: string]: Order[];
 }
 
-interface SalesRecordData {
-  id: string;
-  date: string;
-  totalSales: number;
-  totalOrders: number;
-  status: string;
-}
-
 interface Category {
   categoryId: string;
   categoryName: string;
@@ -52,45 +41,8 @@ interface Category {
   createdTime: string;
 }
 
-const productRecordData = [
-  {
-    id: "1",
-    productName: "iPhone X Screen",
-    revenue: 5000,
-    orderDate: "2024-01-01",
-    sales: 0,
-    payment: "Out of Stock",
-  },
-  {
-    id: "2",
-    productName: "Samsung Battery",
-    revenue: 3000,
-    orderDate: "2024-01-02",
-    sales: 2,
-    payment: "In Stock",
-  },
-  {
-    id: "3",
-    productName: "MacBook Charger",
-    revenue: 8000,
-    orderDate: "2024-01-03",
-    sales: 5,
-    payment: "In Stock",
-  },
-];
-
-const productList = [
-  "Screen",
-  "Downboard",
-  "Battery",
-  "Back Glass",
-  "Touch Pad",
-];
-
 function Page() {
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
-  const [open, setOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState("Screen");
   const [toggle, setToggle] = useState(false);
   const [loading, setLoading] = useState(false);
   const [startDateStr, setStartDateStr] = useState<string>("");
@@ -102,7 +54,7 @@ function Page() {
     null
   );
   const [categoryData, setCategoryData] = useState<Category[]>();
-  const { salesRecData, setSalesRecData } = useStore();
+  // const { salesRecData, setSalesRecData } = useStore();
   const today = moment();
   const params = useParams<{ storeId?: string }>();
   const router = useRouter();
@@ -177,7 +129,7 @@ function Page() {
       };
       fetchCategories();
     }
-  }, [selectedCategoryId]);
+  }, [selectedCategoryId, storeId]);
 
   useEffect(() => {
     if (!startDateStr || !endDateStr || !storeId) return;
@@ -202,11 +154,10 @@ function Page() {
     };
 
     fetchSalesData();
-    console.log(startDateStr, "/", endDateStr); // Check the date range in the console
+    console.log(startDateStr, "/", endDateStr);
   }, [storeId, startDateStr, endDateStr]);
 
   const handleRecStore = (date: string) => {
-    setSalesRecData(groupedOrders[date]);
     console.log(date);
     router.push(`/caldera/${storeId}/sales-record/${date}`);
     console.log(groupedOrders[date]);
@@ -223,27 +174,6 @@ function Page() {
     { key: "quantity", label: "Number of sales" },
     { key: "total", label: "Total Revenue" },
     { key: "userName", label: "Sold by" },
-
-    // {
-    //   key: "action",
-    //   label: "",
-    //   render: () => (
-    //     <div>
-    //       <button onClick={() => setOpen(true)} className={``}>
-    //         <ChevronRight />
-    //       </button>
-
-    //       {/* <SalesHistorySlider
-    //         isOpen={open}
-    //         onClose={() => setOpen(false)}
-    //         data={productRecordData} // Pass the entire array
-    //         width="w-1/4"
-    //         overlayColor="bg-black bg-opacity-50"
-    //         drawerStyle="bg-white"
-    //       /> */}
-    //     </div>
-    //   ),
-    // },
   ];
 
   const handleAction = (row: Order) => {

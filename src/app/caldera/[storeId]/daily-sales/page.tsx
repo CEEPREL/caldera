@@ -61,7 +61,6 @@ function Page() {
   const [salesReportData, setSalesReportData] = useState<Order[]>([]);
   const [viewDailyRec, setViewDailyRec] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [orderId, setOrderId] = useState(true);
   const [inventoryData, setInventoryData] = useState<InventoryItem[]>([]);
   const [formData, setFormData] = useState<FormData>({
     customerName: "",
@@ -70,30 +69,10 @@ function Page() {
     product: [],
   });
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
-  const [amount, setAmount] = useState(0);
 
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
 
-  const { cart, setCart, removeFromCart, addToCart, updateQuantity } =
-    useCart();
-
-  // const salesOrders = cart.map(
-  //   ({
-  //     categoryId,
-  //     price,
-  //     productId,
-  //     categoryName,
-  //     productName,
-  //     quantity,
-  //   }) => ({
-  //     categoryId,
-  //     categoryName,
-  //     productId,
-  //     productName,
-  //     price,
-  //     quantity,
-  //   })
-  // );
+  const { cart, removeFromCart, addToCart, updateQuantity } = useCart();
 
   const handleFormDataChange = (newFormData: FormData) => {
     setFormData(newFormData);
@@ -104,10 +83,16 @@ function Page() {
     // Ensure the quantity is always greater than 0
     if (quantity < 1) return;
 
-    // Update the cart with new quantity
+    // Update the cart with the new quantity
     updateQuantity(productId, quantity);
 
-    // Update the product quantity in the formData
+    // Update the quantities state
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [productId]: quantity,
+    }));
+
+    // Update the product quantity in formData
     setFormData((prevFormData) => ({
       ...prevFormData,
       product: prevFormData.product.map((product) =>
@@ -117,22 +102,6 @@ function Page() {
       ),
     }));
   };
-  // const handleAddProductToForm = (product: InventoryItem) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     product: [
-  //       ...prev.product,
-  //       {
-  //         categoryId: product.categoryId,
-  //         categoryName: product.categoryName,
-  //         productId: product.productId,
-  //         productName: product.productName,
-  //         price: product.price,
-  //         quantity: 1,
-  //       },
-  //     ],
-  //   }));
-  // };
 
   const dailyRecTable = [
     { key: "", label: "#" },
@@ -232,6 +201,12 @@ function Page() {
         },
       ],
     }));
+
+    // Optionally, update the quantities state again here if needed
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [productId]: userQuantity,
+    }));
   };
 
   const handleViewMore = (row: Order) => {
@@ -264,16 +239,23 @@ function Page() {
     removeFromCart(id);
   };
 
-  const handleOnSubmit = async () => {
+  const handleOnSubmit = async (formData: FormData, amount: number) => {
     try {
       setLoading(true);
 
       const res = await createSalesOrder(formData);
-      await createSalesPayment({
+      const res2 = await createSalesPayment({
         amount: amount,
         orderId: res.data.data.orderId,
       });
-      console.log(formData, { amount });
+      console.log(
+        "Just wanna know what  is sent",
+        {
+          amount: amount,
+          orderId: res.data.data.orderId,
+        },
+        res2
+      );
       alert("Order processed!");
       // window.location.reload();
     } catch (error) {

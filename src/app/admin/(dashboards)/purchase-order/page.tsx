@@ -1,4 +1,6 @@
 "use client";
+import { getallOrderStatus } from "@/app/actions/fetch";
+import { PurchaseOrder } from "@/app/caldera/[storeId]/stock-management/page";
 import PurchaseOrderTableAdmin from "@/components/admin/purchaseOrderTableAdmin";
 import MenuComponent from "@/components/store/general_UI/SmallMenuComp";
 
@@ -10,25 +12,6 @@ interface MenuItem {
   actionType?: "link" | "button" | "div";
   href?: string;
 }
-
-const apiData = [
-  {
-    id: 1,
-    productName: "iPhone X Screen",
-    cadre: "Lagos 1",
-    quantity: 10,
-    note: "This product...",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    productName: "Samsung Battery",
-    cadre: "Abuja 2",
-    quantity: 5,
-    note: "Urgent replacement needed.",
-    status: "Pending",
-  },
-];
 
 const menuItems: MenuItem[] = [
   {
@@ -53,6 +36,9 @@ const menuItems: MenuItem[] = [
 function Page() {
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const dropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
+  const [poData, setPoData] = useState<PurchaseOrder[]>([]);
 
   const handleWindowBlur = () => {
     setOpenDropdownId(null);
@@ -87,12 +73,28 @@ function Page() {
     setOpenDropdownId(null);
   };
 
+  useEffect(() => {
+    const fetchPoData = async () => {
+      setLoadingProducts(true);
+      const result = await getallOrderStatus();
+      if (!result.status) {
+        console.error(result.error || "Unknown error");
+      } else {
+        setPoData(result.data);
+        console.log("podata: ", result.data);
+      }
+      setLoadingProducts(false);
+    };
+
+    fetchPoData();
+  }, []);
+
   const columns = [
     { key: "id", label: "#" },
-    { key: "productName", label: "Product Name" },
-    { key: "cadre", label: "Cadre" },
-    { key: "quantity", label: "Quantity" },
-    { key: "note", label: "Note" },
+    { key: "poId", label: "Order ID" },
+    { key: "storeName", label: "Cadre" },
+    { key: "requestDate", label: " Date" },
+    { key: "productRequestCount", label: "No of Product" },
     { key: "status", label: "Status" },
     {
       key: "action",
@@ -102,16 +104,16 @@ function Page() {
           <button
             className="dropdown-toggle"
             onClick={() =>
-              setOpenDropdownId(openDropdownId === row.id ? null : row.id)
+              setOpenDropdownId(openDropdownId === row.poId ? null : row.poId)
             }
           >
             •••
           </button>
-          {openDropdownId === row.id && (
+          {openDropdownId === row.poId && (
             <div
               className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-50"
               ref={(el) => {
-                dropdownRefs.current[row.id] = el;
+                dropdownRefs.current[row.poId] = el;
               }}
             >
               <div className="flex flex-col gap-2 p-2">
@@ -132,9 +134,14 @@ function Page() {
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
       <div className="flex flex-col">
         <h1 className="text-2xl font-medium">Purchase Order</h1>
-        <div>
-          <PurchaseOrderTableAdmin columns={columns} data={apiData} />
-        </div>
+
+        {loadingProducts ? (
+          <p>Loadiing</p>
+        ) : (
+          <div>
+            <PurchaseOrderTableAdmin columns={columns} data={poData} />
+          </div>
+        )}
       </div>
     </div>
   );

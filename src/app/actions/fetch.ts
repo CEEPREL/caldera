@@ -475,7 +475,7 @@ export async function getSalesByCategory(storeId: string, categoryId: string) {
 
 //====== fetch order status list ===========
 
-export async function getallOrderStatus(storeId: string) {
+export async function getallOrderStatus() {
   const token = (await cookies()).get("token")?.value;
   if (!token) {
     console.error("No token found!");
@@ -492,10 +492,10 @@ export async function getallOrderStatus(storeId: string) {
     return { status: false, data: [], error: "API URL not set" };
   }
 
-  if (!storeId) {
-    console.error("Store ID is missing!");
-    return { status: false, data: [], error: "Store ID is required" };
-  }
+  // if (!storeId) {
+  //   console.error("Store ID is missing!");
+  //   return { status: false, data: [], error: "Store ID is required" };
+  // }
 
   // API endpoints
   const urls = {
@@ -542,6 +542,7 @@ export async function getallOrderStatus(storeId: string) {
             poId,
             requestDate,
             userId,
+            storeId,
             requestTime,
             storeName,
             userName,
@@ -589,7 +590,7 @@ export async function getallOrderStatus(storeId: string) {
     const finalData = Object.values(mergedData);
 
     // Sorting by requestTime
-    finalData.sort((a, b) => {
+    finalData.reverse().sort((a, b) => {
       const timeA = a.requestTime
         ? new Date(`1970-01-01T${a.requestTime}Z`).getTime()
         : 0;

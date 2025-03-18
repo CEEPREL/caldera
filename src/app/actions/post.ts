@@ -113,7 +113,7 @@ export async function createSalesPayment(order: any) {
   }
 
   try {
-    console.log("ppayload", JSON.stringify({ order: order }));
+    console.log("ppayload", JSON.stringify(order));
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/makepayment`,
       {

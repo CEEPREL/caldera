@@ -1,13 +1,8 @@
 "use client";
 
-import { ArrowLeft, ShoppingBasket } from "lucide-react";
-import React, { useEffect, useState } from "react";
-// import DailySalesRec from "@/components/store/daily_sales/DailySalesRec";
-// import CartSlider from "@/components/store/daily_sales/CartSlider";
-// import OrderDetailSlider from "@/components/store/daily_sales/OrderDetailSlider";
-// import {  getSalesReport } from "@/app/actions/fetch";
+import { ArrowLeft } from "lucide-react";
+import React, { useState } from "react";
 import { useStore } from "@/ContextAPI/storeContex";
-// import { InventoryItem } from "../inventory/page";
 import { useCart } from "@/ContextAPI/cartContext";
 import { createSalesOrder } from "@/app/actions/post";
 import DailySalesRec from "@/components/store/sales_rec/DailySalesRec";
@@ -55,8 +50,6 @@ function Page() {
   const [openDetail, setOpenDetail] = useState(false);
   const [viewDailyRec, setViewDailyRec] = useState<Order[]>([]);
   const { salesRecData } = useStore();
-
-  const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
 
   const { setCart, removeFromCart } = useCart();
 
@@ -147,66 +140,9 @@ function Page() {
     }
   };
 
-  // useEffect(() => {
-  //   if (!storeId) return;
-
-  //   const fetchPoData = async () => {
-  //     setLoading(true);
-  //     const result = await getInventoies(`${storeId}`);
-
-  //     if (!result) {
-  //       console.error("Unknown error fetching data");
-  //     } else {
-  //       setInventoryData(result);
-  //     }
-  //     setLoading(false);
-  //   };
-
-  //   fetchPoData();
-  // }, [storeId]);
-
-  // useEffect(() => {
-  //   if (!storeId) return;
-  //   const fetchPoData = async () => {
-  //     setLoading(true);
-  //     const result = await getSalesReport(`${storeId}`);
-
-  //     if (!result) {
-  //       console.error("Unknown error fetching data");
-  //     } else {
-  //       setSalesReportData(result);
-  //     }
-  //     setLoading(false);
-  //   };
-
-  //   fetchPoData();
-  // }, [storeId]);
-
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
       <div className="flex gap-2 flex-col">
-        {/* <div className="flex flex-row justify-between">
-          <h1 className="text-2xl font-medium">Daily Record</h1>
-
-          <button onClick={() => setCartSalesOpen(true)} className="relative">
-            <h1 className="flex text-xs -top-2 right-0 absolute w-5 h-5 items-center justify-center bg-red-400 text-white rounded-full">
-              {cart.length}
-            </h1>
-            <div className="bg-gray-200 rounded-full p-1">
-              <ShoppingBasket />
-            </div>
-          </button>
-
-          <CartSlider
-            isOpen={cartSalesOpen}
-            onClose={() => setCartSalesOpen(false)}
-            data={salesOrders}
-            onDelete={removeFromCart}
-            onQuantityChange={updateQuantity}
-            onSubmit={handleOnSubmit}
-          />
-        </div> */}
-
         <div className="gap-2 flex flex-col">
           <div className="flex gap-2 flex-row">
             <button

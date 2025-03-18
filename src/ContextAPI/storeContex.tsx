@@ -12,7 +12,6 @@ import { fetchProduct, fetchStores } from "@/app/actions/fetch";
 import { getStoreData } from "@/app/actions/auth";
 import { Order } from "@/app/caldera/[storeId]/daily-sales/page";
 import { SetState } from "./cartContext";
-import { GroupedOrders } from "@/app/caldera/[storeId]/sales-record/page";
 
 // Store type definition
 interface Store {

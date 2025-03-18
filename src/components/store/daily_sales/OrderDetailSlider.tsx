@@ -164,9 +164,7 @@ const OrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
                         <input
                           type="number"
                           value={product.quantity}
-                          onChange={
-                            (e) => handleIncrease(product.productId) // Allow manual editing of quantity
-                          }
+                          onChange={() => handleIncrease(product.productId)}
                           className="w-16 text-center"
                         />
                         <button

@@ -83,6 +83,7 @@ const CartSlider: React.FC<CartSliderProps> = ({
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
+    console.log("Amount entered:", value); // Add this line to log the entered amount
     setAmount(value);
   };
 
