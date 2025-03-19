@@ -425,7 +425,7 @@ export async function getCategories() {
     });
 
     if (!response.ok) {
-      console.error(`Failed to fetch categories`);
+      console.error(`Failed to fetch categories true`);
       return token;
     }
     const result = await response.json();

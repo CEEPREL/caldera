@@ -14,11 +14,11 @@ interface PurchaseOrderTableProps {
   onActionClick?: (row: any) => void;
 }
 
-function PurchaseOrderTable({
-  columns,
-  data,
-}: // onActionClick,
-PurchaseOrderTableProps) {
+function PurchaseOrderTable({ columns, data }: PurchaseOrderTableProps) {
+  if (!data || data.length === 0) {
+    return <p>No Record found</p>;
+  }
+
   return (
     <div>
       <table className="w-full border-collapse shadow-md">

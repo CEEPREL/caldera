@@ -62,6 +62,7 @@ function Page() {
         productId: item.productId,
         productName: item.productName,
         requestQuantity: quantities[item.productId] || 1,
+        unitPrice: item.price,
         outOfStock: 1,
       }));
 

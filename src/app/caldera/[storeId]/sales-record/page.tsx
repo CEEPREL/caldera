@@ -11,6 +11,7 @@ import {
 } from "@/app/actions/fetch";
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import { Order } from "../daily-sales/page";
+import { useStore } from "@/ContextAPI/storeContex";
 
 interface DataByCategory {
   transactionId: string;
@@ -54,7 +55,7 @@ function Page() {
     null
   );
   const [categoryData, setCategoryData] = useState<Category[]>();
-  // const { salesRecData, setSalesRecData } = useStore();
+  const { salesRecData, setSalesRecData } = useStore();
   const today = moment();
   const params = useParams<{ storeId?: string }>();
   const router = useRouter();
@@ -106,29 +107,38 @@ function Page() {
     setStoreId(storeId);
   }, [params.storeId, today]);
   useEffect(() => {
-    setLoading(true);
+    setLoading(true); // Start loading for categories
     const fetchCategories = async () => {
       try {
         const res = await getCategories();
-        setCategoryData(res.data);
+        setCategoryData(res.data); // Set categories data
       } catch (error) {
-        console.error("Error fetching sales data:", error);
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false); // Stop loading after the request finishes
       }
     };
     fetchCategories();
+  }, []);
+  useEffect(() => {
+    if (!selectedCategoryId) return; // Avoid fetching if no category is selected
 
-    if (selectedCategoryId) {
-      setLoading(true);
-      const fetchCategories = async () => {
-        try {
-          const res = await getSalesByCategory(storeId, selectedCategoryId);
-          setDateByCat(res.data);
-        } catch (error) {
-          console.error("Error fetching sales data:", error);
-        }
-      };
-      fetchCategories();
-    }
+    setLoading(true); // Start loading for sales data
+    const fetchSalesData = async () => {
+      console.log("Fetching sales data for category", selectedCategoryId);
+
+      try {
+        const res = await getSalesByCategory(storeId, selectedCategoryId);
+        setDateByCat(res.data); // Set sales data by category
+        console.log("Sales data:", res.data);
+      } catch (error) {
+        console.error("Error fetching sales data:", error);
+      } finally {
+        setLoading(false); // Stop loading after the request finishes
+      }
+    };
+
+    fetchSalesData();
   }, [selectedCategoryId, storeId]);
 
   useEffect(() => {
@@ -154,13 +164,13 @@ function Page() {
     };
 
     fetchSalesData();
-    console.log(startDateStr, "/", endDateStr);
   }, [storeId, startDateStr, endDateStr]);
 
   const handleRecStore = (date: string) => {
     console.log(date);
     router.push(`/caldera/${storeId}/sales-record/${date}`);
-    console.log(groupedOrders[date]);
+    setSalesRecData(groupedOrders[date]);
+    console.log("date by cat", dateByCat);
   };
   const handleToggle = (p: string) => {
     setToggle(!toggle);
@@ -243,7 +253,7 @@ function Page() {
           </div>
         ) : (
           <div className="gap-2 flex flex-col">
-            <div className="flex gap-6">
+            <div className="flex overflow-x-auto gap-6">
               {categoryData?.map((p, index) => (
                 <button
                   key={index}
