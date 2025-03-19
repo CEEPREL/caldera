@@ -7,7 +7,7 @@ import {
 import { Trash2 } from "lucide-react";
 
 interface OrderDetailSliderProps {
-  mainOrder: PurchaseOrder[] | null;
+  mainOrder: PurchaseOrder | null;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (
@@ -50,8 +50,10 @@ const AdminOrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const orderData = mainOrder?.flatMap((order) =>
-      order.productRequest.map((product: ProductRequest) => {
+    if (!mainOrder) return; // Ensure mainOrder is available
+
+    const orderData = mainOrder.productRequest.map(
+      (product: ProductRequest) => {
         const quantity =
           quantities[product.productId] || product.requestQuantity;
         const price = Number(product.unitPrice) || 0;
@@ -62,11 +64,11 @@ const AdminOrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
           quantity,
           amount: totalAmount,
         };
-      })
+      }
     );
 
-    if (orderData) {
-      onSubmit(orderData, mainOrder?.[0]?.poId || ""); // Pass orderData and orderId
+    if (orderData.length > 0) {
+      onSubmit(orderData, mainOrder.poId); // Pass orderData and correct orderId
     }
   };
 
@@ -97,54 +99,52 @@ const AdminOrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
             ✕
           </button>
 
-          {mainOrder && mainOrder.length > 0 ? (
-            mainOrder.map((order) => (
-              <div key={order.poId} className="mt-8">
-                <h1 className="text-lg text-blue-300">
-                  Customer Name:{" "}
-                  <span className="font-bold">{order.storeName || ""}</span>
-                </h1>
-                <h1>{order.userName}</h1>
+          {mainOrder ? (
+            <div key={mainOrder.poId} className="mt-8">
+              <h1 className="text-lg text-blue-300">
+                Customer Name:{" "}
+                <span className="font-bold">{mainOrder.storeName || ""}</span>
+              </h1>
+              <h1>{mainOrder.userName}</h1>
 
-                {order.productRequest.length > 0 ? (
-                  order.productRequest.map((product: ProductRequest) => (
-                    <div key={product.productId} className="mt-4">
-                      <div className="flex items-center mt-2 gap-2">
-                        <p className="flex-1">{product.productName}</p>
-                        <input
-                          type="number"
-                          value={
-                            quantities[product.productId] ||
-                            product.requestQuantity
-                          }
-                          onChange={(e) =>
-                            handleQuantityChange(
-                              product.productId,
-                              e.target.value
-                            )
-                          }
-                          className="w-16 text-center focus:border border-gray-400"
-                        />
-                        <input
-                          type="number"
-                          value={Number(product.unitPrice) || 0}
-                          readOnly
-                          className="w-20 text-center focus:border border-gray-400"
-                        />
-                        <button
-                          className="text-red-500"
-                          onClick={() => onDelete(product.productId)}
-                        >
-                          <Trash2 />
-                        </button>
-                      </div>
+              {mainOrder.productRequest.length > 0 ? (
+                mainOrder.productRequest.map((product: ProductRequest) => (
+                  <div key={product.productId} className="mt-4">
+                    <div className="flex items-center mt-2 gap-2">
+                      <p className="flex-1">{product.productName}</p>
+                      <input
+                        type="number"
+                        value={
+                          quantities[product.productId] ||
+                          product.requestQuantity
+                        }
+                        onChange={(e) =>
+                          handleQuantityChange(
+                            product.productId,
+                            e.target.value
+                          )
+                        }
+                        className="w-16 text-center focus:border border-gray-400"
+                      />
+                      <input
+                        type="number"
+                        value={Number(product.unitPrice) || 0}
+                        readOnly
+                        className="w-20 text-center focus:border border-gray-400"
+                      />
+                      <button
+                        className="text-red-500"
+                        onClick={() => onDelete(product.productId)}
+                      >
+                        <Trash2 />
+                      </button>
                     </div>
-                  ))
-                ) : (
-                  <p>No products found for this order.</p>
-                )}
-              </div>
-            ))
+                  </div>
+                ))
+              ) : (
+                <p>No products found for this order.</p>
+              )}
+            </div>
           ) : (
             <p>No order details available.</p>
           )}

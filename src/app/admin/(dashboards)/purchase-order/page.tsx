@@ -43,6 +43,7 @@ function Page() {
   const dropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [poData, setPoData] = useState<PurchaseOrder[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<PurchaseOrder>();
   const [openDetail, setOpenDetail] = useState(false);
   const { cart, setCart, removeFromCart, addToCart } = useCart();
 
@@ -69,45 +70,6 @@ function Page() {
       requestQuantity: quantity,
     })
   );
-  const handleAddAllToCart = () => {
-    // Loop through the poData array to map items to the cart
-    poData.forEach((item) => {
-      const {
-        poId,
-        userName,
-        storeName,
-        productRequest, // This is an array
-      } = item;
-
-      // Loop through the productRequest array to access each product
-      productRequest.forEach((product) => {
-        const {
-          productId,
-          productName,
-          categoryId,
-          categoryName,
-          unitPrice, // price of the product
-          requestQuantity, // quantity for the product
-        } = product;
-
-        // Add the product to the cart
-        addToCart({
-          productId,
-          productName,
-          storeName,
-          userName,
-          orderId: poId,
-          categoryId,
-          categoryName,
-          price: unitPrice || 0, // price is unitPrice in ProductRequest
-          quantity: requestQuantity, // quantity is requestQuantity
-        });
-      });
-    });
-
-    // Open the cart once all items are added
-    setOpenDetail(true);
-  };
 
   // Fetch purchase order data
   useEffect(() => {
@@ -129,24 +91,26 @@ function Page() {
   const handleDelete = () => {};
 
   const handleMenuItemClick = async (label: string, poId: string) => {
-    // if (label === "Confirm Order") {
-    //   const orderToConfirm = poData.find((order) => order.poId === poId);
-    //   if (orderToConfirm) {
-    //     const payload = prepareOrderPayload(orderToConfirm);
-    //     console.log("hi", payload);
-    //     const result = await acceptAllOrder(payload);
-    //     if (result.status) {
-    //       alert("Order confirmed successfully");
-    //     } else {
-    //       alert("Failed to confirm order");
-    //     }
-    //   } else {
-    //     console.error("Order not found for poId:", poId);
-    //   }
-    // }
-    handleAddAllToCart;
-    setOpenDetail(true);
+    if (label === "Confirm Order") {
+      const orderToConfirm = poData.find((order) => order.poId === poId);
+      if (orderToConfirm) {
+        const payload = prepareOrderPayload(orderToConfirm);
+        console.log("hi", payload);
+        const result = await acceptAllOrder(payload);
+        if (result.status) {
+          alert("Order confirmed successfully");
+        } else {
+          alert("Failed to confirm order");
+        }
+      } else {
+        console.error("Order not found for poId:", poId);
+      }
+    }
+
+    const selectedOrder = poData.find((order) => order.poId === poId); // Get the specific order
+    setOpenDetail(true); // Open the slider
     setOpenDropdownId(null); // Close dropdown
+    setSelectedOrder(selectedOrder); // Set the selected order to be passed to the slider
   };
 
   const prepareOrderPayload = (order: PurchaseOrder) => {
@@ -224,7 +188,7 @@ function Page() {
         )}
       </div>
       <AdminOrderDetailSlider
-        mainOrder={productOrders}
+        mainOrder={selectedOrder || null}
         isOpen={openDetail}
         onClose={() => setOpenDetail(false)}
         onSubmit={handleSubmit}
