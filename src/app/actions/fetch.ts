@@ -194,6 +194,7 @@ export async function getallpurchaseOrder(storeId: string) {
             requestTime,
             storeName,
             userName,
+            outOfStock,
             productRequest,
           } = po;
 
@@ -211,6 +212,7 @@ export async function getallpurchaseOrder(storeId: string) {
               requestTime: requestTime || "00:00:00",
               storeName,
               userName,
+              outOfStock,
               productRequest: [],
               status: res.value.status,
               productRequestCount: 0,

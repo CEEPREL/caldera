@@ -33,6 +33,7 @@ export interface PurchaseOrder {
   userName: string;
   storeId: string;
   storeName: string;
+  outOfStock?: string;
   requestDate: string;
   requestTime: string;
   status: string;
@@ -210,6 +211,7 @@ function Page() {
         productId: item.productId,
         productName: item.productName,
         requestQuantity: quantities[item.productId] || 1,
+        outOfStock: 1,
       }));
 
       console.log("Submitting Order:", productOrders);

@@ -33,9 +33,12 @@ export async function createPurchaseOrder(
         body: JSON.stringify({ product: products }),
       }
     );
+    console.log(JSON.stringify({ product: products }));
 
     if (!response.ok) {
       const errorData = await response.json();
+      console.log(errorData);
+
       throw new Error(
         errorData.error ||
           "Something went wrong while submitting the purchase order"
@@ -195,15 +198,7 @@ export async function createSalesRefund(order: any) {
     }
   }
 }
-export async function acceptAllOrder(order: {
-  poId: string;
-  product: {
-    prId: string;
-    costPrice: number;
-    unitPrice: number;
-    quantity: number;
-  }[];
-}) {
+export async function acceptAllOrder(order: any) {
   const token = (await cookies()).get("token")?.value;
 
   if (!token) {
@@ -231,6 +226,7 @@ export async function acceptAllOrder(order: {
 
     if (!response.ok) {
       const errorData = await response.json();
+      console.log(errorData);
 
       throw new Error(
         errorData.error || "Something went wrong while submitting the order"

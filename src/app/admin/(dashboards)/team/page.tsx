@@ -91,7 +91,6 @@ function Team() {
           url: "/images/profile.png",
           active: true,
         });
-        // Refresh data after adding a new team member
         const updatedData = await fetchStaff();
         setData(updatedData);
       }

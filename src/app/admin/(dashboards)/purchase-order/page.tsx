@@ -45,31 +45,31 @@ function Page() {
   const [poData, setPoData] = useState<PurchaseOrder[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<PurchaseOrder>();
   const [openDetail, setOpenDetail] = useState(false);
-  const { cart, setCart, removeFromCart, addToCart } = useCart();
+  // const { cart, setCart, removeFromCart, addToCart } = useCart();
 
-  const productOrders = cart.map(
-    ({
-      categoryId,
-      orderId,
-      userName,
-      storeName,
-      categoryName,
-      productId,
-      productName,
-      quantity,
-      price,
-    }) => ({
-      categoryId,
-      categoryName,
-      orderId,
-      price,
-      userName,
-      storeName,
-      productId,
-      productName,
-      requestQuantity: quantity,
-    })
-  );
+  // const productOrders = cart.map(
+  //   ({
+  //     categoryId,
+  //     orderId,
+  //     userName,
+  //     storeName,
+  //     categoryName,
+  //     productId,
+  //     productName,
+  //     quantity,
+  //     price,
+  //   }) => ({
+  //     categoryId,
+  //     categoryName,
+  //     orderId,
+  //     price,
+  //     userName,
+  //     storeName,
+  //     productId,
+  //     productName,
+  //     requestQuantity: quantity,
+  //   })
+  // );
 
   // Fetch purchase order data
   useEffect(() => {
@@ -87,53 +87,72 @@ function Page() {
     fetchPoData();
   }, []);
 
-  const handleSubmit = () => {};
+  // Handle submit for confirming the order
+  const handleSubmit = async (
+    updatedProducts: {
+      prId: string;
+      quantity: number;
+      unitPrice: number;
+      costPrice: number;
+      outOfStock: number;
+    }[],
+    poId: string
+  ) => {
+    const orderToConfirm = poData.find((order) => order.poId === poId);
+    if (orderToConfirm) {
+      // Transform the updatedProducts to match the expected shape
+      const payload = prepareOrderPayload(orderToConfirm, updatedProducts);
+      console.log("hi", payload);
+
+      const result = await acceptAllOrder(payload);
+      if (result.status) {
+        alert("Order confirmed successfully");
+      } else {
+        alert("Failed to confirm order");
+      }
+    } else {
+      console.error("Order not found for poId:", poId);
+    }
+  };
+
   const handleDelete = () => {};
 
   const handleMenuItemClick = async (label: string, poId: string) => {
     if (label === "Confirm Order") {
-      const orderToConfirm = poData.find((order) => order.poId === poId);
-      if (orderToConfirm) {
-        const payload = prepareOrderPayload(orderToConfirm);
-        console.log("hi", payload);
-        const result = await acceptAllOrder(payload);
-        if (result.status) {
-          alert("Order confirmed successfully");
-        } else {
-          alert("Failed to confirm order");
-        }
-      } else {
-        console.error("Order not found for poId:", poId);
-      }
+      const selectedOrder = poData.find((order) => order.poId === poId);
+      setOpenDetail(true);
+      setOpenDropdownId(null);
+      setSelectedOrder(selectedOrder);
     }
-
-    const selectedOrder = poData.find((order) => order.poId === poId); // Get the specific order
-    setOpenDetail(true); // Open the slider
-    setOpenDropdownId(null); // Close dropdown
-    setSelectedOrder(selectedOrder); // Set the selected order to be passed to the slider
   };
 
-  const prepareOrderPayload = (order: PurchaseOrder) => {
-    const productRequests = order.productRequest.map(
-      (product: ProductRequest) => {
-        const costPrice = product.costPrice ? product.costPrice : 0;
-        const unitPrice = product.unitPrice ? product.unitPrice : 0;
-
-        return {
-          prId: product.prId,
-          costPrice: costPrice,
-          unitPrice: unitPrice,
-          quantity: product.requestQuantity,
-        };
-      }
-    );
+  // Prepare order payload with simplified product data
+  const prepareOrderPayload = (
+    order: PurchaseOrder,
+    updatedProducts: {
+      prId: string;
+      quantity: number;
+      unitPrice: number;
+      costPrice: number;
+      outOfStock: number;
+    }[]
+  ) => {
+    // Convert updatedProducts (with explicit typing) into the expected structure
+    const productRequests = updatedProducts.map((product) => ({
+      prId: product.prId, // Extract prId
+      quantity: product.quantity, // Extract quantity
+      unitPrice: product.unitPrice || 0, // Set unitPrice (default to 0 if undefined)
+      costPrice: product.costPrice || 0, // Set costPrice (default to 0 if undefined)
+      outOfStock: product.outOfStock || 0,
+    }));
 
     return {
       poId: order.poId,
-      product: productRequests,
+      product: productRequests, // This is now the correct shape expected by onSubmit
     };
   };
 
+  // Columns definition for the Purchase Order Table
   const columns = [
     { key: "id", label: "#" },
     { key: "poId", label: "Order ID" },
@@ -191,7 +210,7 @@ function Page() {
         mainOrder={selectedOrder || null}
         isOpen={openDetail}
         onClose={() => setOpenDetail(false)}
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit} // Passing handleSubmit to child component
         onDelete={handleDelete}
       />
     </div>
