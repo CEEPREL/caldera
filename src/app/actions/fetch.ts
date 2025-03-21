@@ -194,6 +194,7 @@ export async function getallpurchaseOrder(storeId: string) {
             requestTime,
             storeName,
             userName,
+            outOfStock,
             productRequest,
           } = po;
 
@@ -211,6 +212,7 @@ export async function getallpurchaseOrder(storeId: string) {
               requestTime: requestTime || "00:00:00",
               storeName,
               userName,
+              outOfStock,
               productRequest: [],
               status: res.value.status,
               productRequestCount: 0,
@@ -423,7 +425,7 @@ export async function getCategories() {
     });
 
     if (!response.ok) {
-      console.error(`Failed to fetch categories`);
+      console.error(`Failed to fetch categories true`);
       return token;
     }
     const result = await response.json();

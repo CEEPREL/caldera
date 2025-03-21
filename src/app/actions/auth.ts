@@ -97,3 +97,34 @@ export async function getStoreData() {
     return error;
   }
 }
+
+export async function resetPass(
+  prevState: { error?: string; success?: boolean; redirectTo?: string } | null,
+  formData: FormData
+) {
+  const userId = formData.get("userId") as string;
+  const password = formData.get("password") as string;
+
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/updatepassword`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, password }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      return { success: true, redirectTo: "/login" };
+    } else {
+      return { error: data.message || "Reset failed!" };
+    }
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : "An error occurred",
+    };
+  }
+}

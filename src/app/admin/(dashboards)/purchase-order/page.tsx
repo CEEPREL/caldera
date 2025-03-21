@@ -1,10 +1,11 @@
 "use client";
 import { getallOrderStatus } from "@/app/actions/fetch";
+import { acceptAllOrder } from "@/app/actions/post";
 import { PurchaseOrder } from "@/app/caldera/[storeId]/stock-management/page";
+import AdminOrderDetailSlider from "@/components/admin/AdminOrderDetailSlider";
 import PurchaseOrderTableAdmin from "@/components/admin/purchaseOrderTableAdmin";
 import MenuComponent from "@/components/store/general_UI/SmallMenuComp";
-
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 interface MenuItem {
   label: string;
@@ -17,11 +18,11 @@ const menuItems: MenuItem[] = [
   {
     label: "Confirm Order",
     icon: "/icons/brief_case.svg",
-    actionType: "link",
+    actionType: "button",
     href: "/admin/purchase-order/update-order",
   },
   {
-    label: "View Store",
+    label: "View Order",
     icon: "/icons/stores.svg",
     actionType: "link",
     href: "/settings",
@@ -37,42 +38,36 @@ function Page() {
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const dropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const [loadingProducts, setLoadingProducts] = useState(true);
-
   const [poData, setPoData] = useState<PurchaseOrder[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<PurchaseOrder>();
+  const [openDetail, setOpenDetail] = useState(false);
+  // const { cart, setCart, removeFromCart, addToCart } = useCart();
 
-  const handleWindowBlur = () => {
-    setOpenDropdownId(null);
-  };
+  // const productOrders = cart.map(
+  //   ({
+  //     categoryId,
+  //     orderId,
+  //     userName,
+  //     storeName,
+  //     categoryName,
+  //     productId,
+  //     productName,
+  //     quantity,
+  //     price,
+  //   }) => ({
+  //     categoryId,
+  //     categoryName,
+  //     orderId,
+  //     price,
+  //     userName,
+  //     storeName,
+  //     productId,
+  //     productName,
+  //     requestQuantity: quantity,
+  //   })
+  // );
 
-  const handleClickOutside = useCallback(
-    (event: MouseEvent) => {
-      if (
-        openDropdownId !== null &&
-        dropdownRefs.current[openDropdownId] &&
-        !dropdownRefs.current[openDropdownId]?.contains(event.target as Node) &&
-        !(event.target as HTMLElement).closest(".dropdown-toggle")
-      ) {
-        setOpenDropdownId(null);
-      }
-    },
-    [openDropdownId]
-  );
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    window.addEventListener("blur", handleWindowBlur);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      window.removeEventListener("blur", handleWindowBlur);
-    };
-  }, [openDropdownId, handleClickOutside]);
-
-  const handleMenuItemClick = (label: string) => {
-    if (label === "Confirm Order") {
-    }
-    setOpenDropdownId(null);
-  };
-
+  // Fetch purchase order data
   useEffect(() => {
     const fetchPoData = async () => {
       setLoadingProducts(true);
@@ -81,7 +76,6 @@ function Page() {
         console.error(result.error || "Unknown error");
       } else {
         setPoData(result.data);
-        console.log("podata: ", result.data);
       }
       setLoadingProducts(false);
     };
@@ -89,11 +83,77 @@ function Page() {
     fetchPoData();
   }, []);
 
+  // Handle submit for confirming the order
+  const handleSubmit = async (
+    updatedProducts: {
+      prId: string;
+      quantity: number;
+      unitPrice: number;
+      costPrice: number;
+      outOfStock: number;
+    }[],
+    poId: string
+  ) => {
+    const orderToConfirm = poData.find((order) => order.poId === poId);
+    if (orderToConfirm) {
+      // Transform the updatedProducts to match the expected shape
+      const payload = prepareOrderPayload(orderToConfirm, updatedProducts);
+      console.log("hi", payload);
+
+      const result = await acceptAllOrder(payload);
+      if (result.status) {
+        alert("Order confirmed successfully");
+      } else {
+        alert("Failed to confirm order");
+      }
+    } else {
+      console.error("Order not found for poId:", poId);
+    }
+  };
+
+  const handleDelete = () => {};
+
+  const handleMenuItemClick = async (label: string, poId: string) => {
+    if (label === "Confirm Order") {
+      const selectedOrder = poData.find((order) => order.poId === poId);
+      setOpenDetail(true);
+      setOpenDropdownId(null);
+      setSelectedOrder(selectedOrder);
+    }
+  };
+
+  // Prepare order payload with simplified product data
+  const prepareOrderPayload = (
+    order: PurchaseOrder,
+    updatedProducts: {
+      prId: string;
+      quantity: number;
+      unitPrice: number;
+      costPrice: number;
+      outOfStock: number;
+    }[]
+  ) => {
+    // Convert updatedProducts (with explicit typing) into the expected structure
+    const productRequests = updatedProducts.map((product) => ({
+      prId: product.prId, // Extract prId
+      quantity: product.quantity, // Extract quantity
+      unitPrice: product.unitPrice || 0, // Set unitPrice (default to 0 if undefined)
+      costPrice: product.costPrice || 0, // Set costPrice (default to 0 if undefined)
+      outOfStock: product.outOfStock || 0,
+    }));
+
+    return {
+      poId: order.poId,
+      product: productRequests, // This is now the correct shape expected by onSubmit
+    };
+  };
+
+  // Columns definition for the Purchase Order Table
   const columns = [
     { key: "id", label: "#" },
     { key: "poId", label: "Order ID" },
     { key: "storeName", label: "Cadre" },
-    { key: "requestDate", label: " Date" },
+    { key: "requestDate", label: "Date" },
     { key: "productRequestCount", label: "No of Product" },
     { key: "status", label: "Status" },
     {
@@ -109,7 +169,7 @@ function Page() {
           >
             •••
           </button>
-          {openDropdownId === row.poId && (
+          {openDropdownId === row.poId ? (
             <div
               className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-50"
               ref={(el) => {
@@ -119,12 +179,14 @@ function Page() {
               <div className="flex flex-col gap-2 p-2">
                 <MenuComponent
                   menuItems={menuItems}
-                  onMenuItemClick={handleMenuItemClick}
+                  onMenuItemClick={(label: string) =>
+                    handleMenuItemClick(label, row.poId)
+                  }
                   product={row}
                 />
               </div>
             </div>
-          )}
+          ) : null}
         </div>
       ),
     },
@@ -134,15 +196,19 @@ function Page() {
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
       <div className="flex flex-col">
         <h1 className="text-2xl font-medium">Purchase Order</h1>
-
         {loadingProducts ? (
-          <p>Loadiing</p>
+          <p>Loading...</p>
         ) : (
-          <div>
-            <PurchaseOrderTableAdmin columns={columns} data={poData} />
-          </div>
+          <PurchaseOrderTableAdmin columns={columns} data={poData} />
         )}
       </div>
+      <AdminOrderDetailSlider
+        mainOrder={selectedOrder || null}
+        isOpen={openDetail}
+        onClose={() => setOpenDetail(false)}
+        onSubmit={handleSubmit} // Passing handleSubmit to child component
+        onDelete={handleDelete}
+      />
     </div>
   );
 }

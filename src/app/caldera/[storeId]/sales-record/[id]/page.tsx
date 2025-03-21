@@ -1,12 +1,13 @@
 "use client";
 
 import { ArrowLeft } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useStore } from "@/ContextAPI/storeContex";
 import { useCart } from "@/ContextAPI/cartContext";
 import { createSalesOrder } from "@/app/actions/post";
 import DailySalesRec from "@/components/store/sales_rec/DailySalesRec";
 import OrderDetailSlider from "@/components/store/sales_rec/OrderDetailSlider";
+import { usePathname, useRouter } from "next/navigation";
 
 export interface Order {
   orderId: string;
@@ -45,6 +46,8 @@ export interface Transaction {
 }
 
 function Page() {
+  const pathname = usePathname();
+  const router = useRouter();
   const { storeData } = useStore();
   const storeId = storeData?.data.storeId;
   const [openDetail, setOpenDetail] = useState(false);
@@ -53,6 +56,18 @@ function Page() {
 
   const { setCart, removeFromCart } = useCart();
 
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  useEffect(() => {
+    // Ensure `salesRecData` is empty and `pathname` includes 'sales-record/'
+    if (!salesRecData && pathname.includes("sales-record/") && storeId) {
+      // Generate the desired redirect URL with the storeId
+      const date = pathname.split("/").pop(); // Extract date from the pathname
+      const redirectUrl = `${baseUrl}/caldera/${storeId}/sales-record/${date}`;
+
+      // Redirect immediately if the condition is met
+      router.push(redirectUrl);
+    }
+  }, [pathname, salesRecData, storeId, baseUrl, router]);
   const dailyRecTable = [
     { key: "", label: "#" },
     { key: "customerName", label: "Customer Name" },
@@ -130,7 +145,7 @@ function Page() {
   ) => {
     try {
       const res = await createSalesOrder(formData);
-      console.log(res, formData, `---${storeId}`);
+      console.log(res, formData, `${storeId}`);
 
       setCart([]);
       // window.location.reload();
@@ -141,7 +156,12 @@ function Page() {
   };
 
   return (
-    <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
+    <div
+      onClick={() => {
+        console.log(salesRecData);
+      }}
+      className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl"
+    >
       <div className="flex gap-2 flex-col">
         <div className="gap-2 flex flex-col">
           <div className="flex gap-2 flex-row">

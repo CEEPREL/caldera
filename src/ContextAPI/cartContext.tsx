@@ -10,14 +10,17 @@ import {
 
 export type SetState<T> = Dispatch<SetStateAction<T>>;
 
-interface Product {
+export interface Product {
   categoryId: string;
   categoryName: string;
   productId: string;
   productName: string;
   price: number;
+  costPrice?: number;
   quantity: number;
   orderId?: string;
+  userName?: string;
+  storeName?: string;
 }
 
 export interface ProductOrder {
