@@ -55,7 +55,7 @@ function Page() {
     null
   );
   const [categoryData, setCategoryData] = useState<Category[]>();
-  const { salesRecData, setSalesRecData } = useStore();
+  const { setSalesRecData } = useStore();
   const today = moment();
   const params = useParams<{ storeId?: string }>();
   const router = useRouter();

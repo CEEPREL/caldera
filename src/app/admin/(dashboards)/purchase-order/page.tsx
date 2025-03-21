@@ -1,11 +1,7 @@
 "use client";
-import { useCart } from "@/ContextAPI/cartContext";
 import { getallOrderStatus } from "@/app/actions/fetch";
 import { acceptAllOrder } from "@/app/actions/post";
-import {
-  PurchaseOrder,
-  ProductRequest,
-} from "@/app/caldera/[storeId]/stock-management/page";
+import { PurchaseOrder } from "@/app/caldera/[storeId]/stock-management/page";
 import AdminOrderDetailSlider from "@/components/admin/AdminOrderDetailSlider";
 import PurchaseOrderTableAdmin from "@/components/admin/purchaseOrderTableAdmin";
 import MenuComponent from "@/components/store/general_UI/SmallMenuComp";
