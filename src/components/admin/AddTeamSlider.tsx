@@ -21,6 +21,7 @@ export interface FormData {
   status: string;
   url: string;
   active: boolean;
+  password?: string;
 }
 
 interface SlideDrawerProps {
@@ -57,16 +58,15 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
   optionslocation,
 }) => {
   const [hasOpened, setHasOpened] = useState(false);
+
   useEffect(() => {
     if (isOpen && !hasOpened) {
-      // Call onChange to reset the form data
       onChange({
         target: {
           name: "fullName",
           value: "",
         },
       } as React.ChangeEvent<HTMLInputElement>);
-
       onChange({
         target: {
           name: "email",
@@ -99,6 +99,12 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
     }
     setHasOpened(true);
   }, [isOpen, onChange, hasOpened, resetPass]);
+
+  // Handle checkbox change
+  // const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setShouldSendRequest(e.target.checked);
+  // };
+
   return (
     <>
       {/* Overlay (blocks interaction with background) */}
@@ -132,33 +138,6 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
             {/* Location Section */}
             <div className="flex flex-col bg-gray-100 p-5 w-full gap-4">
               <h1 className="text-lg font-bold">Location</h1>
-              {/* <div className="flex flex-col gap-1">
-                <label htmlFor="state">State</label>
-                <Dropdown
-                  showSearch
-                  className="gap-0"
-                  className2="bg-white border-none w-full h-9 flex justify-between items-center rounded-md"
-                  label={
-                    typeof formData.state === "string"
-                      ? formData.state
-                      : "Select a State"
-                  }
-                  options={options}
-                  placeholder="Select a State"
-                  onSelect={(selectedState) => {
-                    // Directly call onChange from the parent to update the 'state' field
-                    onChange({
-                      target: {
-                        name: "state", // Field name to update
-                        value: selectedState, // Value from the selected state
-                      },
-                    } as React.ChangeEvent<HTMLInputElement>);
-                  }}
-                  getLabel={(state) => state.state}
-                  getSubLabel={() => ""}
-                  id="store-state"
-                />
-              </div> */}
               <div className="flex flex-col gap-1">
                 <label htmlFor="location">Enter Store Location</label>
                 <Dropdown
@@ -173,11 +152,10 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   options={optionslocation || []}
                   placeholder="Select a State"
                   onSelect={(selectedState) => {
-                    // Directly call onChange from the parent to update the 'state' field
                     onChange({
                       target: {
                         name: "location", // Field name to update
-                        value: selectedState, // Value from the selected state
+                        value: formData.location || selectedState, // Value from the selected state
                       },
                     } as React.ChangeEvent<HTMLInputElement>);
                   }}
@@ -267,12 +245,21 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                 </div>
               )}
 
+              {/* Checkbox for submitting */}
+              {/* <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="sendRequest"
+                  onChange={handleCheckboxChange}
+                />
+                <label htmlFor="sendRequest">
+                  Send request to reset password
+                </label>
+              </div> */}
+
               <button className="bg-button text-white p-2 rounded-full">
                 {loading ? "Adding..." : "Add Team Member"}
               </button>
-              {/* {errorMessage && (
-                <p className="text-red-500 mt-4">{errorMessage}</p>
-              )} */}
             </div>
           </form>
         </div>

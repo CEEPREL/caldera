@@ -2,12 +2,15 @@
 import Image from "next/image";
 import logo from "../../../public/images/Frame.svg";
 import frame from "../../../public/images/Vector (4).svg";
-import { useState } from "react";
-import { loginAction } from "../actions/auth";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { resetPass } from "../actions/auth";
+import { useRouter, useSearchParams } from "next/navigation";
 
 function AdminLogin() {
   const router = useRouter();
+  const searchParams = useSearchParams(); // Access the query parameters
+  const userId = searchParams.get("userId"); // Get the userId from the URL
+
   const [formState, setFormState] = useState<{
     error?: string;
     success?: boolean;
@@ -16,6 +19,14 @@ function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // If the userId is not available, redirect to an error page or show an error message
+  useEffect(() => {
+    if (!userId) {
+      // Redirect to an error page or display a message
+      router.push("/error"); // Adjust the route as needed
+    }
+  }, [userId, router]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -28,12 +39,12 @@ function AdminLogin() {
       return;
     }
 
-    const formData = new FormData(event.currentTarget);
-    formData.set("password", password); // Override password in the FormData with the one from state
-    formData.set("confirmPassword", confirmPassword); // Same for confirmPassword if needed
+    const formData = new FormData();
+    formData.set("password", password);
+    formData.set("userId", userId!); // Make sure userId is not null
 
-    // Assuming loginAction is for authentication or password reset (adjust as necessary)
-    const result = await loginAction(null, formData);
+    // Call the resetPass function and handle the result
+    const result = await resetPass(null, formData);
 
     setFormState(result);
     setLoading(false);
@@ -87,7 +98,7 @@ function AdminLogin() {
                 className="bg-[#7D95EE] text-white p-2 rounded-xl mt-4"
                 disabled={loading}
               >
-                {loading ? "Logging in..." : "Reset Password"}
+                {loading ? "Resetting..." : "Reset Password"}
               </button>
             </form>
           </div>

@@ -8,6 +8,7 @@ import { deleteStaff } from "@/app/actions/delete";
 import { Trash2 } from "lucide-react";
 import Confirm from "@/components/store/general_UI/ConfirmBox";
 import { UpdateStaffInfoProp, updateStaff } from "@/app/actions/update";
+import { resetPass } from "@/app/actions/post";
 
 const menuItems = [
   { label: "User Activity", icon: "/icons/brief_case.svg" },
@@ -60,6 +61,8 @@ export default function TeamTable({
 
   const flatStores = allStates.flat();
 
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   const handleUpdateStaff = async (id: string) => {
     try {
       setLoading(true);
@@ -74,14 +77,15 @@ export default function TeamTable({
       const selectedStore = flatStores.find(
         (store) => store.storeLocation === formData.location
       );
+      console.log("hi", selectedStore);
 
-      if (!selectedStore) {
-        setErrorMessage("Invalid store selection.");
-        setLoading(false);
-        return;
-      }
-      const storeId = selectedStore.storeId;
-      const storeName = selectedStore.storeName;
+      // if (!selectedStore) {
+      //   setErrorMessage("Invalid store selection.");
+      //   setLoading(false);
+      //   return;
+      // }
+      const storeId = originalStaff.storeId;
+      const storeName = originalStaff.storeName;
       const updatedFields: UpdateStaffInfoProp = {
         fullName: formData.fullName ?? originalStaff.fullName,
         phoneNumber: formData.phoneNumber ?? originalStaff.phoneNumber,
@@ -92,19 +96,27 @@ export default function TeamTable({
       };
       await updateStaff(updatedFields, id);
       alert("Staff updated successfully!");
+      console.log({
+        userId: formData.userId,
+        resetUrl: `${baseUrl}/reset_pass`,
+      });
+      if (formData.password === "Reset") {
+        await resetPass({
+          userId: formData.userId,
+          resetUrl: `${baseUrl}/reset_pass`,
+        });
+      }
 
-      console.log("Selected Store ID:", updatedFields);
+      console.log("Selected Store ID:", formData);
       // Await the store assignment request
       // await assignStore(storeId, id);
-
-      alert("Store assigned successfully!");
     } catch (error) {
       console.error("Error:", error);
       alert("An error occurred while updating staff.");
     } finally {
       setLoading(false);
       setOpenEdit(false);
-      window.location.reload();
+      // window.location.reload();
     }
   };
 
@@ -206,25 +218,27 @@ export default function TeamTable({
 
   useEffect(() => {
     if (openEdit && selectedProfileId) {
-      const selectedStaff = data.find((s) => s.userId === selectedProfileId);
-      if (!selectedStaff) return;
-
-      setFormData({
-        userId: selectedStaff.userId ?? "",
-        fullName: selectedStaff.fullName ?? "",
-        email: selectedStaff.email ?? "",
-        state: selectedStaff.state ?? "",
-        location: selectedStaff.location ?? "",
-        manager: selectedStaff.manager ?? "",
-        phoneNumber: selectedStaff.phoneNumber ?? "",
-        cadre: selectedStaff.cadre ?? "",
-        userName: selectedStaff.userName ?? "",
-        profilePic: selectedStaff.url ?? "",
-        registered: selectedStaff.registered ?? "",
-        status: selectedStaff.status ?? "",
-        url: selectedStaff.url ?? "",
-        active: selectedStaff.status === "",
-      });
+      const selectedStaff = data.find(
+        (staff) => staff.userId === selectedProfileId
+      );
+      if (selectedStaff) {
+        setFormData({
+          userId: selectedStaff.userId ?? "",
+          fullName: selectedStaff.fullName ?? "",
+          email: selectedStaff.email ?? "",
+          state: selectedStaff.state ?? "",
+          location: selectedStaff.location ?? "",
+          manager: selectedStaff.manager ?? "",
+          phoneNumber: selectedStaff.phoneNumber ?? "",
+          cadre: selectedStaff.cadre ?? "",
+          userName: selectedStaff.userName ?? "",
+          profilePic: selectedStaff.url ?? "",
+          registered: selectedStaff.registered ?? "",
+          status: selectedStaff.status ?? "Active",
+          url: selectedStaff.url ?? "",
+          active: selectedStaff.status === "Active",
+        });
+      }
     }
   }, [openEdit, selectedProfileId, data]);
 

@@ -33,6 +33,18 @@ export async function updateStaff(staffInfo: UpdateStaffInfoProp, id: string) {
     }),
   });
 
+  console.log("hi");
+
+  console.log(
+    JSON.stringify({
+      fullName,
+      phoneNumber,
+      userName,
+      storeId,
+      storeName,
+      email,
+    })
+  );
   const data = await res.json();
   return { message: data.message };
 }
