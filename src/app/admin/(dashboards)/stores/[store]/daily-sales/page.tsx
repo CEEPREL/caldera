@@ -9,13 +9,14 @@ import CartSlider, {
 import OrderDetailSlider from "@/components/store/daily_sales/OrderDetailSlider";
 import { getInventoies, getSalesReport } from "@/app/actions/fetch";
 import { useStore } from "@/ContextAPI/storeContex";
-import { InventoryItem } from "../inventory/page";
+// import { InventoryItem } from "../inventory/page";
 import { useCart } from "@/ContextAPI/cartContext";
 import {
   createSalesOrder,
   createSalesPayment,
   createSalesRefund,
 } from "@/app/actions/post";
+import { InventoryItem } from "@/app/caldera/[storeId]/inventory/page";
 
 export interface Order {
   orderId: string;
@@ -309,7 +310,7 @@ function Page() {
 
     const fetchPoData = async () => {
       setLoading(true);
-      const result = await getInventoies(storeId);
+      const result = await getInventoies(`${storeId}`);
 
       if (!result) {
         console.error("Unknown error fetching data");

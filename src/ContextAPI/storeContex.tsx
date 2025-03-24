@@ -69,6 +69,7 @@ interface StoreContextType {
   stores: Store[];
   salesRecData: Order[];
   setSalesRecData: SetState<Order[]>;
+  setStoreIdState: (storeId: string) => void;
   loading: boolean;
   storeData: StoreData | null;
 }
@@ -98,16 +99,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // Extract storeId from pathname
   useEffect(() => {
-    const pathParts = pathname.split("/");
-    const storeIndex = pathParts.indexOf("stores");
-    const isNewStore = pathParts.includes("new");
-
-    if (storeIndex !== -1 && pathParts[storeIndex + 1] && !isNewStore) {
-      setStoreId(pathParts[storeIndex + 1]);
-    } else {
-      setStoreId(null);
+    const storedStoreId = localStorage.getItem("storeId");
+    if (storedStoreId) {
+      setStoreId(storedStoreId);
     }
-  }, [pathname]);
+  }, []);
+  const setStoreIdState = (storeId: string) => {
+    localStorage.setItem("storeId", storeId);
+    setStoreId(storeId);
+  };
 
   // Fetch stores and products
   useEffect(() => {
@@ -162,6 +162,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         storeData,
         salesRecData,
         setSalesRecData,
+        setStoreIdState,
       }}
     >
       {children}

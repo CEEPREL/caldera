@@ -14,7 +14,7 @@ const getMenuItems = (basePath: string, storeId: string) => [
   },
   {
     icon: "/icons/daily_record.svg",
-    label: "Daily Sales",
+    label: "Daily Record",
     href: `${basePath}/${storeId}/daily-sales`,
   },
   {

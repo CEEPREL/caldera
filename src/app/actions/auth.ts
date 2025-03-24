@@ -72,7 +72,19 @@ export async function logout() {
   (await cookieStore).delete("storeId");
   (await cookieStore).delete("storeData");
 
-  return { success: true, redirectTo: "/login" };
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (response.ok) {
+      return { success: true, redirectTo: "/login" };
+    }
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : "An error occurred",
+    };
+  }
 }
 
 // Retrieve storeId

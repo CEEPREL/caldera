@@ -1,12 +1,14 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { fetchStores } from "@/app/actions/fetch";
 import { Trash2 } from "lucide-react";
 import { deleteStore } from "@/app/actions/delete";
 import Confirm from "@/components/store/general_UI/ConfirmBox";
+import { useToastContext } from "@/ContextAPI/toastContext";
+import { useStore } from "@/ContextAPI/storeContex";
 
 function StorePage() {
   const [states, setStates] = useState<string[]>([]);
@@ -16,6 +18,29 @@ function StorePage() {
   const [deleting, setDeleting] = useState<string | null>(null);
 
   const router = useRouter();
+  const pathname = usePathname();
+
+  const { showToast } = useToastContext();
+  const { setStoreIdState, storeId } = useStore();
+
+  const handleLinkClick = async (
+    e: React.MouseEvent<HTMLDivElement>,
+    store: any
+  ) => {
+    try {
+      e.preventDefault();
+      setLoading(true);
+      if (!storeId && pathname.includes("admin")) {
+        setStoreIdState(store.storeId);
+      }
+      router.push(`/admin/stores/${store.storeId}/report`);
+      setLoading(false);
+      showToast("Store loaded successfully", "success");
+    } catch {
+      showToast("Failed to load store", "error");
+    }
+    console.log(store.storeId);
+  };
 
   const groupStores = (stores: any[]) => {
     return stores.reduce((acc, store) => {
@@ -142,9 +167,9 @@ function StorePage() {
           <div className="pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {selectedState &&
               stateObj[selectedState]?.map((store) => (
-                <Link
+                <div
                   className=" cursor-auto"
-                  href={`/admin/stores/${store.storeId}/report`}
+                  onClick={(e) => handleLinkClick(e, store)}
                   key={store.storeId}
                 >
                   <div className="bg-gradient-to-t from-gray-100 to-gray-300 shadow-2xl rounded-lg p-5">
@@ -190,7 +215,6 @@ function StorePage() {
                     </p>
 
                     <div className="w-full h-[200px]">
-                      {/* Example Graph Placeholder */}
                       <p className="text-gray-500">
                         {/* [Sales Graph for {validPeriod}] */}
                       </p>
@@ -200,7 +224,7 @@ function StorePage() {
                       <p className="text-sm text-gray-500">2024-01-01</p>
                     </div>
                   </div>
-                </Link>
+                </div>
               ))}
           </div>
         )}
