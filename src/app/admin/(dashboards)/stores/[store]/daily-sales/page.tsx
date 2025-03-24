@@ -327,7 +327,7 @@ function Page() {
     if (!storeId) return;
     const fetchPoData = async () => {
       setLoading(true);
-      const result = await getSalesReport(`${storeId}`);
+      const result = await getSalesReport(storeId);
       console.log(storeId);
 
       if (!result) {

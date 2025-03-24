@@ -99,9 +99,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // Extract storeId from pathname
   useEffect(() => {
-    const storedStoreId = localStorage.getItem("storeId");
-    if (storedStoreId) {
-      setStoreId(storedStoreId);
+    // const storedStoreId = localStorage.getItem("storeId");
+    // if (storedStoreId) {
+    //   setStoreId(storedStoreId);
+    // }
+
+    const pathParts = pathname.split("/");
+    const storeIndex = pathParts.indexOf("stores");
+    const isNewStore = pathParts.includes("new");
+    if (storeIndex !== -1 && pathParts[storeIndex + 1] && !isNewStore) {
+      setStoreId(pathParts[storeIndex + 1]);
+    } else {
+      setStoreId(null);
     }
   }, []);
   const setStoreIdState = (storeId: string) => {

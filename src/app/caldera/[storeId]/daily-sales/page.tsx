@@ -76,7 +76,6 @@ function Page() {
 
   const handleFormDataChange = (newFormData: FormData) => {
     setFormData(newFormData);
-    console.log("New form data received:", newFormData);
   };
 
   const handleQuantityChange = (productId: string, quantity: number) => {
@@ -151,7 +150,6 @@ function Page() {
   ];
 
   const handleAction = (row: any) => {
-    console.log("Perform action on:", row);
     alert(`Action performed on ${row.productName}`);
   };
 
@@ -326,11 +324,12 @@ function Page() {
     if (!storeId) return;
     const fetchPoData = async () => {
       setLoading(true);
-      const result = await getSalesReport(`${storeId}`);
-      console.log(storeId);
+      const result = await getSalesReport(storeId);
 
       if (!result) {
         console.error("Unknown error fetching data");
+      } else if (typeof result === "string") {
+        setSalesReportData([]);
       } else {
         setSalesReportData(result);
       }

@@ -9,6 +9,7 @@ import { Trash2 } from "lucide-react";
 import Confirm from "@/components/store/general_UI/ConfirmBox";
 import { UpdateStaffInfoProp, updateStaff } from "@/app/actions/update";
 import { resetPass } from "@/app/actions/post";
+import { capitalizeFirstLetter } from "./AdminOrderDetailSlider";
 
 const menuItems = [
   { label: "User Activity", icon: "/icons/brief_case.svg" },
@@ -351,20 +352,14 @@ export default function TeamTable({
                 <td className=" p-2">
                   <span
                     className={`px-2 py-1 border border-green-800 rounded-3xl ${
-                      staff.status === "Active"
+                      staff.status === "active"
                         ? "bg-green-50 text-green-800"
                         : staff.status === activeStatus
                         ? "bg-gray-200 text-gray-500"
                         : "bg-red-200 text-red-800"
                     }`}
                   >
-                    {staff.status === "Active"
-                      ? "Active"
-                      : staff.status === "Inactive"
-                      ? "Inactive"
-                      : staff.status === "Deactivated"
-                      ? "Deactivated"
-                      : "Active"}
+                    {capitalizeFirstLetter(staff.status)}
                   </span>
                 </td>
                 <td className=" p-2 relative text-indigo-600 cursor-pointer">

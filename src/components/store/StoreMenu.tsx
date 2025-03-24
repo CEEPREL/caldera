@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useParams } from "next/navigation";
 import React, { useState } from "react";
+import Menu from "../admin/Menu";
 
-// Function to generate menu items dynamically
 const getMenuItems = (basePath: string, storeId: string) => [
   {
     icon: "/icons/revenue.svg",
@@ -54,7 +54,6 @@ function StoreMenu() {
   const pathname = usePathname();
   const params = useParams<{ storeId?: string }>();
 
-  // Extract storeId from params or pathname
   let storeId: string | undefined = params.storeId;
 
   if (!storeId) {
@@ -63,37 +62,42 @@ function StoreMenu() {
     storeId = match?.[1];
   }
 
-  // Set the base path for the menu
   const basePath = pathname.startsWith("/admin/stores")
     ? "/admin/stores"
     : "/caldera";
 
-  // Initialize the selected item state (always called)
   const [selectedItem, setSelectedItem] = useState(pathname);
 
-  // Handle menu item click
   const handleClick = (href: string) => {
     setSelectedItem(href);
     router.push(href);
   };
 
-  // If no storeId found, show error message
   if (!storeId) {
     return (
-      <div className="p-2 bg-white h-full flex flex-col gap-10">
-        <h2 className="text-red-500">
-          Store ID is missing. Please check the URL.
-        </h2>
+      <div className="text-gray-500 flex flex-col gap-6">
+        <Menu />
       </div>
     );
   }
+
+  const handleBackToStore = () => {
+    router.push("/admin/stores");
+  };
+
+  // Filter out the 'Settings' item if the pathname includes '/admin'
+  const filteredMenuItems = pathname.includes("/admin")
+    ? getMenuItems(basePath, storeId).filter(
+        (item) => item.label !== "Settings"
+      )
+    : getMenuItems(basePath, storeId);
 
   return (
     <div className="p-2 bg-white h-full flex flex-col gap-10">
       {/* Back Button for Admins */}
       {pathname.includes("/admin") ? (
         <button
-          onClick={() => router.push("/admin/stores")}
+          onClick={handleBackToStore}
           className="flex items-center gap-2 text-lg text-black font-semibold"
         >
           <Image
@@ -115,7 +119,7 @@ function StoreMenu() {
 
       {/* Menu Items */}
       <div className="text-gray-500 flex flex-col gap-6">
-        {getMenuItems(basePath, storeId).map((item) => (
+        {filteredMenuItems.map((item) => (
           <Link
             key={item.label}
             className={`flex p-2 rounded-3xl gap-2 ${
@@ -123,7 +127,7 @@ function StoreMenu() {
             }`}
             href={item.href}
             onClick={(e) => {
-              e.preventDefault(); // Prevent full reload
+              e.preventDefault();
               handleClick(item.href);
             }}
           >
