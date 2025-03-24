@@ -58,7 +58,7 @@ function New() {
         showToast("Something went wrong", "error");
       }
     } catch (error) {
-      console.error("Error creating store:", error);
+      console.error("Error creating store ", error);
     }
     setLoading(false);
   };
