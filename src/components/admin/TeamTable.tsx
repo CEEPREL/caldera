@@ -63,7 +63,7 @@ export default function TeamTable({
 
   const flatStores = allStates.flat();
 
-  const baseUrl = `${process.env.NEXT_PUBLIC_API_URL}`;
+  const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}`;
 
   const handleUpdateStaff = async (id: string) => {
     try {
