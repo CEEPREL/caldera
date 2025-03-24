@@ -76,9 +76,9 @@ export default function TeamTable({
         return;
       }
       // Find store based on selected location
-      const selectedStore = flatStores.find(
-        (store) => store.storeLocation === formData.location
-      );
+      // const selectedStore = flatStores.find(
+      //   (store) => store.storeLocation === formData.location
+      // );
 
       // if (!selectedStore) {
       //   setErrorMessage("Invalid store selection.");
