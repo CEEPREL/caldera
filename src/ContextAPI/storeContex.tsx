@@ -112,7 +112,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     } else {
       setStoreId(null);
     }
-  }, []);
+  }, [pathname]);
   const setStoreIdState = (storeId: string) => {
     localStorage.setItem("storeId", storeId);
     setStoreId(storeId);
