@@ -29,6 +29,7 @@ interface SlideDrawerProps {
   onClose: () => void;
   width?: string;
   tittle?: string;
+  btnTitle?: string;
   formData: FormData;
   overlayColor?: string;
   drawerStyle?: string;
@@ -52,6 +53,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
   tittle = "Add Team Member",
   formData,
   loading,
+  btnTitle,
   onChange,
   onSubmit,
   resetPass,
@@ -258,7 +260,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
               </div> */}
 
               <button className="bg-button text-white p-2 rounded-full">
-                {loading ? "Adding..." : "Add Team Member"}
+                {loading ? "Adding..." : btnTitle || "Add Team Member"}
               </button>
             </div>
           </form>

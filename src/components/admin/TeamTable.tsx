@@ -10,6 +10,7 @@ import Confirm from "@/components/store/general_UI/ConfirmBox";
 import { UpdateStaffInfoProp, updateStaff } from "@/app/actions/update";
 import { resetPass } from "@/app/actions/post";
 import { capitalizeFirstLetter } from "./AdminOrderDetailSlider";
+import { useToastContext } from "@/ContextAPI/toastContext";
 
 const menuItems = [
   { label: "User Activity", icon: "/icons/brief_case.svg" },
@@ -32,7 +33,7 @@ export default function TeamTable({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const menuItem = menuItems;
   const [openProfile, setOpenProfile] = useState<boolean>(false);
-
+  const { showToast } = useToastContext();
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -62,7 +63,7 @@ export default function TeamTable({
 
   const flatStores = allStates.flat();
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const baseUrl = `${process.env.NEXT_PUBLIC_API_URL}`;
 
   const handleUpdateStaff = async (id: string) => {
     try {
@@ -78,7 +79,6 @@ export default function TeamTable({
       const selectedStore = flatStores.find(
         (store) => store.storeLocation === formData.location
       );
-      console.log("hi", selectedStore);
 
       // if (!selectedStore) {
       //   setErrorMessage("Invalid store selection.");
@@ -96,7 +96,7 @@ export default function TeamTable({
         email: formData.email ?? originalStaff.email,
       };
       await updateStaff(updatedFields, id);
-      alert("Staff updated successfully!");
+      showToast("Staff updated successfully!", "success");
       console.log({
         userId: formData.userId,
         resetUrl: `${baseUrl}/reset_pass`,
@@ -108,7 +108,6 @@ export default function TeamTable({
         });
       }
 
-      console.log("Selected Store ID:", formData);
       // Await the store assignment request
       // await assignStore(storeId, id);
     } catch (error) {
@@ -327,6 +326,7 @@ export default function TeamTable({
                             setOpenEdit(false);
                           }}
                           id={staff.userId}
+                          btnTitle="Save"
                           tittle="Edit Team Member"
                           formData={formData}
                           role={staff.cadre}
