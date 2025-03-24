@@ -4,6 +4,8 @@ import Image from "next/image";
 import React, { useState } from "react";
 import states from "@/data/states.json";
 import { createStore, StoreData } from "@/app/actions/create";
+import { useToastContext } from "@/ContextAPI/toastContext";
+import { useRouter } from "next/navigation";
 
 function New() {
   const allStates = states.states.map((s) => s.name);
@@ -19,6 +21,9 @@ function New() {
     // password: "",
     // confirmPassword: "",
   });
+  const [loading, setLoading] = useState(false);
+  const { showToast } = useToastContext();
+  const router = useRouter();
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +38,7 @@ function New() {
   // Handle form submission
   const handleSubmit = async (formData: StoreData) => {
     try {
+      setLoading(true);
       const result = await createStore({
         storeLocation: formData.storeLocation,
         storeName: formData.storeName,
@@ -46,10 +52,15 @@ function New() {
           storeState: "",
           phoneNumber: "",
         });
+        showToast("Store created successfully!", "success");
+        router.push("/admin/stores");
+      } else {
+        showToast("Something went wrong", "error");
       }
     } catch (error) {
       console.error("Error creating store:", error);
     }
+    setLoading(false);
   };
 
   return (
@@ -130,8 +141,7 @@ function New() {
                 onChange={handleChange}
               />
               <button className="bg-button mt-2 text-white p-2 rounded-full">
-                {/* {loading ? "Adding..." : "Add Team Member"} */}
-                Add Team Member
+                {loading ? "Creating..." : "Create store"}
               </button>
             </div>
           </div>

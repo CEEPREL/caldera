@@ -5,6 +5,7 @@ import frame from "../../../public/images/Vector (4).svg";
 import { useState } from "react";
 import { loginAction } from "../actions/auth";
 import { useRouter } from "next/navigation";
+import { useToastContext } from "@/ContextAPI/toastContext";
 
 function AdminLogin() {
   const router = useRouter();
@@ -14,6 +15,7 @@ function AdminLogin() {
     redirectTo?: string;
   } | null>(null);
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToastContext();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -26,7 +28,12 @@ function AdminLogin() {
     setLoading(false);
 
     if (result?.success && result.redirectTo) {
+      showToast("Login successful!", "success");
       router.push(result.redirectTo);
+    }
+
+    if (result?.error) {
+      showToast("Login failed!", "error");
     }
   }
 
