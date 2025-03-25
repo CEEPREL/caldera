@@ -109,7 +109,7 @@ export default function TeamTable({
       }
 
       // Await the store assignment request
-      // await assignStore(storeId, id);
+      // await assignStore(storeId, id)
     } catch (error) {
       console.error("Error:", error);
       alert("An error occurred while updating staff.");
