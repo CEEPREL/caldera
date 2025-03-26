@@ -298,3 +298,24 @@ export async function resetPass(order: any) {
     }
   }
 }
+
+export async function assignStore(storesId: string, id: string) {
+  const storeId = storesId;
+  const userId = id;
+  const token = (await cookies()).get("token")?.value;
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/assignstore`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`, // Correct authorization header
+    },
+    method: "POST",
+    body: JSON.stringify({ storeId, userId }),
+  });
+
+  const data = await res.json();
+
+  return {
+    data,
+  };
+}

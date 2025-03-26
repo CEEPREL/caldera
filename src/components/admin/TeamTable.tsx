@@ -9,7 +9,6 @@ import { Trash2 } from "lucide-react";
 import Confirm from "@/components/store/general_UI/ConfirmBox";
 import { UpdateStaffInfoProp, updateStaff } from "@/app/actions/update";
 import { resetPass } from "@/app/actions/post";
-import { capitalizeFirstLetter } from "./AdminOrderDetailSlider";
 import { useToastContext } from "@/ContextAPI/toastContext";
 
 const menuItems = [
@@ -33,6 +32,7 @@ export default function TeamTable({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const menuItem = menuItems;
   const [openProfile, setOpenProfile] = useState<boolean>(false);
+  const [active, setActive] = useState<boolean>(false);
   const { showToast } = useToastContext();
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
@@ -55,7 +55,6 @@ export default function TeamTable({
     url: "",
     active: true,
   });
-  const activeStatus = "Active";
 
   const { stateObj } = useStore();
 
@@ -71,10 +70,11 @@ export default function TeamTable({
 
       const originalStaff = data.find((staff) => staff.userId === id);
       if (!originalStaff) {
-        setErrorMessage("Staff not found.");
+        showToast("Staff not found.", "error");
         setLoading(false);
         return;
       }
+
       // Find store based on selected location
       // const selectedStore = flatStores.find(
       //   (store) => store.storeLocation === formData.location
@@ -91,14 +91,15 @@ export default function TeamTable({
         fullName: formData.fullName ?? originalStaff.fullName,
         phoneNumber: formData.phoneNumber ?? originalStaff.phoneNumber,
         userName: formData.userName ?? originalStaff.userName,
-        storeId: storeId ?? originalStaff.storeId,
-        storeName: storeName ?? originalStaff.storeName,
+        storeId: formData.storeId ?? originalStaff.storeId,
+        storeName: formData.location ?? originalStaff.storeName,
         email: formData.email ?? originalStaff.email,
       };
       await updateStaff(updatedFields, id);
+      // await assignStore(formData.storeId || "", id);
       showToast("Staff updated successfully!", "success");
       console.log({
-        userId: formData.userId,
+        userId: formData.storeId,
         resetUrl: `${baseUrl}/reset_pass`,
       });
       if (formData.password === "Reset") {
@@ -107,9 +108,6 @@ export default function TeamTable({
           resetUrl: `${baseUrl}/reset_pass`,
         });
       }
-
-      // Await the store assignment request
-      // await assignStore(storeId, id)
     } catch (error) {
       console.error("Error:", error);
       alert("An error occurred while updating staff.");
@@ -216,6 +214,32 @@ export default function TeamTable({
     };
   }, []);
 
+  const checkIfActive = (
+    loginDate: string | null,
+    loginTime: string | null
+  ) => {
+    if (!loginDate || !loginTime) return false;
+
+    const loginDateTimeString = `${loginDate}T${loginTime}`;
+
+    const loginDateTime = new Date(loginDateTimeString);
+
+    const currentTime = new Date();
+
+    const expirationTime = new Date(
+      currentTime.getTime() - 12 * 60 * 60 * 1000
+    );
+
+    return loginDateTime >= expirationTime;
+  };
+  useEffect(() => {
+    data.forEach((staff) => {
+      if (staff.loginDate && staff.loginTime) {
+        const isActive = checkIfActive(staff.loginDate, staff.loginTime);
+        staff.active = isActive;
+      }
+    });
+  }, [data]);
   useEffect(() => {
     if (openEdit && selectedProfileId) {
       const selectedStaff = data.find(
@@ -277,7 +301,7 @@ export default function TeamTable({
                   className={`absolute top-[8px] h-[90%] w-[75%] left-0 ${
                     staff.status === "active"
                       ? "opacity-0 "
-                      : staff.status === "Deactivated"
+                      : staff.status === "inactive"
                       ? "opacity-80  bg-white"
                       : "opacity-0"
                   } h-12 `}
@@ -352,14 +376,12 @@ export default function TeamTable({
                 <td className=" p-2">
                   <span
                     className={`px-2 py-1 border border-green-800 rounded-3xl ${
-                      staff.status === "active"
+                      staff.active
                         ? "bg-green-50 text-green-800"
-                        : staff.status === activeStatus
-                        ? "bg-gray-200 text-gray-500"
                         : "bg-red-200 text-red-800"
                     }`}
                   >
-                    {capitalizeFirstLetter(staff.status)}
+                    {staff.active ? "Active" : "Inactive"}
                   </span>
                 </td>
                 <td className=" p-2 relative text-indigo-600 cursor-pointer">

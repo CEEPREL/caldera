@@ -33,7 +33,16 @@ export async function updateStaff(staffInfo: UpdateStaffInfoProp, id: string) {
     }),
   });
 
-  console.log("hi");
+  console.log(
+    JSON.stringify({
+      fullName,
+      phoneNumber,
+      userName,
+      storeId,
+      storeName,
+      email,
+    })
+  );
 
   console.log(
     JSON.stringify({
@@ -63,6 +72,7 @@ export async function assignStore(storesId: string, id: string) {
     method: "POST",
     body: JSON.stringify({ storeId, userId }),
   });
+  console.log(JSON.stringify({ storeId, userId }));
 
   const data = await res.json();
   return { message: data.message };

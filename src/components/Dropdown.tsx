@@ -104,7 +104,7 @@ const Dropdown = <T,>({
               <div
                 key={index}
                 className={clsx(
-                  `p-2  w-full   hover:bg-gray-100 cursor-pointer `,
+                  `p-2 w-full hover:bg-gray-100 cursor-pointer`,
                   className3
                 )}
                 onClick={() =>
@@ -112,7 +112,7 @@ const Dropdown = <T,>({
                 }
               >
                 <h1 id={id}>
-                  {getLabel ? getLabel(option) : (option as string)}{" "}
+                  {getLabel ? getLabel(option) : (option as string)}
                   {getSubLabel && typeof option !== "string" && (
                     <span className="italic">{getSubLabel(option)}</span>
                   )}

@@ -1,11 +1,14 @@
 "use client";
 import Dropdown from "@/components/Dropdown";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import states from "@/data/states.json";
 import { createStore, StoreData } from "@/app/actions/create";
 import { useToastContext } from "@/ContextAPI/toastContext";
 import { useRouter } from "next/navigation";
+import { fetchStaff } from "@/app/actions/fetch";
+import { FormData } from "@/components/admin/AddTeamSlider";
+import { assignStore } from "@/app/actions/post";
 
 function New() {
   const allStates = states.states.map((s) => s.name);
@@ -16,12 +19,11 @@ function New() {
     storeName: "",
     storeState: "",
     phoneNumber: "",
-    // cadre: "",
-    // username: "",
-    // password: "",
-    // confirmPassword: "",
+    userId: "",
+    fullName: "",
   });
   const [loading, setLoading] = useState(false);
+  const [staff, setStaff] = useState<FormData[]>([]);
   const { showToast } = useToastContext();
   const router = useRouter();
 
@@ -35,6 +37,21 @@ function New() {
     setFormData({ ...formData, storeState: state.name });
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await fetchStaff();
+        setStaff(res);
+      } catch (error) {
+        console.error("Error fetching staff:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   // Handle form submission
   const handleSubmit = async (formData: StoreData) => {
     try {
@@ -43,23 +60,40 @@ function New() {
         storeLocation: formData.storeLocation,
         storeName: formData.storeName,
         storeState: formData.storeState,
-        phoneNumber: formData.phoneNumber,
+        phoneNumber: "0",
       });
-      if (result.success) {
-        setFormData({
-          storeLocation: "",
-          storeName: "",
-          storeState: "",
-          phoneNumber: "",
-        });
-        showToast("Store created successfully!", "success");
-        router.push("/admin/stores");
+
+      console.log(result.data.storeId, formData.userId);
+      const storeId = result.data.storeId;
+      if (storeId) {
+        const assignResult = await assignStore(storeId, formData.userId || "");
+
+        if (assignResult) {
+          setFormData({
+            storeLocation: "",
+            storeName: "",
+            storeState: "",
+            phoneNumber: "",
+            userId: "",
+            fullName: "",
+          });
+
+          showToast("Store created and assigned successfully!", "success");
+          router.push("/admin/stores");
+        } else {
+          showToast("error" || "Failed to assign store", "error");
+        }
       } else {
-        showToast("Something went wrong", "error");
+        showToast("Store ID not found in the response.", "error");
       }
     } catch (error) {
-      console.error("Error creating store ", error);
+      console.error("Error creating and assigning store", error);
+      showToast(
+        "An error occurred while creating and assigning the store",
+        "error"
+      );
     }
+
     setLoading(false);
   };
 
@@ -132,13 +166,34 @@ function New() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="phone">Phone Number</label>
-              <input
-                className="h-8 p-1 rounded-md"
-                type="text"
-                id="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
+              <label htmlFor="manager">Assign Manager</label>
+              <Dropdown
+                showSearch
+                className="gap-0"
+                className2="bg-white border-none w-full h-9 flex justify-between items-center rounded-md"
+                label={
+                  typeof formData.fullName === "string"
+                    ? formData.fullName
+                    : "Select a State"
+                }
+                options={staff || []}
+                placeholder="Select a State"
+                onSelect={(selectedStaff) => {
+                  const selectedstaff = staff?.find(
+                    (user) => user.fullName === selectedStaff
+                  );
+
+                  if (selectedstaff) {
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      fullName: selectedstaff.fullName,
+                      userId: selectedstaff.userId, // Assign the userId to formData
+                    }));
+                  }
+                }}
+                getLabel={(staff) => staff.fullName}
+                getSubLabel={(staff) => ` `}
+                id="storeId"
               />
               <button className="bg-button mt-2 text-white p-2 rounded-full">
                 {loading ? "Creating..." : "Create store"}
