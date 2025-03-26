@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import TeamProfileSlider from "./TeamProfileSlider";
 import AddTeamSlider from "@/components/admin/AddTeamSlider";
 import { FormData } from "./AddTeamSlider";
@@ -232,12 +232,13 @@ export default function TeamTable({
 
     return loginDateTime >= expirationTime;
   };
-  useEffect(() => {
-    data.forEach((staff) => {
+  const updatedData = useMemo(() => {
+    return data.map((staff) => {
       if (staff.loginDate && staff.loginTime) {
         const isActive = checkIfActive(staff.loginDate, staff.loginTime);
-        staff.active = isActive;
+        return { ...staff, active: isActive };
       }
+      return staff;
     });
   }, [data]);
   useEffect(() => {
@@ -286,7 +287,7 @@ export default function TeamTable({
           </tr>
         </thead>
         <tbody>
-          {data.map((staff, index) =>
+          {updatedData.map((staff, index) =>
             staff.fullName ? (
               <tr key={staff.userId} className=" relative border-b">
                 <td className=" justify-start items-center h-12 text-gray-400 text-xs flex w-14 p-2">
@@ -298,7 +299,7 @@ export default function TeamTable({
                   {index + 1}
                 </td>
                 <td
-                  className={`absolute top-[8px] h-[90%] w-[75%] left-0 ${
+                  className={`absolute top-[8px] h-[80%] md:w-[60%] w-[70%] left-0 ${
                     staff.status === "active"
                       ? "opacity-0 "
                       : staff.status === "inactive"
@@ -376,12 +377,14 @@ export default function TeamTable({
                 <td className=" p-2">
                   <span
                     className={`px-2 py-1 border border-green-800 rounded-3xl ${
-                      staff.active
+                      staff.active && staff.status === "active"
                         ? "bg-green-50 text-green-800"
                         : "bg-red-200 text-red-800"
                     }`}
                   >
-                    {staff.active ? "Active" : "Inactive"}
+                    {staff.active && staff.status === "active"
+                      ? "Active"
+                      : "Inactive"}
                   </span>
                 </td>
                 <td className=" p-2 relative text-indigo-600 cursor-pointer">
