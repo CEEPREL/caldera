@@ -122,7 +122,7 @@ function StorePage() {
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex pt-3 gap-6">
+      <div className="flex overflow-x-auto pt-3 gap-6">
         {states.map((state) => (
           <button
             key={state}
@@ -221,7 +221,9 @@ function StorePage() {
                     </div>
                     <div className="flex justify-between items-center">
                       <p className="text-sm text-gray-500">Created on</p>
-                      <p className="text-sm text-gray-500">2024-01-01</p>
+                      <p className="text-sm text-gray-500">
+                        {store.createdDate}
+                      </p>
                     </div>
                   </div>
                 </div>

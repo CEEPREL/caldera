@@ -20,7 +20,7 @@ function Team() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
-    userId: crypto.randomUUID(),
+    userId: "",
     fullName: "",
     email: "",
     state: "",

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import TeamProfileSlider from "./TeamProfileSlider";
 import AddTeamSlider from "@/components/admin/AddTeamSlider";
 import { FormData } from "./AddTeamSlider";
@@ -9,8 +9,8 @@ import { Trash2 } from "lucide-react";
 import Confirm from "@/components/store/general_UI/ConfirmBox";
 import { UpdateStaffInfoProp, updateStaff } from "@/app/actions/update";
 import { resetPass } from "@/app/actions/post";
-import { capitalizeFirstLetter } from "./AdminOrderDetailSlider";
 import { useToastContext } from "@/ContextAPI/toastContext";
+import { getStaffStatus } from "@/app/actions/fetch";
 
 const menuItems = [
   { label: "User Activity", icon: "/icons/brief_case.svg" },
@@ -55,7 +55,6 @@ export default function TeamTable({
     url: "",
     active: true,
   });
-  const activeStatus = "Active";
 
   const { stateObj } = useStore();
 
@@ -71,10 +70,11 @@ export default function TeamTable({
 
       const originalStaff = data.find((staff) => staff.userId === id);
       if (!originalStaff) {
-        setErrorMessage("Staff not found.");
+        showToast("Staff not found.", "error");
         setLoading(false);
         return;
       }
+
       // Find store based on selected location
       // const selectedStore = flatStores.find(
       //   (store) => store.storeLocation === formData.location
@@ -85,31 +85,24 @@ export default function TeamTable({
       //   setLoading(false);
       //   return;
       // }
-      const storeId = originalStaff.storeId;
-      const storeName = originalStaff.storeName;
       const updatedFields: UpdateStaffInfoProp = {
         fullName: formData.fullName ?? originalStaff.fullName,
         phoneNumber: formData.phoneNumber ?? originalStaff.phoneNumber,
         userName: formData.userName ?? originalStaff.userName,
-        storeId: storeId ?? originalStaff.storeId,
-        storeName: storeName ?? originalStaff.storeName,
+        storeId: formData.storeId ?? originalStaff.storeId,
+        storeName: formData.location ?? originalStaff.storeName,
         email: formData.email ?? originalStaff.email,
       };
       await updateStaff(updatedFields, id);
+      // await assignStore(formData.storeId || "", id);
       showToast("Staff updated successfully!", "success");
-      console.log({
-        userId: formData.userId,
-        resetUrl: `${baseUrl}/reset_pass`,
-      });
+
       if (formData.password === "Reset") {
         await resetPass({
           userId: formData.userId,
           resetUrl: `${baseUrl}/reset_pass`,
         });
       }
-
-      // Await the store assignment request
-      // await assignStore(storeId, id);
     } catch (error) {
       console.error("Error:", error);
       alert("An error occurred while updating staff.");
@@ -129,6 +122,7 @@ export default function TeamTable({
       console.error("error: ", error);
     } finally {
       console.error(errorMessage);
+      setErrorMessage(errorMessage);
     }
   };
 
@@ -160,23 +154,34 @@ export default function TeamTable({
         active: staff.status === "Active",
       }));
     } else if (label === "Remove Staff") {
+      <Confirm
+        message={`Are you sure you want to delete ${staff.fullName}?`}
+        button={
+          <button
+            className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border-gray-500 transition cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <Trash2 className="text-red-600" />
+            <h1 className="text-sm text-gray-700">Remove Staff</h1>
+          </button>
+        }
+        onConfirm={() => handleDelStaff(staff.userId)}
+      />;
     } else if (label === "Deactivate User" || label === "Activate User") {
+      console.log("clicked");
       setLoading(true);
-      setData((prevData) =>
-        prevData.map((user) =>
-          user.userId.toString() === staff.userId
-            ? {
-                ...user,
-                status:
-                  user.status === "Active"
-                    ? "Deactivated"
-                    : user.status === "Inactive"
-                    ? "Deactivated"
-                    : "Active",
-              }
-            : user
-        )
-      );
+      try {
+        const res = await getStaffStatus(staff.userId);
+        if (res.ok) {
+          setData(res.data);
+        } else {
+          console.error("Error: Response not OK", res);
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
+      }
       setOpenEdit(false);
       setOpenProfile(false);
     } else {
@@ -216,6 +221,33 @@ export default function TeamTable({
     };
   }, []);
 
+  const checkIfActive = (
+    loginDate: string | null,
+    loginTime: string | null
+  ) => {
+    if (!loginDate || !loginTime) return false;
+
+    const loginDateTimeString = `${loginDate}T${loginTime}`;
+
+    const loginDateTime = new Date(loginDateTimeString);
+
+    const currentTime = new Date();
+
+    const expirationTime = new Date(
+      currentTime.getTime() - 12 * 60 * 60 * 1000
+    );
+
+    return loginDateTime >= expirationTime;
+  };
+  const updatedData = useMemo(() => {
+    return data.map((staff) => {
+      if (staff.loginDate && staff.loginTime) {
+        const isActive = checkIfActive(staff.loginDate, staff.loginTime);
+        return { ...staff, active: isActive };
+      }
+      return staff;
+    });
+  }, [data]);
   useEffect(() => {
     if (openEdit && selectedProfileId) {
       const selectedStaff = data.find(
@@ -262,7 +294,7 @@ export default function TeamTable({
           </tr>
         </thead>
         <tbody>
-          {data.map((staff, index) =>
+          {updatedData.map((staff, index) =>
             staff.fullName ? (
               <tr key={staff.userId} className=" relative border-b">
                 <td className=" justify-start items-center h-12 text-gray-400 text-xs flex w-14 p-2">
@@ -274,10 +306,10 @@ export default function TeamTable({
                   {index + 1}
                 </td>
                 <td
-                  className={`absolute top-[8px] h-[90%] w-[75%] left-0 ${
+                  className={`absolute top-[8px] h-[80%] md:w-[60%] w-[70%] left-0 ${
                     staff.status === "active"
                       ? "opacity-0 "
-                      : staff.status === "Deactivated"
+                      : staff.status === "inactive"
                       ? "opacity-80  bg-white"
                       : "opacity-0"
                   } h-12 `}
@@ -352,14 +384,14 @@ export default function TeamTable({
                 <td className=" p-2">
                   <span
                     className={`px-2 py-1 border border-green-800 rounded-3xl ${
-                      staff.status === "active"
+                      staff.active && staff.status === "active"
                         ? "bg-green-50 text-green-800"
-                        : staff.status === activeStatus
-                        ? "bg-gray-200 text-gray-500"
                         : "bg-red-200 text-red-800"
                     }`}
                   >
-                    {capitalizeFirstLetter(staff.status)}
+                    {staff.active && staff.status === "active"
+                      ? "Active"
+                      : "Inactive"}
                   </span>
                 </td>
                 <td className=" p-2 relative text-indigo-600 cursor-pointer">
@@ -380,39 +412,22 @@ export default function TeamTable({
                         {menuItems.map((item, index) => {
                           const isDeactivate = item.label === "Deactivate User";
                           const newLabel =
-                            staff.status === "Active" && isDeactivate
+                            staff.status === "active" && isDeactivate
                               ? "Deactivate User"
-                              : staff.status === "Deactivated" && isDeactivate
+                              : staff.status === "inactive" && isDeactivate
                               ? "Activate User"
                               : item.label;
                           const newIcon =
                             staff.status === "Active" && isDeactivate
                               ? "/icons/deactivate.svg"
-                              : staff.status === "Deactivated" && isDeactivate
+                              : staff.status === "inactive" && isDeactivate
                               ? "/icons/activate.svg"
                               : item.icon;
 
                           return (
                             <React.Fragment key={`staff-${index}`}>
-                              {item.label === "Remove Staff" ? (
-                                <Confirm
-                                  message={`Are you sure you want to delete ${staff.fullName}?`}
-                                  button={
-                                    <button
-                                      className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border-gray-500 transition cursor-pointer"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDelStaff(staff.userId);
-                                      }}
-                                    >
-                                      <Trash2 className="text-red-600" />
-                                      <h1 className="text-sm text-gray-700">
-                                        Remove Staff
-                                      </h1>
-                                    </button>
-                                  }
-                                  onConfirm={() => console.log(staff.userId)}
-                                />
+                              {item.label === "Remove Staf" ? (
+                                <div></div>
                               ) : (
                                 <button
                                   onClick={() =>

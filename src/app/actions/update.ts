@@ -33,7 +33,16 @@ export async function updateStaff(staffInfo: UpdateStaffInfoProp, id: string) {
     }),
   });
 
-  console.log("hi");
+  console.log(
+    JSON.stringify({
+      fullName,
+      phoneNumber,
+      userName,
+      storeId,
+      storeName,
+      email,
+    })
+  );
 
   console.log(
     JSON.stringify({
@@ -45,25 +54,6 @@ export async function updateStaff(staffInfo: UpdateStaffInfoProp, id: string) {
       email,
     })
   );
-  const data = await res.json();
-  return { message: data.message };
-}
-
-//Assign store
-export async function assignStore(storesId: string, id: string) {
-  const storeId = storesId;
-  const userId = id;
-  const token = (await cookies()).get("token")?.value;
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/assignstore`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `${token}`,
-    },
-    method: "POST",
-    body: JSON.stringify({ storeId, userId }),
-  });
-
   const data = await res.json();
   return { message: data.message };
 }

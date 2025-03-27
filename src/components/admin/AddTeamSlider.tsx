@@ -22,6 +22,8 @@ export interface FormData {
   url: string;
   active: boolean;
   password?: string;
+  loginTime?: string;
+  loginDate?: string;
 }
 
 interface SlideDrawerProps {
@@ -154,15 +156,28 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   options={optionslocation || []}
                   placeholder="Select a State"
                   onSelect={(selectedState) => {
-                    onChange({
-                      target: {
-                        name: "location", // Field name to update
-                        value: formData.location || selectedState, // Value from the selected state
-                      },
-                    } as React.ChangeEvent<HTMLInputElement>);
+                    const selectedLocation = optionslocation?.find(
+                      (location) => location.storeLocation === selectedState
+                    );
+
+                    if (selectedLocation) {
+                      onChange({
+                        target: {
+                          name: "location",
+                          value: selectedLocation.storeLocation,
+                        },
+                      } as React.ChangeEvent<HTMLInputElement>);
+
+                      onChange({
+                        target: {
+                          name: "storeId",
+                          value: selectedLocation.storeId,
+                        },
+                      } as React.ChangeEvent<HTMLInputElement>);
+                    }
                   }}
                   getLabel={(state) => state.storeLocation}
-                  getSubLabel={() => ""}
+                  getSubLabel={(state) => ` in ${state.state}`}
                   id="location"
                 />
               </div>
