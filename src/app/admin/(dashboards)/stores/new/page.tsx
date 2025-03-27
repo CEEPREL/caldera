@@ -197,7 +197,7 @@ function New() {
                   }
                 }}
                 getLabel={(staff) => staff.fullName}
-                getSubLabel={(staff) => ` `}
+                getSubLabel={() => ` `}
                 id="storeId"
               />
               <button className="bg-button mt-2 text-white p-2 rounded-full">

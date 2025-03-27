@@ -85,8 +85,6 @@ export default function TeamTable({
       //   setLoading(false);
       //   return;
       // }
-      const storeId = originalStaff.storeId;
-      const storeName = originalStaff.storeName;
       const updatedFields: UpdateStaffInfoProp = {
         fullName: formData.fullName ?? originalStaff.fullName,
         phoneNumber: formData.phoneNumber ?? originalStaff.phoneNumber,
@@ -124,6 +122,7 @@ export default function TeamTable({
       console.error("error: ", error);
     } finally {
       console.error(errorMessage);
+      setErrorMessage(errorMessage);
     }
   };
 
