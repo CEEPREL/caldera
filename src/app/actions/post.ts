@@ -307,13 +307,15 @@ export async function assignStore(storesId: string, id: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/assignstore`, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`, // Correct authorization header
+      Authorization: `${token}`,
     },
     method: "POST",
     body: JSON.stringify({ storeId, userId }),
   });
 
   const data = await res.json();
+
+  console.log("this assign:", JSON.stringify({ storeId, userId }));
 
   return {
     data,

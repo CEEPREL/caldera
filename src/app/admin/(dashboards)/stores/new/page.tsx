@@ -8,10 +8,11 @@ import { useToastContext } from "@/ContextAPI/toastContext";
 import { useRouter } from "next/navigation";
 import { fetchStaff } from "@/app/actions/fetch";
 import { FormData } from "@/components/admin/AddTeamSlider";
-import { assignStore } from "@/app/actions/post";
+import { assignStore, resetPass } from "@/app/actions/post";
 
 function New() {
   const allStates = states.states.map((s) => s.name);
+  const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}`;
 
   // State for form data
   const [formData, setFormData] = useState<StoreData>({
@@ -67,6 +68,10 @@ function New() {
       const storeId = result.data.storeId;
       if (storeId) {
         const assignResult = await assignStore(storeId, formData.userId || "");
+        await resetPass({
+          userId: formData.userId,
+          resetUrl: `${baseUrl}/reset_pass`,
+        });
 
         if (assignResult) {
           setFormData({

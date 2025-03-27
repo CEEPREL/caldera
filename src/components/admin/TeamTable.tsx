@@ -10,6 +10,7 @@ import Confirm from "@/components/store/general_UI/ConfirmBox";
 import { UpdateStaffInfoProp, updateStaff } from "@/app/actions/update";
 import { resetPass } from "@/app/actions/post";
 import { useToastContext } from "@/ContextAPI/toastContext";
+import { getStaffStatus } from "@/app/actions/fetch";
 
 const menuItems = [
   { label: "User Activity", icon: "/icons/brief_case.svg" },
@@ -32,7 +33,6 @@ export default function TeamTable({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const menuItem = menuItems;
   const [openProfile, setOpenProfile] = useState<boolean>(false);
-  const [active, setActive] = useState<boolean>(false);
   const { showToast } = useToastContext();
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
@@ -98,10 +98,7 @@ export default function TeamTable({
       await updateStaff(updatedFields, id);
       // await assignStore(formData.storeId || "", id);
       showToast("Staff updated successfully!", "success");
-      console.log({
-        userId: formData.storeId,
-        resetUrl: `${baseUrl}/reset_pass`,
-      });
+
       if (formData.password === "Reset") {
         await resetPass({
           userId: formData.userId,
@@ -160,21 +157,32 @@ export default function TeamTable({
     } else if (label === "Remove Staff") {
     } else if (label === "Deactivate User" || label === "Activate User") {
       setLoading(true);
-      setData((prevData) =>
-        prevData.map((user) =>
-          user.userId.toString() === staff.userId
-            ? {
-                ...user,
-                status:
-                  user.status === "Active"
-                    ? "Deactivated"
-                    : user.status === "Inactive"
-                    ? "Deactivated"
-                    : "Active",
-              }
-            : user
-        )
-      );
+      try {
+        const res = await getStaffStatus(staff.userId);
+        if (res.ok) {
+          setData(res.data);
+        } else {
+          console.error("Error: Response not OK", res);
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
+      }
+
+      // setData((prevData) =>
+      //   prevData.map((user) =>
+      //     user.userId.toString() === staff.userId
+      //       ? {
+      //           ...user,
+      //           status:
+      //             user.status === "Active"
+      //               ? "Deactivated"
+      //               : user.status === "Inactive"
+      //               ? "Deactivated"
+      //               : "Active",
+      //         }
+      //       : user
+      //   )
+      // );
       setOpenEdit(false);
       setOpenProfile(false);
     } else {
