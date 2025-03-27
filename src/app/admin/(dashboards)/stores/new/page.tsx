@@ -182,7 +182,7 @@ function New() {
                     : "Select a State"
                 }
                 options={staff || []}
-                placeholder="Select a State"
+                placeholder="Select a Manager"
                 onSelect={(selectedStaff) => {
                   const selectedstaff = staff?.find(
                     (user) => user.fullName === selectedStaff
