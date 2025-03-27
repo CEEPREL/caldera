@@ -86,7 +86,7 @@ function New() {
           showToast("Store created and assigned successfully!", "success");
           router.push("/admin/stores");
         } else {
-          showToast("error" || "Failed to assign store", "error");
+          showToast("Failed to assign store", "error");
         }
       } else {
         showToast("Store ID not found in the response.", "error");
