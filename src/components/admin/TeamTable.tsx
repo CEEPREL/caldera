@@ -155,7 +155,23 @@ export default function TeamTable({
         active: staff.status === "Active",
       }));
     } else if (label === "Remove Staff") {
+      <Confirm
+        message={`Are you sure you want to delete ${staff.fullName}?`}
+        button={
+          <button
+            className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border-gray-500 transition cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <Trash2 className="text-red-600" />
+            <h1 className="text-sm text-gray-700">Remove Staff</h1>
+          </button>
+        }
+        onConfirm={() => handleDelStaff(staff.userId)}
+      />;
     } else if (label === "Deactivate User" || label === "Activate User") {
+      console.log("clicked");
       setLoading(true);
       try {
         const res = await getStaffStatus(staff.userId);
@@ -167,22 +183,6 @@ export default function TeamTable({
       } catch (error) {
         console.error("An error occurred:", error);
       }
-
-      // setData((prevData) =>
-      //   prevData.map((user) =>
-      //     user.userId.toString() === staff.userId
-      //       ? {
-      //           ...user,
-      //           status:
-      //             user.status === "Active"
-      //               ? "Deactivated"
-      //               : user.status === "Inactive"
-      //               ? "Deactivated"
-      //               : "Active",
-      //         }
-      //       : user
-      //   )
-      // );
       setOpenEdit(false);
       setOpenProfile(false);
     } else {
@@ -413,39 +413,22 @@ export default function TeamTable({
                         {menuItems.map((item, index) => {
                           const isDeactivate = item.label === "Deactivate User";
                           const newLabel =
-                            staff.status === "Active" && isDeactivate
+                            staff.status === "active" && isDeactivate
                               ? "Deactivate User"
-                              : staff.status === "Deactivated" && isDeactivate
+                              : staff.status === "inactive" && isDeactivate
                               ? "Activate User"
                               : item.label;
                           const newIcon =
                             staff.status === "Active" && isDeactivate
                               ? "/icons/deactivate.svg"
-                              : staff.status === "Deactivated" && isDeactivate
+                              : staff.status === "inactive" && isDeactivate
                               ? "/icons/activate.svg"
                               : item.icon;
 
                           return (
                             <React.Fragment key={`staff-${index}`}>
-                              {item.label === "Remove Staff" ? (
-                                <Confirm
-                                  message={`Are you sure you want to delete ${staff.fullName}?`}
-                                  button={
-                                    <button
-                                      className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border-gray-500 transition cursor-pointer"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDelStaff(staff.userId);
-                                      }}
-                                    >
-                                      <Trash2 className="text-red-600" />
-                                      <h1 className="text-sm text-gray-700">
-                                        Remove Staff
-                                      </h1>
-                                    </button>
-                                  }
-                                  onConfirm={() => console.log(staff.userId)}
-                                />
+                              {item.label === "Remove Staf" ? (
+                                <div></div>
                               ) : (
                                 <button
                                   onClick={() =>
