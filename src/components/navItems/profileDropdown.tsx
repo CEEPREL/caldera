@@ -47,7 +47,7 @@ export function ProfileDropdown({
           <MenubarItem
             className="hover:bg-gray-100"
             inset
-            onClick={() => console.log("hello ", storeData)}
+            onClick={handleProfileRedirect}
           >
             Profile
           </MenubarItem>
