@@ -47,7 +47,7 @@ export function ProfileDropdown({
           <MenubarItem
             className="hover:bg-gray-100"
             inset
-            onClick={handleProfileRedirect} // Trigger the redirect on click
+            onClick={handleProfileRedirect}
           >
             Profile
           </MenubarItem>

@@ -149,7 +149,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     };
 
     fetchData();
-  }, []);
+  }, [storeId, pathname]);
 
   // Fetch store data
   useEffect(() => {
@@ -159,7 +159,30 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     };
     fetchStoreData();
   }, []);
+  useEffect(() => {
+    const fetchStoreData = async () => {
+      if (!storeId) {
+        console.warn("No storeId found, skipping fetch.");
+        return;
+      }
 
+      try {
+        const storedData = await getStoreData();
+        console.log("Fetched Store Data:", storedData);
+
+        if (!storedData || storedData.status === false || !storedData.data) {
+          console.error("Invalid store data received:", storedData);
+          return;
+        }
+
+        setStoreData(storedData);
+      } catch (error) {
+        console.error("Error fetching store data:", error);
+      }
+    };
+
+    fetchStoreData();
+  }, [storeId]);
   return (
     <StoreContext.Provider
       value={{

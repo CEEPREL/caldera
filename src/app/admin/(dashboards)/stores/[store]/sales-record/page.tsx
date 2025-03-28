@@ -12,6 +12,7 @@ import {
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import { Order } from "../daily-sales/page";
 import { useStore } from "@/ContextAPI/storeContex";
+import SkeletonLoader from "../../../loading";
 
 interface DataByCategory {
   transactionId: string;
@@ -59,6 +60,17 @@ function Page() {
   const today = moment();
   const params = useParams<{ storeId?: string }>();
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && !storeId) {
+      const pathParts = window.location.pathname.split("/");
+      const storeIndex = pathParts.indexOf("stores") + 1;
+      if (storeIndex && pathParts[storeIndex]) {
+        setStoreId(pathParts[storeIndex]);
+      }
+    }
+    console.log(storeId, "new");
+  }, [storeId]);
 
   const groupedOrders: GroupedOrders = oldSalesRecData.reduce((acc, order) => {
     const orderDate = new Date(order.orderDate);
@@ -220,36 +232,42 @@ function Page() {
 
         {salesToggle === "daily" ? (
           <div className="pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {Object.entries(groupedOrders)
-              .reverse()
-              .map(([date, orders]) => (
-                <div
-                  onClick={() => handleRecStore(date)}
-                  key={date}
-                  // href={`/caldera/${storeId}/sales-record/${date}`}
-                >
-                  <div className="bg-gradient-to-t from-gray-100 to-gray-300 shadow-2xl rounded-lg p-5">
-                    <div className="flex justify-between items-center">
-                      <div className="flex w-full flex-col gap-8">
-                        <p className="text-sm text-gray-500">
-                          {date === todayStr
-                            ? "Today"
-                            : date === yesterdayStr
-                            ? "Yesterday"
-                            : date}
-                        </p>
-                        <div className="flex flex-row justify-between w-full">
-                          <p className="text-sm text-black">
-                            {orders.length}{" "}
-                            {orders.length > 1 ? "Orders" : "Order"}
+            {Object.keys(groupedOrders).length > 0 ? (
+              Object.entries(groupedOrders)
+                .reverse()
+                .map(([date, orders]) => (
+                  <div
+                    onClick={() => handleRecStore(date)}
+                    key={date}
+                    className="cursor-pointer"
+                  >
+                    <div className="bg-gradient-to-t from-gray-100 to-gray-300 shadow-2xl rounded-lg p-5">
+                      <div className="flex justify-between items-center">
+                        <div className="flex w-full flex-col gap-8">
+                          <p className="text-sm text-gray-500">
+                            {date === todayStr
+                              ? "Today"
+                              : date === yesterdayStr
+                              ? "Yesterday"
+                              : date}
                           </p>
-                          <ChevronRight />
+                          <div className="flex flex-row justify-between w-full">
+                            <p className="text-sm text-black">
+                              {orders.length}{" "}
+                              {orders.length > 1 ? "Orders" : "Order"}
+                            </p>
+                            <ChevronRight />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+            ) : (
+              <p className="text-center text-gray-500 col-span-full">
+                No record found
+              </p>
+            )}
           </div>
         ) : (
           <div className="gap-2 flex flex-col">
@@ -269,7 +287,9 @@ function Page() {
               ))}
             </div>
             {loading ? (
-              <p>Loading...</p>
+              <div className="flex items-center justify-center h-screen w-full">
+                <SkeletonLoader />
+              </div>
             ) : (
               <PurchaseOrderTable
                 columns={columns}

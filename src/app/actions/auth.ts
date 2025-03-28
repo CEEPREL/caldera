@@ -97,6 +97,7 @@ export async function getStoreId() {
 export async function getStoreData() {
   const cookieStore = cookies();
   const storeData = (await cookieStore).get("storeData")?.value;
+  console.log("storeData");
 
   if (!storeData) {
     return null;

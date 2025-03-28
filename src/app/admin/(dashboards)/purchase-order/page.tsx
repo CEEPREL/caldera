@@ -6,6 +6,7 @@ import AdminOrderDetailSlider from "@/components/admin/AdminOrderDetailSlider";
 import PurchaseOrderTableAdmin from "@/components/admin/purchaseOrderTableAdmin";
 import MenuComponent from "@/components/store/general_UI/SmallMenuComp";
 import React, { useState, useEffect, useRef } from "react";
+import SkeletonLoader from "../loading";
 
 interface MenuItem {
   label: string;
@@ -197,7 +198,9 @@ function Page() {
       <div className="flex flex-col">
         <h1 className="text-2xl font-medium">Purchase Order</h1>
         {loadingProducts ? (
-          <p>Loading...</p>
+          <div className="flex items-center justify-center h-screen w-full">
+            <SkeletonLoader />
+          </div>
         ) : (
           <PurchaseOrderTableAdmin columns={columns} data={poData} />
         )}

@@ -685,12 +685,13 @@ export async function getDebtorsList(storeId: string) {
     return "error";
   }
 }
+
 export async function getStaffStatus(userId: string) {
   const token = (await cookies()).get("token")?.value;
 
   if (!token) {
     console.error("No token found in cookies.");
-    return null; // or throw an error
+    return null;
   }
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -700,7 +701,7 @@ export async function getStaffStatus(userId: string) {
   }
 
   try {
-    const response = await fetch(`${apiUrl}/staff${userId}`, {
+    const response = await fetch(`${apiUrl}/staff/${userId}`, {
       method: "GET",
       headers: {
         Authorization: `${token}`,
@@ -717,7 +718,7 @@ export async function getStaffStatus(userId: string) {
 
     const result = await response.json();
 
-    return result.data;
+    return result;
   } catch (error) {
     console.error("Error fetching data:", error);
     return "error";

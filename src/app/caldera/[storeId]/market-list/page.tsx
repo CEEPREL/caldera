@@ -3,6 +3,7 @@ import { useCart } from "@/ContextAPI/cartContext";
 import { useStore } from "@/ContextAPI/storeContex";
 import { getOutOfStockList } from "@/app/actions/fetch";
 import { createPurchaseOrder } from "@/app/actions/post";
+import SkeletonLoader from "@/app/admin/(dashboards)/loading";
 import PurchaseOrderTable from "@/components/store/inventory/purchaseOrderTable";
 import CartSlider from "@/components/store/stock_mgt/CartSlider";
 import React, { useEffect, useState } from "react";
@@ -149,7 +150,9 @@ function Page() {
         />
         <div>
           {loading ? (
-            <p className="text-2xl">Loading...</p>
+            <div className="flex items-center justify-center h-screen w-full">
+              <SkeletonLoader />
+            </div>
           ) : (
             <PurchaseOrderTable columns={inventoryTable} data={inventoryData} />
           )}

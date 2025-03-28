@@ -24,7 +24,7 @@ export default function ConfirmDialog({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{button}</AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className=" overflow-visible fixed z-50">
         <AlertDialogHeader>
           <AlertDialogTitle>{message}</AlertDialogTitle>
           <AlertDialogDescription></AlertDialogDescription>

@@ -12,6 +12,7 @@ import {
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import { Order } from "../daily-sales/page";
 import { useStore } from "@/ContextAPI/storeContex";
+import SkeletonLoader from "@/app/admin/(dashboards)/loading";
 
 interface DataByCategory {
   transactionId: string;
@@ -269,7 +270,9 @@ function Page() {
               ))}
             </div>
             {loading ? (
-              <p>Loading...</p>
+              <div className="flex items-center justify-center h-screen w-full">
+                <SkeletonLoader />
+              </div>
             ) : (
               <PurchaseOrderTable
                 columns={columns}

@@ -8,7 +8,7 @@ import CartSlider, {
 } from "@/components/store/daily_sales/CartSlider";
 import OrderDetailSlider from "@/components/store/daily_sales/OrderDetailSlider";
 import { getInventoies, getSalesReport } from "@/app/actions/fetch";
-import { useStore } from "@/ContextAPI/storeContex";
+// import { useStore } from "@/ContextAPI/storeContex";
 // import { InventoryItem } from "../inventory/page";
 import { useCart } from "@/ContextAPI/cartContext";
 import {
@@ -17,6 +17,7 @@ import {
   createSalesRefund,
 } from "@/app/actions/post";
 import { InventoryItem } from "@/app/caldera/[storeId]/inventory/page";
+import SkeletonLoader from "../../../loading";
 
 export interface Order {
   orderId: string;
@@ -55,8 +56,8 @@ export interface Transaction {
 }
 
 function Page() {
-  const { storeData } = useStore();
-  const storeId = storeData?.data.storeId;
+  const [storeId, setStoreId] = useState<string | null>(null);
+
   const [cartSalesOpen, setCartSalesOpen] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
   const [salesReportData, setSalesReportData] = useState<Order[]>([]);
@@ -69,6 +70,16 @@ function Page() {
     paid: "pending",
     product: [],
   });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const pathParts = window.location.pathname.split("/");
+      const storeIndex = pathParts.indexOf("stores") + 1;
+      if (storeIndex && pathParts[storeIndex]) {
+        setStoreId(pathParts[storeIndex]);
+      }
+    }
+  }, []);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
   const [salesToggle, setSalesToggle] = useState<"daily" | "product">("daily");
@@ -165,8 +176,6 @@ function Page() {
       price,
       quantity: availableQuantity,
     } = product;
-
-    // Get the quantity from the quantities state or default to 1
     const userQuantity = quantities[productId] || 1;
 
     // Ensure the user is not adding more than the available stock
@@ -328,7 +337,6 @@ function Page() {
     const fetchPoData = async () => {
       setLoading(true);
       const result = await getSalesReport(storeId);
-      console.log(storeId);
 
       if (!result) {
         console.error("Unknown error fetching data");
@@ -393,7 +401,9 @@ function Page() {
           </div>
 
           {loading ? (
-            <p>Loading...</p>
+            <div className="flex items-center justify-center h-screen w-full">
+              <SkeletonLoader />
+            </div>
           ) : salesToggle === "daily" ? (
             <DailySalesRec
               columns={dailyRecTable}
