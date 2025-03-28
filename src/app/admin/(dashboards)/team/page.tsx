@@ -7,6 +7,7 @@ import { addTeamAction } from "@/app/actions/addTeam";
 import { fetchStaff } from "@/app/actions/fetch";
 import { FormData } from "@/components/admin/AddTeamSlider";
 import { useStore } from "@/ContextAPI/storeContex";
+import SkeletonLoader from "../loading";
 
 function Team() {
   const { stateObj } = useStore();
@@ -119,8 +120,8 @@ function Team() {
       </div>
       <div className="w-full p-5 relative text-black bg-white">
         {loading ? (
-          <div className="flex justify-center items-center min-h-[80vh]">
-            <p>Loading...</p>
+          <div className="flex justify-center items-center min-h-[50vh]">
+            <SkeletonLoader />
           </div>
         ) : !data || data.length === 0 ? (
           <div className="flex flex-col min-h-[80vh] justify-center items-center w-full">

@@ -6,11 +6,12 @@ import { FormData } from "./AddTeamSlider";
 import { useStore } from "@/ContextAPI/storeContex";
 import { deleteStaff } from "@/app/actions/delete";
 import { Trash2 } from "lucide-react";
-import Confirm from "@/components/store/general_UI/ConfirmBox";
 import { UpdateStaffInfoProp, updateStaff } from "@/app/actions/update";
 import { resetPass } from "@/app/actions/post";
 import { useToastContext } from "@/ContextAPI/toastContext";
 import { getStaffStatus } from "@/app/actions/fetch";
+
+import ConfirmModal from "./MyComfirmation";
 
 const menuItems = [
   { label: "User Activity", icon: "/icons/brief_case.svg" },
@@ -37,6 +38,13 @@ export default function TeamTable({
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{
+    isOpen: boolean;
+    user: string | null;
+  }>({
+    isOpen: false,
+    user: null,
+  });
   const [formData, setFormData] = useState<FormData>({
     userId: "",
     fullName: "",
@@ -128,6 +136,7 @@ export default function TeamTable({
 
   const handleMenuItemClick = async (label: string, staff: FormData) => {
     if (loading) return;
+
     if (label === "User Activity") {
       setSelectedProfileId(staff.userId);
       setOpenProfile(true);
@@ -154,28 +163,13 @@ export default function TeamTable({
         active: staff.status === "Active",
       }));
     } else if (label === "Remove Staff") {
-      <Confirm
-        message={`Are you sure you want to delete ${staff.fullName}?`}
-        button={
-          <button
-            className="flex items-center bg-gray-100 gap-2 p-2 border rounded-md hover:border-gray-500 transition cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <Trash2 className="text-red-600" />
-            <h1 className="text-sm text-gray-700">Remove Staff</h1>
-          </button>
-        }
-        onConfirm={() => handleDelStaff(staff.userId)}
-      />;
     } else if (label === "Deactivate User" || label === "Activate User") {
-      console.log("clicked");
       setLoading(true);
       try {
         const res = await getStaffStatus(staff.userId);
-        if (res.ok) {
+        if (res) {
           setData(res.data);
+          window.location.reload();
         } else {
           console.error("Error: Response not OK", res);
         }
@@ -198,6 +192,10 @@ export default function TeamTable({
     setTimeout(() => {
       setOpenDropdownId((prev) => (prev === rowId ? null : rowId));
     }, 0);
+    setConfirmDelete({
+      isOpen: true,
+      user: rowId,
+    });
   };
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -266,9 +264,9 @@ export default function TeamTable({
           userName: selectedStaff.userName ?? "",
           profilePic: selectedStaff.url ?? "",
           registered: selectedStaff.registered ?? "",
-          status: selectedStaff.status ?? "Active",
+          status: selectedStaff.status ?? "active",
           url: selectedStaff.url ?? "",
-          active: selectedStaff.status === "Active",
+          active: selectedStaff.status === "active",
         });
       }
     }
@@ -405,7 +403,7 @@ export default function TeamTable({
                   </button>
                   {openDropdownId === staff.userId && (
                     <div
-                      className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-50"
+                      className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-10"
                       ref={dropdownRef}
                     >
                       <div key={index} className="flex flex-col gap-2 p-2">
@@ -426,8 +424,26 @@ export default function TeamTable({
 
                           return (
                             <React.Fragment key={`staff-${index}`}>
-                              {item.label === "Remove Staf" ? (
-                                <div></div>
+                              {item.label === "Remove Staff" ? (
+                                <>
+                                  {confirmDelete.isOpen &&
+                                    confirmDelete.user && (
+                                      <button
+                                        onClick={() =>
+                                          setConfirmDelete({
+                                            isOpen: true,
+                                            user: staff.userId,
+                                          })
+                                        }
+                                        className="flex items-center w-full bg-gray-100 gap-2 p-2 border rounded-md hover:border-gray-500 transition cursor-pointer"
+                                      >
+                                        <Trash2 className="text-red-600" />
+                                        <h1 className="text-sm text-gray-700">
+                                          Remove Staff
+                                        </h1>
+                                      </button>
+                                    )}
+                                </>
                               ) : (
                                 <button
                                   onClick={() =>
@@ -453,6 +469,19 @@ export default function TeamTable({
                     </div>
                   )}
                 </td>
+                <ConfirmModal
+                  message={`Are you sure you want to delete ${staff.fullName}?`}
+                  isOpen={
+                    confirmDelete.isOpen && confirmDelete.user === staff.userId
+                  }
+                  onConfirm={() => {
+                    handleDelStaff(staff.userId);
+                    setConfirmDelete({ isOpen: false, user: null });
+                  }}
+                  onClose={() =>
+                    setConfirmDelete({ isOpen: false, user: null })
+                  }
+                />
               </tr>
             ) : null
           )}

@@ -9,6 +9,7 @@ import { deleteStore } from "@/app/actions/delete";
 import Confirm from "@/components/store/general_UI/ConfirmBox";
 import { useToastContext } from "@/ContextAPI/toastContext";
 import { useStore } from "@/ContextAPI/storeContex";
+import SkeletonLoader from "../loading";
 
 function StorePage() {
   const [states, setStates] = useState<string[]>([]);
@@ -27,9 +28,9 @@ function StorePage() {
     e: React.MouseEvent<HTMLDivElement>,
     store: any
   ) => {
+    setLoading(true);
     try {
       e.preventDefault();
-      setLoading(true);
       if (!storeId && pathname.includes("admin")) {
         setStoreIdState(store.storeId);
       }
@@ -141,8 +142,8 @@ function StorePage() {
       {/* Store Content */}
       <div className="w-full relative text-black bg-white">
         {loading ? (
-          <div className="flex justify-center items-center min-h-[80vh]">
-            <p className="text-lg font-bold text-gray-600">Loading stores...</p>
+          <div className="flex justify-center items-center min-h-[50vh]">
+            <SkeletonLoader />
           </div>
         ) : states.length === 0 ? (
           <div className="flex flex-col min-h-[80vh] justify-center items-center w-full">
