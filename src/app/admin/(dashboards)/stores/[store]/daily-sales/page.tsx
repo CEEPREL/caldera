@@ -8,7 +8,7 @@ import CartSlider, {
 } from "@/components/store/daily_sales/CartSlider";
 import OrderDetailSlider from "@/components/store/daily_sales/OrderDetailSlider";
 import { getInventoies, getSalesReport } from "@/app/actions/fetch";
-import { useStore } from "@/ContextAPI/storeContex";
+// import { useStore } from "@/ContextAPI/storeContex";
 // import { InventoryItem } from "../inventory/page";
 import { useCart } from "@/ContextAPI/cartContext";
 import {
