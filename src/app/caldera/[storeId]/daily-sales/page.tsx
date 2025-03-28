@@ -16,6 +16,7 @@ import {
   createSalesPayment,
   createSalesRefund,
 } from "@/app/actions/post";
+import SkeletonLoader from "@/app/admin/(dashboards)/loading";
 
 export interface Order {
   orderId: string;
@@ -391,7 +392,9 @@ function Page() {
           </div>
 
           {loading ? (
-            <p>Loading...</p>
+            <div className="flex items-center justify-center h-screen w-full">
+              <SkeletonLoader />
+            </div>
           ) : salesToggle === "daily" ? (
             <DailySalesRec
               columns={dailyRecTable}

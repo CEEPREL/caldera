@@ -27,11 +27,11 @@ const getMenuItems = (basePath: string, storeId: string) => [
     label: "Debt Management",
     href: `${basePath}/${storeId}/debt-management`,
   },
-  {
-    icon: "/icons/Inventory.svg",
-    label: "Inventory",
-    href: `${basePath}/${storeId}/inventory`,
-  },
+  // {
+  //   icon: "/icons/Inventory.svg",
+  //   label: "Inventory",
+  //   href: `${basePath}/${storeId}/inventory`,
+  // },
   {
     icon: "/icons/stock_mgt.svg",
     label: "Stock Management",
@@ -85,13 +85,11 @@ function StoreMenu() {
     router.push("/admin/stores");
   };
 
-  // Filter out the 'Settings' item if the pathname includes '/admin'
   const filteredMenuItems = pathname.includes("/admin")
     ? getMenuItems(basePath, storeId).filter(
-        (item) => item.label !== "Settings"
+        (item) => !["Settings", "Stock Management"].includes(item.label)
       )
     : getMenuItems(basePath, storeId);
-
   return (
     <div className="p-2 bg-white h-full flex flex-col gap-10">
       {/* Back Button for Admins */}

@@ -1,6 +1,7 @@
 "use client";
 import { useStore } from "@/ContextAPI/storeContex";
 import { getInventoies } from "@/app/actions/fetch";
+import SkeletonLoader from "@/app/admin/(dashboards)/loading";
 import PurchaseOrderTable from "@/components/store/inventory/purchaseOrderTable";
 // import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import React, { useEffect, useState } from "react";
@@ -85,7 +86,9 @@ function Page() {
         <h1 className="text-2xl font-medium">Inventory</h1>
         <div>
           {loading ? (
-            <p className="text-2xl">Loading...</p>
+            <p className="text-2xl">
+              <SkeletonLoader />
+            </p>
           ) : (
             <PurchaseOrderTable columns={inventoryTable} data={inventoryData} />
           )}

@@ -4,6 +4,7 @@ import { getDebtorsList } from "@/app/actions/fetch";
 import PurchaseOrderTable from "@/components/store/inventory/purchaseOrderTable";
 // import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import React, { useEffect, useState } from "react";
+import SkeletonLoader from "../../../loading";
 
 export interface InventoryItem {
   userId: string;
@@ -80,7 +81,9 @@ function Page() {
         <h1 className="text-2xl font-medium">Debt Lists</h1>
         <div>
           {loading ? (
-            <p className="text-2xl">Loading...</p>
+            <div className="flex items-center justify-center h-screen w-full">
+              <SkeletonLoader />
+            </div>
           ) : (
             <PurchaseOrderTable columns={inventoryTable} data={inventoryData} />
           )}

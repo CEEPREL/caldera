@@ -34,6 +34,7 @@ export default function TeamTable({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const menuItem = menuItems;
   const [openProfile, setOpenProfile] = useState<boolean>(false);
+  const [openComfirm, setOpenComfirm] = useState<boolean>(false);
   const { showToast } = useToastContext();
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
@@ -429,12 +430,7 @@ export default function TeamTable({
                                   {confirmDelete.isOpen &&
                                     confirmDelete.user && (
                                       <button
-                                        onClick={() =>
-                                          setConfirmDelete({
-                                            isOpen: true,
-                                            user: staff.userId,
-                                          })
-                                        }
+                                        onClick={() => setOpenComfirm(true)}
                                         className="flex items-center w-full bg-gray-100 gap-2 p-2 border rounded-md hover:border-gray-500 transition cursor-pointer"
                                       >
                                         <Trash2 className="text-red-600" />
@@ -471,9 +467,7 @@ export default function TeamTable({
                 </td>
                 <ConfirmModal
                   message={`Are you sure you want to delete ${staff.fullName}?`}
-                  isOpen={
-                    confirmDelete.isOpen && confirmDelete.user === staff.userId
-                  }
+                  isOpen={openComfirm && confirmDelete.user === staff.userId}
                   onConfirm={() => {
                     handleDelStaff(staff.userId);
                     setConfirmDelete({ isOpen: false, user: null });
