@@ -1,14 +1,11 @@
 "use client";
 import Dropdown from "@/components/Dropdown";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import states from "@/data/states.json";
 import { createStore, StoreData } from "@/app/actions/create";
 import { useToastContext } from "@/ContextAPI/toastContext";
 import { useRouter } from "next/navigation";
-import { fetchStaff } from "@/app/actions/fetch";
-import { FormData } from "@/components/admin/AddTeamSlider";
-import { resetPass } from "@/app/actions/post";
 import { addTeamAction } from "@/app/actions/addTeam";
 
 function New() {
