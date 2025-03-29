@@ -7,6 +7,8 @@ export interface StoreData {
   storeState: string;
   phoneNumber: string;
   userId?: string;
+  email?: string;
+  userName?: string;
   fullName?: string;
 }
 

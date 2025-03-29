@@ -8,7 +8,8 @@ import { useToastContext } from "@/ContextAPI/toastContext";
 import { useRouter } from "next/navigation";
 import { fetchStaff } from "@/app/actions/fetch";
 import { FormData } from "@/components/admin/AddTeamSlider";
-import { assignStore, resetPass } from "@/app/actions/post";
+import { resetPass } from "@/app/actions/post";
+import { addTeamAction } from "@/app/actions/addTeam";
 
 function New() {
   const allStates = states.states.map((s) => s.name);
@@ -22,15 +23,17 @@ function New() {
     phoneNumber: "",
     userId: "",
     fullName: "",
+    email: "",
+    userName: "",
   });
   const [loading, setLoading] = useState(false);
-  const [staff, setStaff] = useState<FormData[]>([]);
+  const [createManager, setCreateManager] = useState(false);
   const { showToast } = useToastContext();
   const router = useRouter();
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   // Handle state selection from dropdown
@@ -38,25 +41,26 @@ function New() {
     setFormData({ ...formData, storeState: state.name });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await fetchStaff();
-        setStaff(res);
-      } catch (error) {
-        console.error("Error fetching staff:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCreateManager(e.target.checked);
+  };
 
   // Handle form submission
   const handleSubmit = async (formData: StoreData) => {
     try {
       setLoading(true);
+      if (createManager) {
+        if (
+          !formData.fullName ||
+          !formData.email ||
+          !formData.phoneNumber ||
+          !formData.userName
+        ) {
+          showToast("Please fill manager details", "error");
+          setLoading(false);
+          return;
+        }
+      }
       const result = await createStore({
         storeLocation: formData.storeLocation,
         storeName: formData.storeName,
@@ -64,32 +68,48 @@ function New() {
         phoneNumber: "0",
       });
 
-      console.log(result.data.storeId, formData.userId);
       const storeId = result.data.storeId;
+      const storeName = result.data.storeName;
       if (storeId) {
-        const assignResult = await assignStore(storeId, formData.userId || "");
-        await resetPass({
-          userId: formData.userId,
-          resetUrl: `${baseUrl}/reset_pass`,
-        });
-
-        if (assignResult) {
-          setFormData({
-            storeLocation: "",
-            storeName: "",
-            storeState: "",
-            phoneNumber: "",
-            userId: "",
-            fullName: "",
+        if (createManager) {
+          const createManagerResponse = await addTeamAction({
+            fullName: formData.fullName || "",
+            email: formData.email || "",
+            phoneNumber: formData.phoneNumber || "",
+            userName: formData.userName || "",
+            storeName: storeName || "",
+            storeId: storeId || "",
+            resetUrl: `${baseUrl}/reset`,
           });
 
-          showToast("Store created and assigned successfully!", "success");
-          router.push("/admin/stores");
-        } else {
-          showToast("Failed to assign store", "error");
+          console.log("create Manager Response; ", createManagerResponse);
+
+          // const userId = createManagerResponse.data.userId;
+
+          // if (createManagerResponse) {
+          //   await resetPass({
+          //     userId: userId,
+          //     resetUrl: `${baseUrl}/reset_pass`,
+          //   });
+          // }
         }
+
+        // Reset form after successful creation
+        setFormData({
+          storeLocation: "",
+          storeName: "",
+          storeState: "",
+          phoneNumber: "",
+          userId: "",
+          fullName: "",
+          email: "",
+          userName: "",
+        });
+
+        showToast("Store created and assigned successfully!", "success");
+        router.push("/admin/stores");
       } else {
-        showToast("Store ID not found in the response.", "error");
+        showToast("Failed to create store", "error");
       }
     } catch (error) {
       console.error("Error creating and assigning store", error);
@@ -151,6 +171,7 @@ function New() {
                 className="h-8 p-1 rounded-md"
                 type="text"
                 id="storeLocation"
+                name="storeLocation"
                 value={formData.storeLocation}
                 onChange={handleChange}
               />
@@ -159,47 +180,83 @@ function New() {
 
           {/* Store Manager Section */}
           <div className="flex flex-col bg-gray-100 p-5 w-1/2 lg:w-1/3 gap-4">
-            {/* <h1 className="text-lg font-bold">Store Manager</h1> */}
             <div className="flex flex-col gap-1">
-              <label htmlFor="manager">Store Name</label>
+              <label htmlFor="storeName">Store Name</label>
               <input
                 className="h-8 p-1 rounded-md"
                 type="text"
                 id="storeName"
+                name="storeName"
                 value={formData.storeName}
                 onChange={handleChange}
               />
             </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="manager">Assign Manager</label>
-              <Dropdown
-                showSearch
-                className="gap-0"
-                className2="bg-white border-none w-full h-9 flex justify-between items-center rounded-md"
-                label={
-                  typeof formData.fullName === "string"
-                    ? formData.fullName
-                    : "Select a State"
-                }
-                options={staff || []}
-                placeholder="Select a Manager"
-                onSelect={(selectedStaff) => {
-                  const selectedstaff = staff?.find(
-                    (user) => user.fullName === selectedStaff
-                  );
 
-                  if (selectedstaff) {
-                    setFormData((prevData) => ({
-                      ...prevData,
-                      fullName: selectedstaff.fullName,
-                      userId: selectedstaff.userId, // Assign the userId to formData
-                    }));
-                  }
-                }}
-                getLabel={(staff) => staff.fullName}
-                getSubLabel={() => ` `}
-                id="storeId"
+            <div className="flex flex-row gap-1">
+              <label htmlFor="manager">Assign Manager?</label>
+              <input
+                type="checkbox"
+                checked={createManager}
+                onChange={handleCheckboxChange}
               />
+            </div>
+
+            {/* Conditional Rendering of Manager Section */}
+            {createManager && (
+              <div className="flex flex-col bg-gray-100 p-5 w-full gap-4">
+                <h1 className="text-lg font-bold">Store Manager</h1>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="name">Full Name</label>
+                  <input
+                    className="h-8 p-1 rounded-md"
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="phone">Phone Number</label>
+                  <input
+                    className="h-8 p-1 rounded-md"
+                    type="number"
+                    id="phone"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold">Authentication</h1>
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="username">User Name</label>
+                    <input
+                      className="h-8 p-1 rounded-md"
+                      type="text"
+                      id="username"
+                      name="userName"
+                      value={formData.userName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      className="h-8 p-1 rounded-md"
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Authentication Section */}
+            <div className="flex flex-col bg-gray-100 p-5 w-full gap-4">
               <button className="bg-button mt-2 text-white p-2 rounded-full">
                 {loading ? "Creating..." : "Create store"}
               </button>
