@@ -11,9 +11,9 @@ import SkeletonLoader from "../loading";
 
 function Team() {
   const { stateObj } = useStore();
+  const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}`;
 
   const allStates = stateObj ? Object.values(stateObj) : [];
-
   const flatStores = allStates.flat();
 
   const [data, setData] = useState<FormData[]>([]);
@@ -32,16 +32,19 @@ function Team() {
     userName: "",
     profilePic: "/images/profile.png",
     registered: new Date().toLocaleDateString(),
-    status: "Active",
+    status: "active",
     url: "/images/profile.png",
     active: true,
   });
 
+  // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Fetch staff data
   useEffect(() => {
+    console.log("allStates", flatStores);
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -56,26 +59,34 @@ function Team() {
     fetchData();
   }, []);
 
+  // Open the slide drawer for adding a new team member
   const newTeam = () => {
     setIsDrawerOpen(true);
+    console.log(allStates, "allStates");
   };
 
+  // Handle form submission
   const handleSubmit = async (formData: FormData) => {
     setLoading(true);
     setErrorMessage(null);
 
     try {
       const result = await addTeamAction({
-        fullName: formData.fullName,
-        email: formData.email,
-        phoneNumber: formData.phoneNumber,
-        userName: formData.userName,
+        fullName: formData.fullName || "",
+        email: formData.email || "",
+        phoneNumber: formData.phoneNumber || "",
+        userName: formData.userName || "",
+        storeName: formData.storeName || "",
+        storeId: formData.storeId || "",
+        resetUrl: `${baseUrl}/reset`,
       });
+      console.log(formData);
 
       if (result.error) {
         setErrorMessage(result.error);
       } else {
         setErrorMessage(null);
+        // Reset form data after successful submission
         setFormData({
           userId: crypto.randomUUID(),
           fullName: "",

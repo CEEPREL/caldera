@@ -104,11 +104,6 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
     setHasOpened(true);
   }, [isOpen, onChange, hasOpened, resetPass]);
 
-  // Handle checkbox change
-  // const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setShouldSendRequest(e.target.checked);
-  // };
-
   return (
     <>
       {/* Overlay (blocks interaction with background) */}
@@ -161,6 +156,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                     );
 
                     if (selectedLocation) {
+                      // Set location and storeId in formData
                       onChange({
                         target: {
                           name: "location",
@@ -172,6 +168,14 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                         target: {
                           name: "storeId",
                           value: selectedLocation.storeId,
+                        },
+                      } as React.ChangeEvent<HTMLInputElement>);
+
+                      // Set storeName in formData as well
+                      onChange({
+                        target: {
+                          name: "storeName",
+                          value: selectedLocation.storeName,
                         },
                       } as React.ChangeEvent<HTMLInputElement>);
                     }
@@ -261,18 +265,6 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   <label htmlFor="resetPass">Reset Password</label>
                 </div>
               )}
-
-              {/* Checkbox for submitting */}
-              {/* <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="sendRequest"
-                  onChange={handleCheckboxChange}
-                />
-                <label htmlFor="sendRequest">
-                  Send request to reset password
-                </label>
-              </div> */}
 
               <button className="bg-button text-white p-2 rounded-full">
                 {loading ? "Adding..." : btnTitle || "Add Team Member"}
