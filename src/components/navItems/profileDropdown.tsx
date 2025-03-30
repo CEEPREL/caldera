@@ -17,7 +17,7 @@ export function ProfileDropdown({
   handleSignOut: () => Promise<void>;
 }) {
   const { storeData } = useStore();
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
 
   // Function to handle profile redirect
   const handleProfileRedirect = () => {

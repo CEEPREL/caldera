@@ -103,7 +103,7 @@ function StorePage() {
       }
     } catch (error) {
       console.error("Failed to delete store:", error);
-      alert("Error deleting store");
+      showToast("Error deleting store", "error");
     } finally {
       setDeleting(null);
     }

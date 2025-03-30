@@ -16,17 +16,17 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  {
-    label: "Confirm Order",
-    icon: "/icons/brief_case.svg",
-    actionType: "button",
-    href: "/admin/purchase-order/update-order",
-  },
+  // {
+  //   label: "Confirm Order",
+  //   icon: "/icons/brief_case.svg",
+  //   actionType: "button",
+  //   href: "/admin/purchase-order/update-order",
+  // },
   {
     label: "View Order",
     icon: "/icons/stores.svg",
-    actionType: "link",
-    href: "/settings",
+    actionType: "button",
+    href: "/admin/purchase-order/update-order",
   },
   {
     label: "Remove Order",
@@ -115,7 +115,7 @@ function Page() {
   const handleDelete = () => {};
 
   const handleMenuItemClick = async (label: string, poId: string) => {
-    if (label === "Confirm Order") {
+    if (label === "View Order") {
       const selectedOrder = poData.find((order) => order.poId === poId);
       setOpenDetail(true);
       setOpenDropdownId(null);

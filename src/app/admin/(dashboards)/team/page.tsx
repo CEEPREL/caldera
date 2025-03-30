@@ -78,7 +78,7 @@ function Team() {
 
     fetchData();
     fetchStoresData();
-  }, []); // Empty dependency array ensures it runs once after mount
+  }, []);
 
   // Open the slide drawer for adding a new team member
   const newTeam = () => {

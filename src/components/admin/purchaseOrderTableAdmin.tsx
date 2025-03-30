@@ -40,7 +40,7 @@ PurchaseOrderTableProps) {
   return (
     <div>
       <table className="w-full border-collapse shadow-md">
-        <thead className="bg-gray-100 text-left">
+        <thead className="bg-gray-100 text-center">
           <tr>
             {columns.map((column) => (
               <th key={column.key} className="p-2">
@@ -53,7 +53,7 @@ PurchaseOrderTableProps) {
           {data.map((row: any, rowIndex: number) => (
             <tr key={rowIndex} className="border-b">
               {columns.map((column) => (
-                <td key={column.key} className="p-2">
+                <td key={column.key} className="p-2 text-center">
                   {column.render ? column.render(row) : row[column.key]}
                 </td>
               ))}

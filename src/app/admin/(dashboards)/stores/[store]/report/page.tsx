@@ -1,6 +1,6 @@
 "use client";
 import Dropdown from "@/components/Dropdown";
-import SalesGraph from "@/components/visualizationToola/SalesGraph";
+// import SalesGraph from "@/components/visualizationToola/SalesGraph";
 import Image from "next/image";
 import React, { useState } from "react";
 import products from "@/data/data.json";
@@ -60,66 +60,66 @@ function Report() {
     setSelectedProduct(p);
   };
 
-  const renderProductContent = () => {
-    switch (selectedProduct) {
-      case "Screen":
-        return (
-          <div className="w-full  h-[200px]">
-            <SalesGraph
-              data={data}
-              nameKeyX=""
-              nameKeyY={toggle && selectedProduct === "Screen" ? "pv" : "amt"}
-            />
-          </div>
-        );
-      case "Downboard":
-        return (
-          <div className="w-full h-[200px]">
-            <SalesGraph
-              data={data}
-              nameKeyX=""
-              nameKeyY={
-                toggle && selectedProduct === "Downboard" ? "uv" : "amt"
-              }
-            />
-          </div>
-        );
-      case "Battery":
-        return (
-          <div className="w-full h-[200px]">
-            <SalesGraph
-              data={data}
-              nameKeyX=""
-              nameKeyY={toggle ? "pv" : "amt"}
-            />
-          </div>
-        );
-      case "Back Glass":
-        return (
-          <div className="w-full h-[200px]">
-            <SalesGraph
-              data={data}
-              nameKeyX=""
-              nameKeyY={toggle ? "pv" : "amt"}
-            />
-          </div>
-        );
-      case "Touch Pad":
-        return (
-          <div className="w-full h-[200px]">
-            <SalesGraph
-              data={data}
-              nameKeyX=""
-              nameKeyY={toggle ? "pv" : "amt"}
-            />
-          </div>
-        );
-      default:
-        return (
-          <p className="text-gray-500">Select a product to see details.</p>
-        );
-    }
-  };
+  // const renderProductContent = () => {
+  //   switch (selectedProduct) {
+  //     case "Screen":
+  //       return (
+  //         <div className="w-full  h-[200px]">
+  //           <SalesGraph
+  //             data={data}
+  //             nameKeyX=""
+  //             nameKeyY={toggle && selectedProduct === "Screen" ? "pv" : "amt"}
+  //           />
+  //         </div>
+  //       );
+  //     case "Downboard":
+  //       return (
+  //         <div className="w-full h-[200px]">
+  //           <SalesGraph
+  //             data={data}
+  //             nameKeyX=""
+  //             nameKeyY={
+  //               toggle && selectedProduct === "Downboard" ? "uv" : "amt"
+  //             }
+  //           />
+  //         </div>
+  //       );
+  //     case "Battery":
+  //       return (
+  //         <div className="w-full h-[200px]">
+  //           <SalesGraph
+  //             data={data}
+  //             nameKeyX=""
+  //             nameKeyY={toggle ? "pv" : "amt"}
+  //           />
+  //         </div>
+  //       );
+  //     case "Back Glass":
+  //       return (
+  //         <div className="w-full h-[200px]">
+  //           <SalesGraph
+  //             data={data}
+  //             nameKeyX=""
+  //             nameKeyY={toggle ? "pv" : "amt"}
+  //           />
+  //         </div>
+  //       );
+  //     case "Touch Pad":
+  //       return (
+  //         <div className="w-full h-[200px]">
+  //           <SalesGraph
+  //             data={data}
+  //             nameKeyX=""
+  //             nameKeyY={toggle ? "pv" : "amt"}
+  //           />
+  //         </div>
+  //       );
+  //     default:
+  //       return (
+  //         <p className="text-gray-500">Select a product to see details.</p>
+  //       );
+  //   }
+  // };
 
   return (
     <div className="w-full h-[88%] bg-white overflow-y-scroll rounded-3xl ">
@@ -195,7 +195,7 @@ function Report() {
                 </div>
                 <div className="flex flex-row items-center justify-start w-full">
                   <div className=" w-[70%] lg:w-[70%]">
-                    {renderProductContent()}
+                    {/* {renderProductContent()} */}
                   </div>{" "}
                   <div className="w-[0%] lg:w-[30%]">
                     <Piechart data={data} />
