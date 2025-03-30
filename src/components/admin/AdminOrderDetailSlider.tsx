@@ -231,13 +231,13 @@ const AdminOrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
               </h1>
 
               {/* Label Header Row */}
-              <div className="grid grid-cols-5 gap-2 font-semibold text-sm text-gray-700 mt-4">
-                <div>Product Name</div>
-                <div>Quantity</div>
-                <div>Unit Price</div>
-                <div>Cost Price</div>
-                <div>Set </div>
-                <div></div> {/* For delete button */}
+              <div className="grid grid-cols-6 gap-1 font-semibold text-sm text-gray-700 mt-4">
+                <div className=" text-center ">Product Name</div>
+                <div className="text-center  ">Quantity</div>
+                <div className=" text-center *:">Unit Price</div>
+                <div className=" text-center ">Cost Price</div>
+                <div className=" text-center">Set </div>
+                <div className=""></div> {/* For delete button */}
               </div>
 
               {productRequest.length > 0 ? (
@@ -297,7 +297,7 @@ const AdminOrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
                       className="w-full h-8 text-center border focus:border-gray-400"
                     />
                     {/* Delete Button */}
-                    <div className="flex items-center justify-center">
+                    <div className="flex items-center h-8 justify-center">
                       <button
                         className="flex justify-center items-center h-8 text-red-500"
                         onClick={() => handleDelete(product.productId)} // Handle delete
@@ -320,7 +320,7 @@ const AdminOrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
               type="submit"
               className="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg"
             >
-              Submit Order
+              Confirm Order
             </button>
           </form>
         </div>
