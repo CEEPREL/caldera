@@ -13,6 +13,7 @@ export interface FormData {
   storeId: string;
   storeName: string;
   location: string;
+
   manager: string;
   cadre: string;
   userName: string;
@@ -31,7 +32,6 @@ interface SlideDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   width?: string;
-  handleLocationChange: (selectedState: string) => void;
   tittle?: string;
   btnTitle?: string;
   formData: FormData;
@@ -61,7 +61,6 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
   onSubmit,
   resetPass,
   optionslocation,
-  handleLocationChange,
 }) => {
   const [hasOpened, setHasOpened] = useState(false);
 
@@ -129,6 +128,39 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
     setHasOpened(true);
   }, [isOpen, onChange, hasOpened, resetPass]);
 
+  const handleLocationChange = (selectedState: string) => {
+    const selectedLocation = optionslocation?.find(
+      (location) => location.storeLocation === selectedState
+    );
+
+    if (selectedLocation) {
+      console.log("Location selected:", selectedLocation);
+      const { storeId, storeName, storeLocation } = selectedLocation;
+
+      // Update the form data for storeId, storeName, and location directly
+      onChange({
+        target: {
+          name: "storeId", // Update storeId directly
+          value: storeId,
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
+
+      onChange({
+        target: {
+          name: "storeName", // Update storeName directly
+          value: storeName,
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
+
+      onChange({
+        target: {
+          name: "location", // Update location directly
+          value: storeLocation,
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
+    }
+  };
+
   return (
     <>
       {/* Overlay (blocks interaction with background) */}
@@ -143,7 +175,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
 
       <div
         className={clsx(
-          "fixed top-0 overflow-y-scroll w-[70%] lg:w-[35%] text-black right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
+          "fixed top-0 overflow-y-scroll w-[70%] lg:w-[35%] text-black  right-0 h-full gap-2 z-10 transition-transform duration-300 ease-in-out",
           isOpen ? "-translate-y-0" : "-translate-y-full",
           width,
           drawerStyle
@@ -175,7 +207,7 @@ const SlideDrawer: React.FC<SlideDrawerProps> = ({
                   }
                   options={optionslocation || []}
                   placeholder="Select a Store Location"
-                  onSelect={handleLocationChange}
+                  onSelect={handleLocationChange} // Use custom handler
                   getLabel={(state) => state.storeName}
                   getSubLabel={(state) => ` in ${state.state}`}
                   id="location"

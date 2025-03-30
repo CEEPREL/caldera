@@ -4,18 +4,14 @@ import React, { useEffect, useState } from "react";
 import TeamTable from "@/components/admin/TeamTable";
 import SlideDrawer from "@/components/admin/AddTeamSlider";
 import { addTeamAction } from "@/app/actions/addTeam";
-import { fetchStaff } from "@/app/actions/fetch";
+import { fetchStaff, fetchStores } from "@/app/actions/fetch";
 import { FormData } from "@/components/admin/AddTeamSlider";
-import { useStore } from "@/ContextAPI/storeContex";
 import SkeletonLoader from "../loading";
+import { useToastContext } from "@/ContextAPI/toastContext";
 
 function Team() {
-  const { stateObj } = useStore();
   const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}`;
-
-  const allStates = stateObj ? Object.values(stateObj) : [];
-  const flatStores = allStates.flat();
-
+  const { showToast } = useToastContext();
   const [data, setData] = useState<FormData[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -25,7 +21,9 @@ function Team() {
     fullName: "",
     email: "",
     state: "",
-    location: "",
+    storeId: "",
+    storeName: "",
+    location: "", // Location is now a string
     manager: "",
     phoneNumber: "",
     cadre: "",
@@ -37,14 +35,26 @@ function Team() {
     active: true,
   });
 
+  const [stores, setStores] = useState<any[]>([]);
+
   // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Fetch staff data
+  const handleLocationChange = (selectedState: string) => {
+    const store = stores.find((store) => store.storeName === selectedState);
+    if (store) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        location: store.storeName,
+        storeId: store.storeId,
+        storeName: store.storeName,
+      }));
+    }
+  };
+
   useEffect(() => {
-    console.log("allStates", flatStores);
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -56,17 +66,31 @@ function Team() {
         setLoading(false);
       }
     };
+
+    const fetchStoresData = async () => {
+      try {
+        const storesResponse = await fetchStores();
+        setStores(storesResponse);
+      } catch (error) {
+        console.error("Error fetching stores:", error);
+      }
+    };
+
     fetchData();
-  }, []);
+    fetchStoresData();
+  }, []); // Empty dependency array ensures it runs once after mount
 
   // Open the slide drawer for adding a new team member
   const newTeam = () => {
     setIsDrawerOpen(true);
-    console.log(allStates, "allStates");
   };
 
   // Handle form submission
   const handleSubmit = async (formData: FormData) => {
+    if (!formData.storeId) {
+      showToast("Assign user to a store", "error");
+      return;
+    }
     setLoading(true);
     setErrorMessage(null);
 
@@ -80,26 +104,26 @@ function Team() {
         storeId: formData.storeId || "",
         resetUrl: `${baseUrl}/reset`,
       });
-      console.log(formData);
 
       if (result.error) {
         setErrorMessage(result.error);
       } else {
         setErrorMessage(null);
-        // Reset form data after successful submission
         setFormData({
           userId: crypto.randomUUID(),
           fullName: "",
           email: "",
           state: "",
           location: "",
+          storeId: "",
+          storeName: "",
           manager: "",
           phoneNumber: "",
           cadre: "",
           userName: "",
           profilePic: "/images/profile.png",
           registered: new Date().toLocaleDateString(),
-          status: "Active",
+          status: "active",
           url: "/images/profile.png",
           active: true,
         });
@@ -112,6 +136,7 @@ function Team() {
     } finally {
       setLoading(false);
     }
+    showToast("Staff created successfully!", "success");
   };
 
   return (
@@ -126,7 +151,8 @@ function Team() {
           loading={loading}
           errorMessage={errorMessage}
           role=""
-          optionslocation={flatStores}
+          optionslocation={stores?.length ? stores : []}
+          handleLocationChange={handleLocationChange}
         />
       </div>
       <div className="w-full p-5 relative text-black bg-white">

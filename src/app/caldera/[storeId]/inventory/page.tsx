@@ -86,9 +86,9 @@ function Page() {
         <h1 className="text-2xl font-medium">Inventory</h1>
         <div>
           {loading ? (
-            <p className="text-2xl">
+            <div className="flex items-center justify-center h-screen w-full">
               <SkeletonLoader />
-            </p>
+            </div>
           ) : (
             <PurchaseOrderTable columns={inventoryTable} data={inventoryData} />
           )}
