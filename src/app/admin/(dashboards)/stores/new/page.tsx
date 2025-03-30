@@ -76,7 +76,7 @@ function New() {
             userName: formData.userName || "",
             storeName: storeName || "",
             storeId: storeId || "",
-            resetUrl: `${baseUrl}/reset`,
+            resetUrl: `${baseUrl}/reset_pass`,
           });
 
           console.log("create Manager Response; ", createManagerResponse);

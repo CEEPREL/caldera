@@ -8,12 +8,20 @@ export interface UpdateStaffInfoProp {
   storeId?: string;
   storeName?: string;
   email?: string;
+  resetPassword?: string;
 }
 
 // Update staff
 export async function updateStaff(staffInfo: UpdateStaffInfoProp, id: string) {
-  const { fullName, phoneNumber, userName, storeId, storeName, email } =
-    staffInfo;
+  const {
+    fullName,
+    phoneNumber,
+    userName,
+    storeId,
+    storeName,
+    email,
+    resetPassword,
+  } = staffInfo;
 
   const token = (await cookies()).get("token")?.value;
 
@@ -30,6 +38,7 @@ export async function updateStaff(staffInfo: UpdateStaffInfoProp, id: string) {
       storeId,
       storeName,
       email,
+      resetPassword,
     }),
   });
 

@@ -8,8 +8,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 function AdminLogin() {
   const router = useRouter();
-  const searchParams = useSearchParams(); // Access the query parameters
-  const userId = searchParams.get("userId"); // Get the userId from the URL
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("userId");
 
   const [formState, setFormState] = useState<{
     error?: string;
@@ -20,11 +20,9 @@ function AdminLogin() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // If the userId is not available, redirect to an error page or show an error message
   useEffect(() => {
     if (!userId) {
-      // Redirect to an error page or display a message
-      router.push("/error"); // Adjust the route as needed
+      router.push("/error");
     }
   }, [userId, router]);
 

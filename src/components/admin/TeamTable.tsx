@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import TeamProfileSlider from "./TeamProfileSlider";
-import AddTeamSlider from "@/components/admin/AddTeamSlider";
+import AddTeamSlider from "@/components/admin/EditTeam";
 import { FormData } from "./AddTeamSlider";
 import { useStore } from "@/ContextAPI/storeContex";
 import { deleteStaff } from "@/app/actions/delete";
@@ -46,7 +46,7 @@ export default function TeamTable({
     isOpen: false,
     user: null,
   });
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<any>({
     userId: "",
     fullName: "",
     email: "",
@@ -101,6 +101,7 @@ export default function TeamTable({
         storeId: formData.storeId ?? originalStaff.storeId,
         storeName: formData.location ?? originalStaff.storeName,
         email: formData.email ?? originalStaff.email,
+        resetPassword: "12345",
       };
       await updateStaff(updatedFields, id);
       // await assignStore(formData.storeId || "", id);
@@ -146,7 +147,7 @@ export default function TeamTable({
       setSelectedProfileId(staff.userId);
       setOpenEdit(true);
 
-      setFormData((prev) => ({
+      setFormData((prev: any) => ({
         userId: staff.userId || prev.userId,
         fullName: staff.fullName || prev.fullName || "",
         email: staff.email || prev.email || "",
@@ -275,7 +276,7 @@ export default function TeamTable({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData((prevData: any) => ({ ...prevData, [name]: value }));
   };
 
   return (
