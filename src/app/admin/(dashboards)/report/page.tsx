@@ -91,7 +91,10 @@ function Report() {
     const toDate = toValue ? toValue.format("YYYY-MM-DD") : "";
 
     try {
-      console.log("store", selectedStore, fromDate);
+      console.log("store", selectedStore, fromDate, toDate);
+      if (!fromDate && !toDate && selectedStore) {
+        showToast("Select date range");
+      }
       if (selectedStore && fromDate && toDate) {
         const res = await fetchDatedStoreReport(
           selectedStore,
@@ -113,7 +116,10 @@ function Report() {
         } else {
           setReplData([]);
           setTotalAmouunt(0);
-          showToast("No data found for the selected filters", "warning");
+          showToast(
+            "Please select a store with date range or a category with date range",
+            "warning"
+          );
         }
       }
     } catch (error) {
