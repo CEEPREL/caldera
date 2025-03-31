@@ -7,6 +7,9 @@ import PurchaseOrderTableAdmin from "@/components/admin/purchaseOrderTableAdmin"
 import MenuComponent from "@/components/store/general_UI/SmallMenuComp";
 import React, { useState, useEffect, useRef } from "react";
 import SkeletonLoader from "../loading";
+import ConfirmModal from "@/components/admin/MyComfirmation";
+import { deletePo } from "@/app/actions/delete";
+import { useToastContext } from "@/ContextAPI/toastContext";
 
 interface MenuItem {
   label: string;
@@ -16,12 +19,6 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  // {
-  //   label: "Confirm Order",
-  //   icon: "/icons/brief_case.svg",
-  //   actionType: "button",
-  //   href: "/admin/purchase-order/update-order",
-  // },
   {
     label: "View Order",
     icon: "/icons/stores.svg",
@@ -29,46 +26,24 @@ const menuItems: MenuItem[] = [
     href: "/admin/purchase-order/update-order",
   },
   {
-    label: "Remove Order",
+    label: "Delete Order",
     icon: "/icons/delete.svg",
     actionType: "button",
   },
 ];
 
 function Page() {
-  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
-  const dropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  // const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [poData, setPoData] = useState<PurchaseOrder[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<PurchaseOrder>();
   const [openDetail, setOpenDetail] = useState(false);
-  // const { cart, setCart, removeFromCart, addToCart } = useCart();
+  const [openComfirm, setOpenComfirm] = useState<boolean>(false);
+  const [poId, setPoId] = useState<string>("");
+  const { showToast } = useToastContext();
 
-  // const productOrders = cart.map(
-  //   ({
-  //     categoryId,
-  //     orderId,
-  //     userName,
-  //     storeName,
-  //     categoryName,
-  //     productId,
-  //     productName,
-  //     quantity,
-  //     price,
-  //   }) => ({
-  //     categoryId,
-  //     categoryName,
-  //     orderId,
-  //     price,
-  //     userName,
-  //     storeName,
-  //     productId,
-  //     productName,
-  //     requestQuantity: quantity,
-  //   })
-  // );
-
-  // Fetch purchase order data
   useEffect(() => {
     const fetchPoData = async () => {
       setLoadingProducts(true);
@@ -97,22 +72,53 @@ function Page() {
   ) => {
     const orderToConfirm = poData.find((order) => order.poId === poId);
     if (orderToConfirm) {
-      // Transform the updatedProducts to match the expected shape
       const payload = prepareOrderPayload(orderToConfirm, updatedProducts);
-      console.log("hi", payload);
 
       const result = await acceptAllOrder(payload);
       if (result.status) {
-        alert("Order confirmed successfully");
+        showToast("Order confirmed successfully");
       } else {
-        alert("Failed to confirm order");
+        showToast("Failed to confirm order", "error");
       }
     } else {
       console.error("Order not found for poId:", poId);
     }
   };
 
-  const handleDelete = () => {};
+  const toggleDropdown = (rowId: string | null) => {
+    setOpenDropdownId((prev) => (prev === rowId ? null : rowId));
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node) &&
+      !(event.target as HTMLElement).closest(".dropdown-toggle")
+    ) {
+      setOpenDropdownId(null);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
+  const handleDelete = async (poId: string) => {
+    try {
+      const response = await deletePo(poId);
+      if (response) {
+        showToast(response.message);
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const handleMenuItemClick = async (label: string, poId: string) => {
     if (label === "View Order") {
@@ -121,9 +127,14 @@ function Page() {
       setOpenDropdownId(null);
       setSelectedOrder(selectedOrder);
     }
+    if (label === "Delete Order") {
+      const selectedOrder = poData.find((order) => order.poId === poId);
+      setOpenComfirm(true);
+      setOpenDropdownId(null);
+      setPoId(selectedOrder?.poId || "");
+    }
   };
 
-  // Prepare order payload with simplified product data
   const prepareOrderPayload = (
     order: PurchaseOrder,
     updatedProducts: {
@@ -134,26 +145,24 @@ function Page() {
       outOfStock: number;
     }[]
   ) => {
-    // Convert updatedProducts (with explicit typing) into the expected structure
     const productRequests = updatedProducts.map((product) => ({
-      prId: product.prId, // Extract prId
-      quantity: product.quantity, // Extract quantity
-      unitPrice: product.unitPrice || 0, // Set unitPrice (default to 0 if undefined)
-      costPrice: product.costPrice || 0, // Set costPrice (default to 0 if undefined)
+      prId: product.prId,
+      quantity: product.quantity,
+      unitPrice: product.unitPrice || 0,
+      costPrice: product.costPrice || 0,
       outOfStock: product.outOfStock || 0,
     }));
 
     return {
       poId: order.poId,
-      product: productRequests, // This is now the correct shape expected by onSubmit
+      product: productRequests,
     };
   };
 
-  // Columns definition for the Purchase Order Table
   const columns = [
     { key: "id", label: "#" },
     { key: "poId", label: "Order ID" },
-    { key: "storeName", label: "Cadre" },
+    { key: "storeName", label: "Store Name" },
     { key: "requestDate", label: "Date" },
     { key: "productRequestCount", label: "No of Product" },
     { key: "status", label: "Status" },
@@ -162,20 +171,25 @@ function Page() {
       label: "Action",
       render: (row: any) => (
         <div className="relative">
+          <ConfirmModal
+            message={`Are you sure you want to delete ${row.poId} from ${row.storeName}?`}
+            isOpen={openComfirm}
+            onConfirm={() => {
+              handleDelete(poId);
+              setOpenComfirm(false);
+            }}
+            onClose={() => setOpenComfirm(false)}
+          />
           <button
             className="dropdown-toggle"
-            onClick={() =>
-              setOpenDropdownId(openDropdownId === row.poId ? null : row.poId)
-            }
+            onClick={() => toggleDropdown(row.poId)}
           >
             •••
           </button>
-          {openDropdownId === row.poId ? (
+          {openDropdownId === row.poId && (
             <div
               className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-50"
-              ref={(el) => {
-                dropdownRefs.current[row.poId] = el;
-              }}
+              ref={dropdownRef}
             >
               <div className="flex flex-col gap-2 p-2">
                 <MenuComponent
@@ -187,7 +201,7 @@ function Page() {
                 />
               </div>
             </div>
-          ) : null}
+          )}
         </div>
       ),
     },
@@ -209,7 +223,7 @@ function Page() {
         mainOrder={selectedOrder || null}
         isOpen={openDetail}
         onClose={() => setOpenDetail(false)}
-        onSubmit={handleSubmit} // Passing handleSubmit to child component
+        onSubmit={handleSubmit}
         onDelete={handleDelete}
       />
     </div>
