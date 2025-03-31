@@ -304,6 +304,8 @@ function Page() {
   };
 
   useEffect(() => {
+    console.log("storeId: ", storeData);
+
     if (!storeId) return;
 
     const fetchPoData = async () => {
