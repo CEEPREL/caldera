@@ -99,10 +99,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // Extract storeId from pathname
   useEffect(() => {
-    // const storedStoreId = localStorage.getItem("storeId");
-    // if (storedStoreId) {
-    //   setStoreId(storedStoreId);
-    // }
+    const storedStoreId = localStorage.getItem("storeId");
+    if (storedStoreId) {
+      setStoreId(storedStoreId);
+    }
 
     const pathParts = pathname.split("/");
     const storeIndex = pathParts.indexOf("stores");
