@@ -115,7 +115,7 @@ export default function TeamTable({
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred while updating staff.");
+      showToast("An error occurred while updating staff.", "error");
     } finally {
       setLoading(false);
       setOpenEdit(false);
@@ -127,7 +127,7 @@ export default function TeamTable({
     console.log(id);
     try {
       const response = await deleteStaff(id);
-      alert(response.message);
+      showToast(response.message);
     } catch (error) {
       console.error("error: ", error);
     } finally {
