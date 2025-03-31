@@ -87,40 +87,73 @@ function Report() {
 
   const handleFilter = async () => {
     setLoadingGraph(true);
+
+    // Format the date values properly
     const fromDate = fromValue ? fromValue.format("YYYY-MM-DD") : "";
     const toDate = toValue ? toValue.format("YYYY-MM-DD") : "";
 
+    // Check if the user has selected both a store and a valid date range
     try {
       console.log("store", selectedStore, fromDate, toDate);
-      if (!fromDate && !toDate && selectedStore) {
-        showToast("Select date range");
+
+      // If both dates and a store are not selected, show a message to select them
+      if (!fromDate || !toDate) {
+        showToast("Select both from and to date range", "warning");
+        return; // Stop execution if the dates are missing
       }
+
+      if (!selectedStore && !selectedCat) {
+        showToast(
+          "Please select either a store or a category to filter",
+          "warning"
+        );
+        return; // Stop execution if neither store nor category is selected
+      }
+
+      // Case when the store is selected and we have the date range
       if (selectedStore && fromDate && toDate) {
         const res = await fetchDatedStoreReport(
           selectedStore,
           fromDate,
           toDate
         );
-
-        setReplData(res.data);
-        setTotalAmouunt(res.totalsales);
-      } else if (selectedCat && fromDate && toDate) {
+        if (res?.data) {
+          setReplData(res.data);
+          setTotalAmouunt(res.totalsales);
+        } else {
+          showToast(
+            "No data found for the selected store and date range",
+            "warning"
+          );
+          setReplData([]);
+          setTotalAmouunt(0);
+        }
+      }
+      // Case when the category is selected and we have the date range
+      else if (selectedCat && fromDate && toDate) {
         const filteredData = await fetchDatedCatAdminReport(
           fromDate,
           toDate,
           selectedCat
         );
-        if (filteredData && filteredData.data) {
+        if (filteredData?.data) {
           setReplData(filteredData.data);
           setTotalAmouunt(filteredData.totalsales);
         } else {
-          setReplData([]);
-          setTotalAmouunt(0);
           showToast(
-            "Please select a store with date range or a category with date range",
+            "No data found for the selected category and date range",
             "warning"
           );
+          setReplData([]);
+          setTotalAmouunt(0);
         }
+      }
+      // Case when both store and category are missing
+      else {
+        showToast(
+          "Please select a store or category with a date range",
+          "warning"
+        );
       }
     } catch (error) {
       console.error("Error fetching filtered data:", error);
@@ -282,23 +315,31 @@ function Report() {
                   </div>
 
                   {/* Product Content */}
-                  <div className="mt-4 p-4 rounded-lg">
-                    <div className="flex justify-between flex-row">
-                      <div>
-                        <label className="text-gray-400">Total sales</label>
-                        <h1 className="text-2xl font-medium pb-8">
-                          ₦{formatNumber(totalAmount)}
-                        </h1>
+                  <div className="border-t-8 border-gray-100">
+                    {loadingGraph ? (
+                      <div className="flex justify-center items-center min-h-[50vh]">
+                        <SkeletonLoader />
                       </div>
-                    </div>
-                    <div className="flex flex-row items-center justify-start w-full">
-                      <div className="w-[70%] lg:w-[70%]">
-                        {renderProductContent()}
+                    ) : (
+                      <div className="mt-4 p-4 rounded-lg">
+                        <div className="flex justify-between flex-row">
+                          <div>
+                            <label className="text-gray-400">Total sales</label>
+                            <h1 className="text-2xl font-medium pb-8">
+                              ₦{formatNumber(totalAmount)}
+                            </h1>
+                          </div>
+                        </div>
+                        <div className="flex flex-row items-center justify-start w-full">
+                          <div className="w-[70%] lg:w-[70%]">
+                            {renderProductContent()}
+                          </div>
+                          <div className="w-[70%] lg:w-[30%]">
+                            {/* <Piechart data={repData || []} /> */}
+                          </div>
+                        </div>
                       </div>
-                      <div className="w-[70%] lg:w-[30%]">
-                        {/* <Piechart data={repData || []} /> */}
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
