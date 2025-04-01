@@ -34,7 +34,6 @@ function New() {
 
   // Handle form submission
   const handleSubmit = async (formData: StoreData) => {
-    console.log("Hii, result");
     try {
       const result = await createStore({
         storeLocation: formData.storeLocation,

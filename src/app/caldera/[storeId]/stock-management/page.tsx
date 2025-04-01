@@ -4,6 +4,7 @@ import { useCart } from "@/ContextAPI/cartContext";
 import { useStore } from "@/ContextAPI/storeContex";
 import { fetchProduct, getallpurchaseOrder } from "@/app/actions/fetch";
 import { createPurchaseOrder } from "@/app/actions/post";
+import SkeletonLoader from "@/app/admin/(dashboards)/loading";
 import CartSlider from "@/components/store/stock_mgt/CartSlider";
 import OrderDetailSlider from "@/components/store/stock_mgt/OrderDetailSlider";
 import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
@@ -212,15 +213,17 @@ function Page() {
         productName: item.productName,
         requestQuantity: quantities[item.productId] || 1,
         outOfStock: 1,
+        unitPrice: 0,
       }));
 
       console.log("Submitting Order:", productOrders);
 
       const response = await createPurchaseOrder(productOrders);
+      console.log("response:", response);
 
       // =======Handle the response=======
       if (response?.status) {
-        console.log("Order created successfully!", response.data);
+        console.log("Order created successfully!", response);
         setCart([]);
       } else {
         console.error(
@@ -231,14 +234,10 @@ function Page() {
     } catch (error) {
       console.error("Submission failed:", error);
     }
+    window.location.reload();
   };
 
   // Loading spinner component
-  const LoadingIndicator = () => (
-    <div className="flex justify-center items-center w-full h-full">
-      <div className=" text-2xl font-bold">Loading...</div>
-    </div>
-  );
 
   return (
     <div className="w-full h-[88%] bg-white text-black overflow-y-scroll p-5 rounded-3xl">
@@ -294,15 +293,16 @@ function Page() {
             </button>
           </div>
           {salesToggle === "purchase order" ? (
-            <div className="flex gap-2 py-2 flex-row">
-              <Link
-                href={`/caldera/${storeId}/stock-management/purchase-order`}
-                className="bg-button text-white p-2 px-4 rounded-full"
-              >
-                Purchase Order
-              </Link>
-            </div>
+            <></>
           ) : (
+            // <div className="flex gap-2 py-2 flex-row">
+            //   <Link
+            //     href={`/caldera/${storeId}/stock-management/purchase-order`}
+            //     className="bg-button text-white p-2 px-4 rounded-full"
+            //   >
+            //     Purchase Order
+            //   </Link>
+            // </div>
             <div className="flex gap-2 py-2 flex-row">
               <Link
                 href={`/caldera/${storeId}/stock-management/new-product`}
@@ -316,7 +316,7 @@ function Page() {
 
         {/* Show loading indicator while products or PO data are being loaded */}
         {loadingProducts || loadingPo ? (
-          <LoadingIndicator />
+          <SkeletonLoader />
         ) : (
           <div>
             {salesToggle === "purchase order" ? (
