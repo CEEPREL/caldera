@@ -170,7 +170,10 @@ function Team() {
                 src={"/icons/team.svg"}
               />
             </div>
-            <h2>No team record yet</h2>
+            <div className="flex justify-center items-center min-h-[50vh]">
+              <SkeletonLoader />
+              <h2>No team record yet</h2>
+            </div>
           </div>
         ) : (
           <div>
