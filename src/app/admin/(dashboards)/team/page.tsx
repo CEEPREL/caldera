@@ -156,7 +156,7 @@ function Team() {
         />
       </div>
       <div className="w-full p-5 relative text-black bg-white">
-        {loading ? (
+        {loading && !stores ? (
           <div className="flex justify-center items-center min-h-[50vh]">
             <SkeletonLoader />
           </div>
