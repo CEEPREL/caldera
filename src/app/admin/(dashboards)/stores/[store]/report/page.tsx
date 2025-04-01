@@ -157,6 +157,7 @@ function Report() {
     const storeId = pathParts[3];
     if (storeId) {
       setStoreId(storeId);
+      console.log(storeId);
     } else {
       setStoreId("");
     }

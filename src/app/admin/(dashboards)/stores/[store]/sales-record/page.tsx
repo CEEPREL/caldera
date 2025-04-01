@@ -3,7 +3,7 @@
 import { ChevronRight, ChevronLeft } from "lucide-react"; // Add ChevronLeft
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import { useParams, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   getCategories,
   getFilteredSalesReport,
@@ -58,8 +58,9 @@ function Page() {
   const [categoryData, setCategoryData] = useState<Category[]>();
   const { setSalesRecData } = useStore();
   const today = moment();
-  const params = useParams<{ storeId?: string }>();
+  // const params = useParams<{ storeId?: string }>();
   const router = useRouter();
+  const pathName = usePathname();
 
   const groupedOrders: GroupedOrders = oldSalesRecData.reduce((acc, order) => {
     const orderDate = new Date(order.orderDate);
@@ -100,10 +101,14 @@ function Page() {
     const endDate = today.clone().add(30, "days").format("YYYY-MM-DD");
     setStartDateStr(startDate);
     setEndDateStr(endDate);
+    console.log("this is a admin sales rec", storeId);
 
-    const storeId = params.storeId || "";
-    setStoreId(storeId);
-  }, [params.storeId, today]);
+    const pathParts = pathName.split("/");
+    setStoreId(pathParts[3]);
+
+    // const storeId = params.storeId || "";
+    // setStoreId(storeId);
+  }, [pathName, today]);
 
   useEffect(() => {
     setLoading(true);
@@ -123,7 +128,6 @@ function Page() {
 
   useEffect(() => {
     if (!selectedCategoryId) return;
-
     setLoading(true);
     const fetchSalesData = async () => {
       try {
