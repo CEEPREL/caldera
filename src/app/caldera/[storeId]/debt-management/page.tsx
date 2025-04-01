@@ -62,13 +62,14 @@ function Page() {
 
     const fetchPoData = async () => {
       setLoading(true);
-      const result = await getDebtorsList(`${storeId}`);
+      const result = await getDebtorsList(storeId);
       console.log("debt  res:", result);
 
       if (!result) {
         console.error("Unknown error fetching data");
       } else {
         setInventoryData(result.data);
+        console.log(result);
       }
       setLoading(false);
     };

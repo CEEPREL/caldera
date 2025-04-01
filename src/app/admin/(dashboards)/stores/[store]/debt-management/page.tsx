@@ -1,10 +1,11 @@
 "use client";
-import { useStore } from "@/ContextAPI/storeContex";
+// import { useStore } from "@/ContextAPI/storeContex";
 import { getDebtorsList } from "@/app/actions/fetch";
 import PurchaseOrderTable from "@/components/store/inventory/purchaseOrderTable";
 // import PurchaseOrderTable from "@/components/store/stock_mgt/purchaseOrderTable";
 import React, { useEffect, useState } from "react";
 import SkeletonLoader from "../../../loading";
+// import { usePathname } from "next/navigation";
 
 export interface InventoryItem {
   userId: string;
@@ -24,9 +25,12 @@ export interface InventoryItem {
 }
 
 function Page() {
-  const { storeData } = useStore();
-  const storeId = storeData?.data.storeId;
+  // const { storeData } = useStore();
+  // const pathName=usePathname()
+
+  // const storeId = storeData?.data.storeId;
   const [loading, setLoading] = useState(true);
+  const [storeId, setStoreId] = useState("");
   const [inventoryData, setInventoryData] = useState<InventoryItem[]>([]);
   // const [error, setError] = useState("");
 
@@ -56,7 +60,15 @@ function Page() {
     //   ),
     // },
   ];
-
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const pathParts = window.location.pathname.split("/");
+      const storeIndex = pathParts.indexOf("stores") + 1;
+      if (storeIndex && pathParts[storeIndex]) {
+        setStoreId(pathParts[storeIndex]);
+      }
+    }
+  }, []);
   useEffect(() => {
     if (!storeId) return;
 
