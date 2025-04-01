@@ -13,7 +13,6 @@ interface newProductProps {
 
 function New() {
   const { products } = useStore();
-  // const categories = [...states.states.map((s) => s.name), "Add New"];
 
   // State for form data
   const [formData, setFormData] = useState<newProductProps>({
