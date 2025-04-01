@@ -102,7 +102,7 @@ function Team() {
         userName: formData.userName || "",
         storeName: formData.storeName || "",
         storeId: formData.storeId || "",
-        resetUrl: `${baseUrl}/reset`,
+        resetUrl: `${baseUrl}/reset_pass`,
       });
 
       if (result.error) {
