@@ -15,6 +15,7 @@ interface CartSliderProps {
   isOpen: boolean;
   onClose: () => void;
   width?: string;
+  title?: string;
   overlayColor?: string;
   drawerStyle?: string;
   onDelete: (id: string) => void;
@@ -23,6 +24,7 @@ interface CartSliderProps {
 }
 
 const CartSlider: React.FC<CartSliderProps> = ({
+  title = "Product order",
   data,
   isOpen,
   onClose,
@@ -90,7 +92,7 @@ const CartSlider: React.FC<CartSliderProps> = ({
           >
             ✕
           </button>
-          <p className=" text-3xl font-bold">Product order</p>
+          <p className=" text-3xl font-bold">{title}</p>
           <form onSubmit={handleSubmit} className="mt-4">
             {data.length === 0 ? (
               <p>No order to display</p>

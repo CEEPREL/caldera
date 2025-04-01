@@ -321,7 +321,7 @@ function Page() {
     };
 
     fetchPoData();
-  }, [storeId]);
+  }, [storeId, storeData]);
 
   useEffect(() => {
     if (!storeId) return;

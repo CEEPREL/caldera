@@ -9,6 +9,7 @@ import SkeletonLoader from "../loading";
 import {
   fetchAllAdminReport,
   fetchDatedCatAdminReport,
+  fetchDatedStoreCatReport,
   fetchDatedStoreReport,
 } from "@/app/actions/fetchReport";
 import { useToastContext } from "@/ContextAPI/toastContext";
@@ -18,6 +19,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { Button } from "@mui/material";
+
 type Store = {
   createdDate: string | null;
   createdTime: string | null;
@@ -49,7 +51,7 @@ function Report() {
   const [filteredStores, setFilteredStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingGraph, setLoadingGraph] = useState(false);
-  const [totalAmount, setTotalAmouunt] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
   const date = new Date();
   const [fromValue, setFromValue] = React.useState(dayjs(date));
   const [toValue, setToValue] = React.useState(dayjs(date));
@@ -111,7 +113,7 @@ function Report() {
       }
 
       // Case when the store is selected and we have the date range
-      if (selectedStore && fromDate && toDate) {
+      if (selectedStore && fromDate && toDate && !selectedCat) {
         const res = await fetchDatedStoreReport(
           selectedStore,
           fromDate,
@@ -119,14 +121,14 @@ function Report() {
         );
         if (res?.data) {
           setReplData(res.data);
-          setTotalAmouunt(res.totalsales);
+          setTotalAmount(res.totalsales);
         } else {
           showToast(
             "No data found for the selected store and date range",
             "warning"
           );
           setReplData([]);
-          setTotalAmouunt(0);
+          setTotalAmount(0);
         }
       }
       // Case when the category is selected and we have the date range
@@ -138,15 +140,42 @@ function Report() {
         );
         if (filteredData?.data) {
           setReplData(filteredData.data);
-          setTotalAmouunt(filteredData.totalsales);
+          setTotalAmount(filteredData.totalsales);
         } else {
           showToast(
             "No data found for the selected category and date range",
             "warning"
           );
           setReplData([]);
-          setTotalAmouunt(0);
+          setTotalAmount(0);
         }
+        if (selectedStore && selectedCat && fromDate && toDate) {
+          const res = await fetchDatedStoreCatReport(
+            selectedStore,
+            selectedCat,
+            fromDate,
+            toDate
+          );
+          if (res?.data) {
+            setReplData(res.data);
+            setTotalAmount(res.totalsales);
+          } else {
+            showToast(
+              "No data found for the selected category and date range",
+              "warning"
+            );
+            setReplData([]);
+            setTotalAmount(0);
+          }
+        } else {
+          showToast(
+            "Please select a store or category with a date range",
+            "warning"
+          );
+        }
+        setselectedCat("");
+        setFromValue(dayjs(""));
+        setToValue(dayjs(""));
       }
       // Case when both store and category are missing
       else {
@@ -159,8 +188,20 @@ function Report() {
       console.error("Error fetching filtered data:", error);
       showToast("Something went wrong while fetching filtered data", "error");
     } finally {
-      setLoadingGraph(false); // Hide loading spinner after fetching
+      setLoadingGraph(false);
     }
+  };
+
+  // Function to reset filters
+  const handleReset = () => {
+    setSelectedStore(""); // Reset store selection
+    setSelectedState("All"); // Reset state to "All"
+    setselectedCat(""); // Reset category selection
+    setFromValue(dayjs(date)); // Reset 'from' date to today's date
+    setToValue(dayjs(date)); // Reset 'to' date to today's date
+    setFilteredStores(stores || []); // Reset filtered stores to the full list
+    setReplData([]); // Clear the report data
+    setTotalAmount(0); // Reset total sales
   };
 
   useEffect(() => {
@@ -185,7 +226,7 @@ function Report() {
         if (storesResponse) {
           setStores(storesResponse.flat());
           setFilteredStores(storesResponse.flat());
-          setTotalAmouunt(reportResponse.totalsales);
+          setTotalAmount(reportResponse.totalsales);
         } else {
           showToast("Something went wrong while fetching stores data", "error");
         }
@@ -290,6 +331,9 @@ function Report() {
                       ></DatePicker>
                     </LocalizationProvider>
                     <Button onClick={handleFilter}>Filter</Button>
+                    <Button onClick={handleReset} variant="outlined">
+                      Reset
+                    </Button>
                   </div>
                 </div>
 

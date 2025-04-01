@@ -26,9 +26,12 @@ function Menu() {
   };
   return (
     <div className="p-2 h-full bg-white flex flex-col gap-10">
-      <Link href="/admin/revenue" className=" text-lg text-black font-semibold">
+      <div
+        onClick={() => window.location.reload()}
+        className=" cursor-pointer text-lg text-black font-semibold"
+      >
         Admin
-      </Link>
+      </div>
       <div className="text-gray-500 flex flex-col gap-6">
         {menuItems.map((item) => (
           <div className="flex flex-col gap-6" key={item.label}>

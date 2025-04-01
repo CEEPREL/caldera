@@ -68,6 +68,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setCart((prevCart) =>
       prevCart.filter((product) => product.productId !== id)
     );
+    console.log(cart);
   };
 
   // Update product quantity in cart

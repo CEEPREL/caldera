@@ -16,7 +16,7 @@ interface PurchaseOrderTableProps {
 
 function PurchaseOrderTable({ columns, data }: PurchaseOrderTableProps) {
   if (!data || data.length === 0) {
-    return <p>No Record found</p>;
+    return <p>No Record found Select another Category</p>;
   }
 
   return (
