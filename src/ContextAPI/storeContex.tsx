@@ -105,16 +105,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
 
     const pathParts = pathname.split("/");
-    const storeIndex = pathParts.indexOf("stores");
-    const isNewStore = pathParts.includes("new");
-    if (storeIndex !== -1 && pathParts[storeIndex + 1] && !isNewStore) {
-      setStoreId(pathParts[storeIndex + 1]);
+    const storeId = pathParts[2];
+    if (storeId) {
+      setStoreId(storeId);
     } else {
       setStoreId(null);
     }
+    console.log("this is storeId from context; ", storeId);
   }, [pathname]);
   const setStoreIdState = (storeId: string) => {
-    localStorage.setItem("storeId", storeId);
+    localStorage.getItem("storeId");
     setStoreId(storeId);
   };
 

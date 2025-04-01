@@ -368,6 +368,7 @@ export async function getFilteredSalesReport(
     return null;
   }
 
+  console.log(`${apiUrl}/filterorderbydate/${storeId}/${start}/${end}`);
   try {
     const response = await fetch(
       `${apiUrl}/filterorderbydate/${storeId}/${start}/${end}`,
@@ -384,7 +385,7 @@ export async function getFilteredSalesReport(
       console.error(
         `Failed to fetch: ${response.statusText} (status: ${response.status})`
       );
-      return token;
+      return response;
     }
     const result = await response.json();
 

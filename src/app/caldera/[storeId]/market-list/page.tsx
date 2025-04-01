@@ -1,6 +1,7 @@
 "use client";
 import { useCart } from "@/ContextAPI/cartContext";
 import { useStore } from "@/ContextAPI/storeContex";
+import { useToastContext } from "@/ContextAPI/toastContext";
 import { getOutOfStockList } from "@/app/actions/fetch";
 import { createPurchaseOrder } from "@/app/actions/post";
 import SkeletonLoader from "@/app/admin/(dashboards)/loading";
@@ -33,6 +34,7 @@ function Page() {
   const [openCart, setOpenCart] = useState(false);
   const [inventoryData, setInventoryData] = useState<InventoryItem[]>([]);
   const { cart, setCart, removeFromCart, addToCart } = useCart();
+  const { showToast } = useToastContext();
 
   const inventoryTable = [
     { key: "", label: "#" },
@@ -54,6 +56,7 @@ function Page() {
   );
 
   const handleOnSubmit = async (quantities: { [key: string]: number }) => {
+    showToast("Order created successfully!", "success");
     try {
       console.log("Submitted Quantities:", quantities);
 
@@ -71,6 +74,8 @@ function Page() {
 
       if (response?.status) {
         alert("Order created successfully!");
+        showToast("Order created successfully!", "success");
+        setOpenCart(false);
         setCart([]);
       } else {
         console.error(
@@ -143,6 +148,7 @@ function Page() {
           isOpen={openCart}
           onClose={() => setOpenCart(false)}
           data={productOrders}
+          title="Market List"
           width="w-1/4"
           overlayColor="bg-black bg-opacity-50"
           drawerStyle="bg-white"

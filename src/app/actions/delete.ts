@@ -27,6 +27,7 @@ export async function deleteStaff(id: string) {
   const data = await res.json();
   return { message: data.message };
 }
+//====== purchaseOrderr delete==========
 export async function deletePo(poId: string) {
   const token = (await cookies()).get("token")?.value;
   const res = await fetch(
@@ -41,4 +42,21 @@ export async function deletePo(poId: string) {
   );
   const data = await res.json();
   return { message: data.message };
+}
+//====== productOrderr delete==========
+
+export async function deleteProductOrder(poId: string) {
+  const token = (await cookies()).get("token")?.value;
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/deleteproductrequest/${poId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${token}`,
+      },
+      method: "DELETE",
+    }
+  );
+  const data = await res.json();
+  return data;
 }

@@ -5,6 +5,8 @@ import {
   PurchaseOrder,
 } from "@/app/caldera/[storeId]/stock-management/page";
 import { Trash2 } from "lucide-react";
+import { deleteProductOrder } from "@/app/actions/delete";
+import { useToastContext } from "@/ContextAPI/toastContext";
 
 interface OrderDetailSliderProps {
   mainOrder: PurchaseOrder | null;
@@ -41,6 +43,7 @@ const AdminOrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
   const [costPrices, setCostPrices] = useState<{ [key: string]: number }>({});
   const [outOfStocks, setOutOfStock] = useState<{ [key: string]: number }>({});
   const [productRequest, setProductRequest] = useState<ProductRequest[]>([]);
+  const { showToast } = useToastContext();
 
   useEffect(() => {
     if (mainOrder) {
@@ -130,34 +133,38 @@ const AdminOrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
   };
 
   // Handle product delete
-  const handleDelete = (productId: string) => {
-    // Remove product from productRequest array
-    const updatedProductRequest = productRequest.filter(
-      (product) => product.productId !== productId
-    );
+  // Handle product delete
+  const handleDelete = async (prId: string) => {
+    try {
+      const updatedProductRequest = await deleteProductOrder(prId);
+      if (updatedProductRequest.status === true) {
+        const newProductRequest = productRequest.filter(
+          (product) => product.prId !== prId
+        );
+        showToast("Deleted successfully", "success");
+        setProductRequest(newProductRequest);
+        const updatedQuantities = { ...quantities };
+        delete updatedQuantities[prId];
+        setQuantities(updatedQuantities);
 
-    // Update state with the new filtered productRequest array
-    setProductRequest(updatedProductRequest);
+        const updatedUnitPrices = { ...unitPrices };
+        delete updatedUnitPrices[prId];
+        setUnitPrices(updatedUnitPrices);
 
-    // Remove corresponding product from other states (quantities, unitPrices, costPrices)
-    const updatedQuantities = { ...quantities };
-    delete updatedQuantities[productId];
-    setQuantities(updatedQuantities);
+        const updatedCostPrices = { ...costPrices };
+        delete updatedCostPrices[prId];
+        setCostPrices(updatedCostPrices);
 
-    const updatedUnitPrices = { ...unitPrices };
-    delete updatedUnitPrices[productId];
-    setUnitPrices(updatedUnitPrices);
+        const updatedOutOfStock = { ...outOfStocks };
+        delete updatedOutOfStock[prId];
+        setOutOfStock(updatedOutOfStock);
 
-    const updatedCostPrices = { ...costPrices };
-    delete updatedCostPrices[productId];
-    setCostPrices(updatedCostPrices);
-
-    const updatedOutOfStock = { ...outOfStocks };
-    delete updatedOutOfStock[productId];
-    setOutOfStock(updatedOutOfStock);
-
-    // Call the onDelete function passed via props to handle removal at the parent level
-    onDelete(productId);
+        // Call the parent's onDelete function, passing the deleted prId
+        onDelete(prId);
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
   };
 
   // Submit the updated order data
@@ -298,12 +305,14 @@ const AdminOrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
                     />
                     {/* Delete Button */}
                     <div className="flex items-center h-8 justify-center">
-                      <button
-                        className="flex justify-center items-center h-8 text-red-500"
-                        onClick={() => handleDelete(product.productId)} // Handle delete
-                      >
-                        <Trash2 />
-                      </button>
+                      {mainOrder?.status === "pending" && (
+                        <button
+                          className="flex justify-center items-center h-8 text-red-500"
+                          onClick={() => handleDelete(product.prId)} // Handle delete
+                        >
+                          <Trash2 />
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))
@@ -316,12 +325,14 @@ const AdminOrderDetailSlider: React.FC<OrderDetailSliderProps> = ({
           )}
 
           <form onSubmit={handleSubmit}>
-            <button
-              type="submit"
-              className="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg"
-            >
-              Confirm Order
-            </button>
+            {mainOrder?.status === "pending" && (
+              <button
+                type="submit"
+                className="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg"
+              >
+                Confirm Order
+              </button>
+            )}
           </form>
         </div>
       </div>

@@ -52,6 +52,7 @@ function Page() {
         console.error(result.error || "Unknown error");
       } else {
         setPoData(result.data);
+        console.log("podata: ", result.data);
       }
       setLoadingProducts(false);
     };
@@ -76,7 +77,9 @@ function Page() {
 
       const result = await acceptAllOrder(payload);
       if (result.status) {
+        setOpenDetail(false);
         showToast("Order confirmed successfully");
+        window.location.reload();
       } else {
         showToast("Failed to confirm order", "error");
       }
@@ -108,6 +111,27 @@ function Page() {
     };
   }, []);
 
+  const handlePrDelete = (prId: string) => {
+    // Update the poData by filtering out the product with matching prId from any poData
+    const updatedPoData = poData.map((po) => {
+      // Filter the productRequest array to remove the item with the matching prId
+      const updatedProductRequest = po.productRequest.filter(
+        (product) => product.prId !== prId
+      );
+
+      // If there are changes in the productRequest array, update the po object
+      return {
+        ...po,
+        productRequest: updatedProductRequest,
+      };
+    });
+
+    // Update the state with the new poData
+    setPoData(updatedPoData);
+
+    console.log("Updated poData:", updatedPoData);
+  };
+
   const handleDelete = async (poId: string) => {
     try {
       const response = await deletePo(poId);
@@ -124,6 +148,8 @@ function Page() {
     if (label === "View Order") {
       const selectedOrder = poData.find((order) => order.poId === poId);
       setOpenDetail(true);
+      console.log("selectedOrder;", selectedOrder);
+
       setOpenDropdownId(null);
       setSelectedOrder(selectedOrder);
     }
@@ -224,7 +250,7 @@ function Page() {
         isOpen={openDetail}
         onClose={() => setOpenDetail(false)}
         onSubmit={handleSubmit}
-        onDelete={handleDelete}
+        onDelete={handlePrDelete}
       />
     </div>
   );
